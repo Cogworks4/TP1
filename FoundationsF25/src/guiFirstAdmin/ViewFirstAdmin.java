@@ -12,6 +12,10 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 
+import java.util.List;
+
+import inputValidation.*;
+
 
 /*******
  * <p> Title: ViewFirstAdmin Class</p>
@@ -56,6 +60,17 @@ public class ViewFirstAdmin {
 			new Label("Enter the Admin's Username, the Password twice, and then click on " + 
 					"Setup Admin Account.");
 	
+	protected static Label label_Requirements = 
+    		new Label("A valid password must satisfy the following requirements:");
+	
+	protected static Label validPassword = new Label();			// This only appears with a valid password
+	protected static Label label_UpperCase = new Label();		// These empty labels change based on the users input
+	protected static Label label_LowerCase = new Label();		//	
+	protected static Label label_NumericDigit = new Label();	//
+	protected static Label label_SpecialChar = new Label();		//
+	protected static Label label_LongEnough = new Label();		//
+	protected static Label label_ShortEnough = new Label();		//
+	
 	protected static Label label_PasswordsDoNotMatch = new Label();
 	protected static TextField text_AdminUsername = new TextField();
 	protected static PasswordField text_AdminPassword1 = new PasswordField();
@@ -73,6 +88,8 @@ public class ViewFirstAdmin {
 	private static Pane theRootPane;
 	private static Scene theFirstAdminScene = null;
 	private static final int theRole = 1;		// Admin: 1; Role1: 2; Role2: 3
+	
+	private static List <Label> labels;
 		
 	
 	/*-********************************************************************************************
@@ -139,6 +156,7 @@ public class ViewFirstAdmin {
 	 * 
 	 */
 	private ViewFirstAdmin() {
+		setGuiElements();
 
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
@@ -165,6 +183,8 @@ public class ViewFirstAdmin {
 				true);
 		text_AdminPassword1.setPromptText("Enter Admin Password");
 		text_AdminPassword1.textProperty().addListener((observable, oldValue, newValue)
+				-> {PasswordValidation.updatePassword(); });
+		text_AdminPassword1.textProperty().addListener((observable, oldValue, newValue)
 				-> {ControllerFirstAdmin.setAdminPassword1(); });
 
 		// Establish the text input operand field for the password
@@ -185,12 +205,16 @@ public class ViewFirstAdmin {
 
 		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 520);
 		button_Quit.setOnAction((event) -> {ControllerFirstAdmin.performQuit(); });
+		
+		PasswordValidation.updateView(labels);
 
 		// Place all of the just-initialized GUI elements into the pane
 		theRootPane.getChildren().addAll(label_ApplicationTitle, label_TitleLine1,
 				label_TitleLine2, text_AdminUsername, text_AdminPassword1, 
 				text_AdminPassword2, button_AdminSetup, label_PasswordsDoNotMatch,
-				button_Quit);
+				button_Quit, validPassword, label_Requirements, label_UpperCase, 
+				label_LowerCase, label_NumericDigit, label_SpecialChar, label_LongEnough,
+				label_ShortEnough);
 	}
 	
 	
@@ -262,5 +286,15 @@ public class ViewFirstAdmin {
 		t.setLayoutX(x);
 		t.setLayoutY(y);		
 		t.setEditable(e);
+		
+
 	}	
+	
+	private void setGuiElements() {
+		labels = PasswordValidation.getGuiElements(label_Requirements, label_UpperCase, label_LowerCase, 
+				 label_NumericDigit,  label_SpecialChar,  label_LongEnough, 
+				 label_ShortEnough, validPassword);
+		
+			
+	}
 }
