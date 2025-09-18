@@ -25,7 +25,8 @@ public class emailRecognizer {
 		testing(7, "jacobhenry@-gmail.com");
 		testing(8, "jacobhenry@gmail-.com");
 		testing(9, "jacobhenry@gmail.c0m");
-		testing(10, "jacobhenry@gmail.com");
+		testing(10, "jacobhenry");
+		testing(11, "jacobhenry@gmail.com");
 	}
 	
 	
@@ -45,6 +46,7 @@ public class emailRecognizer {
 		
 		inputIndex = input.length(); // updates the length of the input index
 		int symbolCount = 0; // the count for a specified symbol
+		int atSymbol = 0; // remembers if the email has a domain
 		
 			// Checks email length
 		if (inputIndex > 254){
@@ -94,6 +96,9 @@ public class emailRecognizer {
 		for (int i = 0; i < inputIndex; i++) {
 			if (input.charAt(i) == '@') {
 				
+					// Remembers the @ symbol was in the input
+				atSymbol = 1;
+				
 					// you cannot start with a hyphen after the @
 				if (input.charAt(i + 1) == '-') {
 					return errorMessage = "You cannont use a hyphen after the @ symbol";
@@ -126,6 +131,11 @@ public class emailRecognizer {
 					}
 				}
 			}
+		}
+		
+			// if there is no @ symbol issue the correct output
+		if (atSymbol == 0) {
+			return errorMessage = "You must use an @ symbol and a domain in your email";
 		}
 		
 		return "All good!";
