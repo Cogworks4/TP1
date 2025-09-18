@@ -8,7 +8,6 @@ package emailRecognizer;
  * error.
  */
 
-
 public class emailRecognizer {
 	
 	static String errorMessage = "";
