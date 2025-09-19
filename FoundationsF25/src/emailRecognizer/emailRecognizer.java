@@ -25,7 +25,9 @@ public class emailRecognizer {
 		testing(7, "jacobhenry@-gmail.com");
 		testing(8, "jacobhenry@gmail-.com");
 		testing(9, "jacobhenry@gmail.c0m");
-		testing(10, "jacobhenry@gmail.com");
+		testing(10, "jacobhenry");
+		testing(11, "jacobhenry@.gmail.com");
+		testing(12, "jacobhenry@gmail.com");
 	}
 	
 	
@@ -45,6 +47,7 @@ public class emailRecognizer {
 		
 		inputIndex = input.length(); // updates the length of the input index
 		int symbolCount = 0; // the count for a specified symbol
+		int atSymbol = 0; // remembers if the email has a domain
 		
 			// Checks email length
 		if (inputIndex > 254){
@@ -76,13 +79,13 @@ public class emailRecognizer {
 					}
 				}
 				
-					// Checks for any dots at the first index, last index before the @
+					// Checks for any dots at the first index, last index before the @ or after the @
 					// symbol, or any subsequent dots
 				if (input.charAt(i) == '.' && i == 0) { // dot at start
 					return errorMessage = "You cannont use the '.' char at the beginning of your email";
 				} else if (input.charAt(i) == '.' && input.charAt(i + 1) == '@') { // dot before @
-					return errorMessage = "You cannont use the '.' char right before the @ symbol";
-				} else if (input.charAt(i) == '.' && input.charAt(i + 1) == '.') { // consecutive dots
+					return errorMessage = "You cannont use the '.' char right after the @ symbol";
+				}else if (input.charAt(i) == '.' && input.charAt(i + 1) == '.') { // consecutive dots
 					return errorMessage = "You cannont use the '.' char consecutively";
 				}
 			}
@@ -94,6 +97,9 @@ public class emailRecognizer {
 		for (int i = 0; i < inputIndex; i++) {
 			if (input.charAt(i) == '@') {
 				
+					// Remembers the @ symbol was in the input
+				atSymbol = 1;
+				
 					// you cannot start with a hyphen after the @
 				if (input.charAt(i + 1) == '-') {
 					return errorMessage = "You cannont use a hyphen after the @ symbol";
@@ -101,12 +107,7 @@ public class emailRecognizer {
 				
 				for (int j = i; j < inputIndex; j++) {
 					if (input.charAt(j) == '.') {
-							// Checks for more than one . after the @
-						symbolCount += 1;
-						if (symbolCount > 1) {
-							return errorMessage = "You cannont use the '.' character more than once after the @ symbol";
-						}
-						
+
 							// Checks the minimum of two characters for the TLD
 						if (j + 3 > inputIndex) {
 							return errorMessage = "You must have a valid TLD (.com, .net, etc) for your email";
@@ -120,7 +121,7 @@ public class emailRecognizer {
 							// Checks for only alphabetic characters for the TLD
 						for (int k = j + 1; k < inputIndex; k++) {
 							if (!Character.isLetter(input.charAt(k))) {
-								return errorMessage = "You can only use alphabetic characters for the TLD (.com, .net, etc)";
+								return errorMessage = "You must have a valid TLD (.com, .net, etc)";
 							}
 						}
 					}
@@ -128,7 +129,12 @@ public class emailRecognizer {
 			}
 		}
 		
-		return "All good!";
+			// if there is no @ symbol issue the correct output
+		if (atSymbol == 0) {
+			return errorMessage = "You must use an @ symbol and a domain in your email";
+		}
+		
+		return "";
 	}
 	
 	static public void testing(int number, String Email) {
