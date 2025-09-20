@@ -10,8 +10,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import entityClasses.User;
+
 
 /*******
  * <p> Title: ViewUserUpdate Class. </p>
@@ -77,6 +79,7 @@ public class ViewUserUpdate {
 	private static Label label_CurrentLastName = new Label();
 	private static Label label_CurrentPreferredFirstName = new Label();
 	private static Label label_CurrentEmailAddress = new Label();
+	private static Label label_ErrorMessage = new Label();
 	
 	// These buttons enable the user to edit the various dynamic fields.  The username and the
 	// passwords for a user are currently not editable.
@@ -116,6 +119,7 @@ public class ViewUserUpdate {
 	public static Scene theUserUpdateScene = null;	// The Scene each invocation populates
 
 	private static Optional<String> result;		// The result from a pop-up dialog
+	private static String error;				// error messages from any field is stored here
 
 	/*-********************************************************************************************
 
@@ -236,6 +240,8 @@ public class ViewUserUpdate {
 		
 		dialogUpdateEmailAddresss.setTitle("Update Email Address");
 		dialogUpdateEmailAddresss.setHeaderText("Update your Email Address");
+		
+		
 
 		// Label theScene with the name of the startup screen, centered at the top of the pane
 		setupLabelUI(label_ApplicationTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
@@ -317,17 +323,28 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentEmailAddress, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 400);
         setupButtonUI(button_UpdateEmailAddress, "Dialog", 18, 275, Pos.CENTER, 500, 393);
         button_UpdateEmailAddress.setOnAction((event) -> {result = dialogUpdateEmailAddresss.showAndWait();
+        	error = emailRecognizer.emailRecognizer.validateEmail(result);
+        	if(error.length() <= 0) {
     		result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
     		theDatabase.getUserAccountDetails(theUser.getUserName());
     		String newEmail = theDatabase.getCurrentEmailAddress();
            	theUser.setEmailAddress(newEmail);
         	if (newEmail == null || newEmail.length() < 1)label_CurrentEmailAddress.setText("<none>");
         	else label_CurrentEmailAddress.setText(newEmail);
- 			});
+        	label_ErrorMessage.setText("");
+        	System.out.println("*** email correctly updated");
+ 			}
+        	else label_ErrorMessage.setText("In Email: "+ error); System.out.println("*** There is a problem with this inputed email");
+        	});
+        	
+        
+        // Any error message
+        setupLabelUI(label_ErrorMessage, "Arial", 18, width, Pos.CENTER, 0, 450);
+        label_ErrorMessage.setTextFill(Color.RED);
         
         // Set up the button to proceed to this user's home page
         setupButtonUI(button_ProceedToUserHomePage, "Dialog", 18, 300, 
-        		Pos.CENTER, width/2-150, 450);
+        		Pos.CENTER, width/2-150, 500);
         button_ProceedToUserHomePage.setOnAction((event) -> 
         	{ControllerUserUpdate.goToUserHomePage(theStage, theUser);});
     	
@@ -342,7 +359,7 @@ public class ViewUserUpdate {
         		label_LastName, label_CurrentLastName, button_UpdateLastName,
         		label_PreferredFirstName, label_CurrentPreferredFirstName,
         		button_UpdatePreferredFirstName, button_UpdateEmailAddress,
-        		label_EmailAddress, label_CurrentEmailAddress, 
+        		label_EmailAddress, label_CurrentEmailAddress, label_ErrorMessage,
         		button_ProceedToUserHomePage);
 	}
 	
