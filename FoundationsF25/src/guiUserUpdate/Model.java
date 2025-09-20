@@ -7,9 +7,9 @@ public class Model {
 			ViewUserUpdate.button_ProceedToUserHomePage.setLayoutY(450);
 			ViewUserUpdate.label_ErrorMessage.setText("");
 			return true;
-		}
-		else ViewUserUpdate.button_ProceedToUserHomePage.setLayoutY(500); return false;
-			
-		
+		} else
+			ViewUserUpdate.button_ProceedToUserHomePage.setLayoutY(500);
+		return false;
+
 	}
 }
