@@ -79,7 +79,7 @@ public class ViewUserUpdate {
 	private static Label label_CurrentLastName = new Label();
 	private static Label label_CurrentPreferredFirstName = new Label();
 	private static Label label_CurrentEmailAddress = new Label();
-	private static Label label_ErrorMessage = new Label();
+	static protected Label label_ErrorMessage = new Label();
 	
 	// These buttons enable the user to edit the various dynamic fields.  The username and the
 	// passwords for a user are currently not editable.
@@ -93,7 +93,7 @@ public class ViewUserUpdate {
 
 	// This button enables the user to finish working on this page and proceed to the user's home
 	// page determined by the user's role at the time of log in.
-	private static Button button_ProceedToUserHomePage = new Button("Proceed to the User Home Page");
+	static protected Button button_ProceedToUserHomePage = new Button("Proceed to the User Home Page");
 	
 	// This is the end of the GUI widgets for this page.
 	
@@ -324,17 +324,18 @@ public class ViewUserUpdate {
         setupButtonUI(button_UpdateEmailAddress, "Dialog", 18, 275, Pos.CENTER, 500, 393);
         button_UpdateEmailAddress.setOnAction((event) -> {result = dialogUpdateEmailAddresss.showAndWait();
         	error = emailRecognizer.emailRecognizer.validateEmail(result);
-        	if(error.length() <= 0) {
-    		result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
-    		theDatabase.getUserAccountDetails(theUser.getUserName());
-    		String newEmail = theDatabase.getCurrentEmailAddress();
-           	theUser.setEmailAddress(newEmail);
-        	if (newEmail == null || newEmail.length() < 1)label_CurrentEmailAddress.setText("<none>");
-        	else label_CurrentEmailAddress.setText(newEmail);
-        	label_ErrorMessage.setText("");
-        	System.out.println("*** email correctly updated");
+        	if(Model.showErrorMessage(error)) {
+        		result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
+        		theDatabase.getUserAccountDetails(theUser.getUserName());
+        		String newEmail = theDatabase.getCurrentEmailAddress();
+        		theUser.setEmailAddress(newEmail);
+        		if (newEmail == null || newEmail.length() < 1)label_CurrentEmailAddress.setText("<none>");
+        		else label_CurrentEmailAddress.setText(newEmail);
+        		System.out.println("*** email correctly updated");
  			}
-        	else label_ErrorMessage.setText("In Email: "+ error); System.out.println("*** There is a problem with this inputed email");
+        	else { 
+        		label_ErrorMessage.setText("In Email: " + error); System.out.println("*** There is a problem with this inputted email");
+        		}
         	});
         	
         
@@ -344,7 +345,7 @@ public class ViewUserUpdate {
         
         // Set up the button to proceed to this user's home page
         setupButtonUI(button_ProceedToUserHomePage, "Dialog", 18, 300, 
-        		Pos.CENTER, width/2-150, 500);
+        		Pos.CENTER, width/2-150, 450);
         button_ProceedToUserHomePage.setOnAction((event) -> 
         	{ControllerUserUpdate.goToUserHomePage(theStage, theUser);});
     	
