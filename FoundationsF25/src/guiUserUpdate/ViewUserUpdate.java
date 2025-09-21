@@ -1,6 +1,7 @@
 package guiUserUpdate;
 
 import java.util.Optional;
+import java.util.List;
 
 import database.Database;
 import javafx.geometry.Pos;
@@ -12,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import entityClasses.User;
+import utilities.userUpdateNameValidator;
 
 /*******
  * <p> Title: ViewUserUpdate Class. </p>
@@ -52,7 +54,7 @@ public class ViewUserUpdate {
 	
 	// These are the widget attributes for the GUI. There are 3 areas for this GUI.
 	
-	// Unlike may of the other pages, the GUI on this page is not organized into areas and the user
+	// Unlike many of the other pages, the GUI on this page is not organized into areas and the user
 	// is not able to logout, return, or quit from this page
 	
 	// These widgets display the purpose of the page and guide the user.
@@ -261,39 +263,79 @@ public class ViewUserUpdate {
         setupLabelUI(label_CurrentFirstName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 200);
         setupButtonUI(button_UpdateFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 193);
         button_UpdateFirstName.setOnAction((event) -> {result = dialogUpdateFirstName.showAndWait();
-        	result.ifPresent(name -> theDatabase.updateFirstName(theUser.getUserName(), result.get()));
+	        
+        // calls InputValidator and if no errors, saves input to database	
+        	result.ifPresent(name -> {
+	            List<String> validationError = userUpdateNameValidator.validateFirstName(name);
+	            if (validationError.isEmpty()) {
+	                theDatabase.updateFirstName(theUser.getUserName(), name);
+	            } else {
+	            	// sends error to console - can comment out if needed
+	            	System.out.println("Validation failed:");
+	            	System.out.println(validationError);
+	                return; // skip update
+	            	// Validation failed — skip the update
+	                // GUI error message can be added here later
+	            }
+	        });
         	theDatabase.getUserAccountDetails(theUser.getUserName());
          	String newName = theDatabase.getCurrentFirstName();
            	theUser.setFirstName(newName);
         	if (newName == null || newName.length() < 1)label_CurrentFirstName.setText("<none>");
         	else label_CurrentFirstName.setText(newName);
-         	});
+        });
                
         // Middle Name
         setupLabelUI(label_MiddleName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 250);
         setupLabelUI(label_CurrentMiddleName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 250);
         setupButtonUI(button_UpdateMiddleName, "Dialog", 18, 275, Pos.CENTER, 500, 243);
         button_UpdateMiddleName.setOnAction((event) -> {result = dialogUpdateMiddleName.showAndWait();
-    		result.ifPresent(name -> theDatabase.updateMiddleName(theUser.getUserName(), result.get()));
-    		theDatabase.getUserAccountDetails(theUser.getUserName());
-    		String newName = theDatabase.getCurrentMiddleName();
-           	theUser.setMiddleName(newName);
-        	if (newName == null || newName.length() < 1)label_CurrentMiddleName.setText("<none>");
-        	else label_CurrentMiddleName.setText(newName);
-    		});
+	    // calls InputValidator and if no errors, saves input to database	
+	    	result.ifPresent(name -> {
+	            List<String> validationError = userUpdateNameValidator.validateMiddleName(name);
+	            if (validationError.isEmpty()) {
+	                theDatabase.updateMiddleName(theUser.getUserName(), name);
+	            } else {
+	            	// sends error to console - can comment out if needed
+	            	System.out.println("Validation failed:");
+	            	System.out.println(validationError); 
+	                return; // skip update
+	            	// Validation failed — skip the update
+	                // GUI error message can be added here later
+	            }
+	        });
+	    	theDatabase.getUserAccountDetails(theUser.getUserName());
+	     	String newName = theDatabase.getCurrentMiddleName();
+	       	theUser.setFirstName(newName);
+	    	if (newName == null || newName.length() < 1)label_CurrentMiddleName.setText("<none>");
+	    	else label_CurrentMiddleName.setText(newName);
+	    });
         
         // Last Name
         setupLabelUI(label_LastName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 300);
         setupLabelUI(label_CurrentLastName, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 300);
         setupButtonUI(button_UpdateLastName, "Dialog", 18, 275, Pos.CENTER, 500, 293);
         button_UpdateLastName.setOnAction((event) -> {result = dialogUpdateLastName.showAndWait();
-    		result.ifPresent(name -> theDatabase.updateLastName(theUser.getUserName(), result.get()));
-    		theDatabase.getUserAccountDetails(theUser.getUserName());
-    		String newName = theDatabase.getCurrentLastName();
-           	theUser.setLastName(newName);
-      	if (newName == null || newName.length() < 1)label_CurrentLastName.setText("<none>");
-        	else label_CurrentLastName.setText(newName);
-    		});
+	    // calls InputValidator and if no errors, saves input to database	
+	    	result.ifPresent(name -> {
+	            List<String> validationError = userUpdateNameValidator.validateLastName(name);
+	            if (validationError.isEmpty()) {
+	                theDatabase.updateLastName(theUser.getUserName(), name);
+	            } else {
+	            	// sends error to console - can comment out if needed
+	            	System.out.println("Validation failed:");
+	            	System.out.println(validationError);
+	            	return; // skip update
+	            	// Validation failed — skip the update
+	                // GUI error message can be added here later
+	            }
+	        });
+	    	theDatabase.getUserAccountDetails(theUser.getUserName());
+	     	String newName = theDatabase.getCurrentLastName();
+	       	theUser.setFirstName(newName);
+	    	if (newName == null || newName.length() < 1)label_CurrentLastName.setText("<none>");
+	    	else label_CurrentLastName.setText(newName);
+	    });
         
         // Preferred First Name
         setupLabelUI(label_PreferredFirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 
@@ -303,14 +345,26 @@ public class ViewUserUpdate {
         setupButtonUI(button_UpdatePreferredFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 343);
         button_UpdatePreferredFirstName.setOnAction((event) -> 
         	{result = dialogUpdatePreferredFirstName.showAndWait();
-    		result.ifPresent(name -> 
-    		theDatabase.updatePreferredFirstName(theUser.getUserName(), result.get()));
-    		theDatabase.getUserAccountDetails(theUser.getUserName());
-    		String newName = theDatabase.getCurrentPreferredFirstName();
-           	theUser.setPreferredFirstName(newName);
-         	if (newName == null || newName.length() < 1)label_CurrentPreferredFirstName.setText("<none>");
+        	// calls InputValidator and if no errors, saves input to database	
+        	result.ifPresent(name -> {
+	            List<String> validationError = userUpdateNameValidator.validatePreferredName(name);
+	            if (validationError.isEmpty()) {
+	                theDatabase.updatePreferredFirstName(theUser.getUserName(), name);
+	            } else {
+	            	// sends error to console - can comment out if needed
+	            	System.out.println("Validation failed:");
+	            	System.out.println(validationError); 
+	                return; // skip update
+	            	// Validation failed — skip the update
+	                // GUI error message can be added here later
+	            }
+	        });
+        	theDatabase.getUserAccountDetails(theUser.getUserName());
+         	String newName = theDatabase.getCurrentPreferredFirstName();
+           	theUser.setFirstName(newName);
+        	if (newName == null || newName.length() < 1)label_CurrentPreferredFirstName.setText("<none>");
         	else label_CurrentPreferredFirstName.setText(newName);
-     		});
+        });
         
         // Email Address
         setupLabelUI(label_EmailAddress, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 400);
