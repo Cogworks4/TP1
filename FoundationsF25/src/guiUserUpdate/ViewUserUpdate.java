@@ -1,5 +1,6 @@
 package guiUserUpdate;
 
+import java.util.List;
 import java.util.Optional;
 
 import database.Database;
@@ -12,6 +13,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import nameValidator.userUpdateNameValidator;
 import entityClasses.User;
 
 /*******
@@ -300,7 +302,19 @@ public class ViewUserUpdate {
 		setupButtonUI(button_UpdateFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 193);
 		button_UpdateFirstName.setOnAction((event) -> {
 			result = dialogUpdateFirstName.showAndWait();
-			result.ifPresent(name -> theDatabase.updateFirstName(theUser.getUserName(), result.get()));
+			result.ifPresent(name -> {
+				List<String> validationError = userUpdateNameValidator.validateFirstName(name);
+				if (validationError.isEmpty()) {
+					theDatabase.updateFirstName(theUser.getUserName(), name);
+				} else {
+					// sends error to console - can comment out if needed
+					System.out.println("Validation failed:");
+					System.out.println(validationError);
+					return; // skip update
+					// Validation failed — skip the update
+					// GUI error message can be added here later
+				}
+			});
 			theDatabase.getUserAccountDetails(theUser.getUserName());
 			String newName = theDatabase.getCurrentFirstName();
 			theUser.setFirstName(newName);
@@ -316,10 +330,23 @@ public class ViewUserUpdate {
 		setupButtonUI(button_UpdateMiddleName, "Dialog", 18, 275, Pos.CENTER, 500, 243);
 		button_UpdateMiddleName.setOnAction((event) -> {
 			result = dialogUpdateMiddleName.showAndWait();
-			result.ifPresent(name -> theDatabase.updateMiddleName(theUser.getUserName(), result.get()));
+			// calls InputValidator and if no errors, saves input to database
+			result.ifPresent(name -> {
+				List<String> validationError = userUpdateNameValidator.validateMiddleName(name);
+				if (validationError.isEmpty()) {
+					theDatabase.updateMiddleName(theUser.getUserName(), name);
+				} else {
+					// sends error to console - can comment out if needed
+					System.out.println("Validation failed:");
+					System.out.println(validationError);
+					return; // skip update
+					// Validation failed — skip the update
+					// GUI error message can be added here later
+				}
+			});
 			theDatabase.getUserAccountDetails(theUser.getUserName());
 			String newName = theDatabase.getCurrentMiddleName();
-			theUser.setMiddleName(newName);
+			theUser.setFirstName(newName);
 			if (newName == null || newName.length() < 1)
 				label_CurrentMiddleName.setText("<none>");
 			else
@@ -332,10 +359,23 @@ public class ViewUserUpdate {
 		setupButtonUI(button_UpdateLastName, "Dialog", 18, 275, Pos.CENTER, 500, 293);
 		button_UpdateLastName.setOnAction((event) -> {
 			result = dialogUpdateLastName.showAndWait();
-			result.ifPresent(name -> theDatabase.updateLastName(theUser.getUserName(), result.get()));
+			// calls InputValidator and if no errors, saves input to database
+			result.ifPresent(name -> {
+				List<String> validationError = userUpdateNameValidator.validateLastName(name);
+				if (validationError.isEmpty()) {
+					theDatabase.updateLastName(theUser.getUserName(), name);
+				} else {
+					// sends error to console - can comment out if needed
+					System.out.println("Validation failed:");
+					System.out.println(validationError);
+					return; // skip update
+					// Validation failed — skip the update
+					// GUI error message can be added here later
+				}
+			});
 			theDatabase.getUserAccountDetails(theUser.getUserName());
 			String newName = theDatabase.getCurrentLastName();
-			theUser.setLastName(newName);
+			theUser.setFirstName(newName);
 			if (newName == null || newName.length() < 1)
 				label_CurrentLastName.setText("<none>");
 			else
@@ -348,10 +388,23 @@ public class ViewUserUpdate {
 		setupButtonUI(button_UpdatePreferredFirstName, "Dialog", 18, 275, Pos.CENTER, 500, 343);
 		button_UpdatePreferredFirstName.setOnAction((event) -> {
 			result = dialogUpdatePreferredFirstName.showAndWait();
-			result.ifPresent(name -> theDatabase.updatePreferredFirstName(theUser.getUserName(), result.get()));
+			// calls InputValidator and if no errors, saves input to database
+			result.ifPresent(name -> {
+				List<String> validationError = userUpdateNameValidator.validatePreferredName(name);
+				if (validationError.isEmpty()) {
+					theDatabase.updatePreferredFirstName(theUser.getUserName(), name);
+				} else {
+					// sends error to console - can comment out if needed
+					System.out.println("Validation failed:");
+					System.out.println(validationError);
+					return; // skip update
+					// Validation failed — skip the update
+					// GUI error message can be added here later
+				}
+			});
 			theDatabase.getUserAccountDetails(theUser.getUserName());
 			String newName = theDatabase.getCurrentPreferredFirstName();
-			theUser.setPreferredFirstName(newName);
+			theUser.setFirstName(newName);
 			if (newName == null || newName.length() < 1)
 				label_CurrentPreferredFirstName.setText("<none>");
 			else
