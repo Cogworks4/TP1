@@ -35,7 +35,7 @@ public class ModelFirstAdmin {
 			return true;
 		}
 		else {
-			ViewFirstAdmin.label_UsernameError.setText(errorMessage);
+			ViewFirstAdmin.label_UsernameError.setText("*" + errorMessage);
 			ViewFirstAdmin.text_AdminPassword1.setLayoutY(215);
 			ViewFirstAdmin.text_AdminPassword2.setLayoutY(265);
 			return false;
