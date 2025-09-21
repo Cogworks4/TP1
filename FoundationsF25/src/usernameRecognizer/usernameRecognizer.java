@@ -52,7 +52,7 @@ public class usernameRecognizer {
 		if (index > 32) {
 			return errorMessage = "Username is too long (maximum is 32 characters)";
 		}
-
+		
 		// Checks if first character is allowed
 		char first = input.charAt(0);
 		if (!Character.isLetterOrDigit(first)) {
