@@ -60,6 +60,7 @@ public class emailRecognizer {
 
 					// Checks for inappropriate characters
 					if (result.get().charAt(i) == notAllowedChar[j]) {
+					if (result.charAt(i) == notAllowedChar[j]) {
 
 						// If it's only one @ symbol continue
 						if (result.charAt(i) == '@') {
