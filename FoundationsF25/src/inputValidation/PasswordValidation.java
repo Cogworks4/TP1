@@ -1,74 +1,93 @@
 package inputValidation;
 
-import java.util.List;
+import java.util.Scanner;
 
-import javafx.geometry.Pos;
-import javafx.scene.control.Label;
-import javafx.scene.paint.Color; 
-
-import javafx.scene.text.Font;
-
-
+//TP1 Version
 public class PasswordValidation {
 	
-	public static String passwordErrorMessage = "";		// The error message text
-	public static String adminPassword1 = "";			// The input being processed
-	public static String adminPassword2 = "";
-	public static String passwordInput = "";
-	public static int passwordIndexofError = -1;		// The index where the error was located
+	public static String adminPassword1 = "";			// global passwords
+	public static String adminPassword2 = "";			//
+	
 	public static boolean foundUpperCase = false;
 	public static boolean foundLowerCase = false;
 	public static boolean foundNumericDigit = false;
 	public static boolean foundSpecialChar = false;
 	public static boolean foundLongEnough = false;
 	public static boolean foundTooLong = false;
-	private static String inputLine = "";				// The input line
+	public static boolean running = false;
+	
+	public static String passwordErrorMessage = "";		// The error message text
+	public static String passwordInput = "";
+	public static int passwordIndexofError = -1;		// The index where the error was located
+	
 	private static char currentChar;					// The current character in the line
-	private static int currentCharNdx;					// The index of the current character
-	private static boolean running;	
-	
-	protected static Label label_UpperCase = new Label();		// These empty labels change based on the
-	protected static Label label_LowerCase = new Label();		// user's input
-	protected static Label label_NumericDigit = new Label();	
-	protected static Label label_SpecialChar = new Label();
-	protected static Label label_LongEnough = new Label();
-	protected static Label label_ShortEnough = new Label();
-	protected static Label label_Requirements = new Label();
-	protected static Label validPassword = new Label();
-	
-	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
-	
-	// A numeric value may not exceed 16 characters
+	private static int currentCharNdx;	
 	
 	
-	// Private method to move to the next character within the limits of the input line
-
 	
-	/**********
-	 * This method is a mechanical transformation of a Finite State Machine diagram into a Java
-	 * method.
-	 * 
-	 * @param input		The input string for the Finite State Machine
-	 * @return			An output string that is empty if every things is okay or it is a String
-	 * 						with a helpful description of the error
-	 */
-	protected static void setAdminPasswords(String pass1, String pass2) {
-
-		pass1 = adminPassword1;
-		pass2 = adminPassword2;
+	public static void main(String[] args) {
 		
-		//checks if inputs are the same and sends error if not
-		if (adminPassword1.compareTo(adminPassword2) == 0) {
-			
-			passwordInput = adminPassword1;
+		Scanner input = new Scanner(System.in);
+		String inputLine = "";
 		
+		//Start
+		System.out.println("Enter a password below or enter newline to quit");
+		
+		//Prompt user to enter password
+		System.out.println("\nEnter your password: \n");
+
+		while (input.hasNextLine()) 
+		{
+			inputLine = input.nextLine();		// Fetch the next line
+			if (inputLine.length() == 0) {		// Display the reason for terminating the loop if quit.
+				System.out.println("\n*** Empty input line detected, the loop stops."); 
+				input.close();					
+				System.exit(0);
+			}
+			else {
+				//get input and check first password for validity
+				adminPassword1 = input.nextLine();
+				if(!checkValidity()) {
+					System.out.println("Error password was invalid,"
+							+ "Please re-enter your password: \n");
+					adminPassword1 = "";
+				}
+				
+				//prompt user to reenter password
+				System.out.println("\nPlease re-enter your password: \n");
+				adminPassword2 = input.nextLine();
+				
+				//compare passwords and prompt if invalid
+				if(adminPassword1.compareTo(adminPassword2) == 0) 
+				{
+					System.out.println("\n\n--Error passwords do not match!--\n\n"
+							+ "please re-enter your passwords: \n");
+					
+					adminPassword1 = "";			
+					adminPassword2 = "";
+					continue;
+					
+				}
+				else 
+					System.out.println("Password Accepted!");
+				
+				System.out.println("\nEnter a password below or enter newline to quit"
+						+ "\nEnter your password: \n");
+			}
 		}
+
+
+		
+		
+
+
 		
 	}
+
 	
 	
 	/*******
-	 * <p> Title: updatePassword - Protected Method </p>
+	 * <p> Title: updatePassword - Public Method </p>
 	 * 
 	 * <p> Description: This method is called every time the user changes the password (e.g., with 
 	 * every key pressed) using the GUI from the PasswordEvaluationGUITestbed.  It resets the 
@@ -77,22 +96,17 @@ public class PasswordValidation {
 	 * to the user and via the console.</p>
 	 */
 	
-	public static void updatePassword() {
-
-
-		
+	static public boolean checkValidity() {		
 		// If the input is empty, clear the aspects of the user interface having to do with the
 		// user input and tell the user that the input is empty.
 		if (adminPassword1.isEmpty()) {
+			return false;
 
 		}
 		else
 		{
 			// There is user input, so evaluate it to see if it satisfies the requirements
-			String errMessage = evaluatePassword(adminPassword1);
-			
-			// Based on the evaluation, change the flag to green for each satisfied requirement
-			updateFlags();
+			String errMessage = passwordEvaluator(adminPassword1);
 			
 			// An empty string means there is no error message, which means the input is valid
 			if (errMessage != "") {
@@ -101,66 +115,33 @@ public class PasswordValidation {
 				System.out.println(errMessage);			// Display the message to the console
 				
 				// Tell the user that the password is not valid with a red message
-				validPassword.setTextFill(Color.RED);
-				validPassword.setText("Failure! The password is not valid.");
-				
-//				// Ensure the button is disabled
-//				ViewFirstAdmin.button_AdminSetup.setDisable(true);
-				
+				System.out.println("Failure! The password is not valid.");	
+				return false;
 			}
 			else {
 				// All the requirements were satisfied - the password is valid
 				System.out.println("Success! The password satisfies the requirements.");
-				
-				// Tell the user that the password is valid with a green message
-				validPassword.setTextFill(Color.GREEN);
-				validPassword.setText("Success! The password satisfies the requirements.");
-				
-//				// Enable the button so the user can accept this password or continue to add
-//				// more characters to the password and make it longer.
-//				ViewFirstAdmin.button_AdminSetup.setDisable(false);
+				return true;
 			} 
 		}
 	}
 	
-	private static void updateFlags() 
-	{
-		if (foundUpperCase) {
-			label_UpperCase.setText("At least one upper case letter - Satisfied");
-			label_UpperCase.setTextFill(Color.GREEN);
-		}
-
-		if (foundLowerCase) {
-			label_LowerCase.setText("At least one lower case letter - Satisfied");
-			label_LowerCase.setTextFill(Color.GREEN);
-		}
-
-		if (foundNumericDigit) {
-			label_NumericDigit.setText("At least one numeric digit - Satisfied");
-			label_NumericDigit.setTextFill(Color.GREEN);
-		}
-
-		if (foundSpecialChar) {
-			label_SpecialChar.setText("At least one special character - Satisfied");
-			label_SpecialChar.setTextFill(Color.GREEN);
-		}
-
-		if (foundLongEnough) {
-			label_LongEnough.setText("At least eight characters - Satisfied");
-			label_LongEnough.setTextFill(Color.GREEN);
-		}
-		if (foundTooLong) {
-			label_ShortEnough.setText("At most thirty-two characters - Not yet satisfied");
-			label_ShortEnough.setTextFill(Color.RED);
-		}
-	}
+	/*******
+	 * <p> Title: passwordEvaluator - Protected Method </p>
+	 * 
+	 * <p> Description: 
+	 * 
+	 * 
+	 * 
+	 * </p>
+	 */
 	
-	public static String evaluatePassword(String input) {
+	protected static String passwordEvaluator(String input) {
 		
 		// The following are the local variable used to perform the Directed Graph simulation
 		passwordErrorMessage = "";
 		passwordIndexofError = 0;			// Initialize the IndexofError
-		inputLine = input;					// Save the reference to the input line as a global
+//		inputLine = input;					// Save the reference to the input line as a global
 		currentCharNdx = 0;					// The index of the current character
 		
 		if(input.length() <= 0) {
@@ -212,21 +193,17 @@ public class PasswordValidation {
 				System.out.println("At least 8 characters found");
 				foundLongEnough = true;
 			}
+			if(input.length() > 32) {
+				System.out.println("Password is too long!");
+				foundTooLong = true;
 			
 			// Go to the next character if there is one
 			currentCharNdx++;
-			if (currentCharNdx >= inputLine.length())
+			if (currentCharNdx >= input.length())
 				running = false;
 			else
 				currentChar = input.charAt(currentCharNdx);
-			
-			if(inputLine.length() > 32) {
-				System.out.println("Password is too long!");
-				foundTooLong = true;
-				
 			}
-			
-			
 			System.out.println();
 		}
 		
@@ -259,87 +236,58 @@ public class PasswordValidation {
 	}
 	
 	
-	//call from View class and pass the labels to update the gui
-	static protected void resetAssessments() 
-	{
-	    //updates Upper case error
-		label_UpperCase.setText("At least one upper case letter - Not yet satisfied");
-	    label_UpperCase.setTextFill(Color.RED);
-	    
-	  //updates Lower case error
-	    label_LowerCase.setText("At least one lower case letter - Not yet satisfied");
-	    label_LowerCase.setTextFill(Color.RED);
-	    
-	  //updates Numeric case error
-	    label_NumericDigit.setText("At least one numeric digit - Not yet satisfied");
-	    label_NumericDigit.setTextFill(Color.RED);
-	    
-	  //updates Special Character case error
-	    label_SpecialChar.setText("At least one special character - Not yet satisfied");
-	    label_SpecialChar.setTextFill(Color.RED);
-	    
-	  //updates Length case error
-	    label_LongEnough.setText("At least eight characters - Not yet satisfied");
-	    label_LongEnough.setTextFill(Color.RED);
-	    
-	  //updates Length case error
-	    label_ShortEnough.setText("At most thirty-two characters - Satisfied");
-	    label_ShortEnough.setTextFill(Color.GREEN);
+	/*******
+	 * <p> Title: printErrorMessages - Protected Method </p>
+	 * 
+	 * <p> Description: 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * 
+	 * </p>
+	 */
+	
+	static protected void printErrorMessages() {
+		
+		//
+		if (foundUpperCase) {
+			System.out.println("At least one upper case letter - Not yet satisfied");
+			
+			System.out.println("At least one upper case letter - Satisfied");
+		}
+
+		if (foundLowerCase) {
+			System.out.println("At least one lower case letter - Not yet satisfied");
+
+			System.out.println("At least one lower case letter - Satisfied");
+		}
+
+		if (foundNumericDigit) {
+			System.out.println("At least one numeric digit - Not yet satisfied");
+
+			System.out.println("At least one numeric digit - Satisfied");
+		}
+
+		if (foundSpecialChar) {
+			System.out.println("At least one special character - Not yet satisfied");
+
+			System.out.println("At least one special character - Satisfied");
+		}
+
+		if (foundLongEnough) {
+			System.out.println("At least eight characters - Not yet satisfied");
+
+			System.out.println("At least eight characters - Satisfied");
+		}
+		if (foundTooLong) {
+			System.out.println("At most thirty-two characters - Satisfied");
+
+			System.out.println("At most thirty-two characters - Not yet satisfied");
+		}
 	}
 
 	
-	public static void updateView(List<Label> labels) {
-		
-		label_Requirements = labels.get(1);
-		
-		setupLabelUI(labels.get(1), "Arial", 16, width-10, Pos.BASELINE_RIGHT, 10, 340);
-		
-		setupLabelUI(label_Requirements, "Arial", 14, width-10, Pos.BASELINE_LEFT, 30, 380);
-	    
-		setupLabelUI(label_UpperCase, "Arial", 14, width-10, Pos.BASELINE_LEFT, 30, 380);
-
-		setupLabelUI(label_LowerCase, "Arial", 14, width-10, Pos.BASELINE_LEFT, 30, 410);
-	    
-		setupLabelUI(label_NumericDigit, "Arial", 14, width-10, Pos.BASELINE_LEFT, 30, 440);
-	    
-		setupLabelUI(label_SpecialChar, "Arial", 14, width-10, Pos.BASELINE_LEFT, 30, 470);
-	    
-		setupLabelUI(label_LongEnough, "Arial", 14, width-10, Pos.BASELINE_LEFT, 30, 500);
-	    
-		setupLabelUI(label_ShortEnough, "Arial", 14, width-10, Pos.BASELINE_LEFT, 30, 530);
-	    
-//		resetAssessments();	// This method is use after each change to establish an initial state
-		
-		// Setup the valid Password message, which is used when all the requirements have been met
-		validPassword.setTextFill(Color.GREEN);
-		validPassword.setAlignment(Pos.BASELINE_RIGHT);
-		setupLabelUI(validPassword, "Arial", 18, width-150-10, Pos.BASELINE_LEFT, 10, 300);
-	}
-	
-	public static List<Label> getGuiElements(Label label_Requirements, Label label_UpperCase, Label label_LowerCase, 
-			Label label_NumericDigit, Label label_SpecialChar, Label label_LongEnough, Label label_ShortEnough, Label validPassword) 
-	{
-		PasswordValidation.label_Requirements = label_Requirements;
-		PasswordValidation.label_UpperCase = label_UpperCase;	// These empty labels change based on the
-		PasswordValidation.label_LowerCase = label_LowerCase;		// user's input
-		PasswordValidation.label_NumericDigit = label_NumericDigit;	
-		PasswordValidation.label_SpecialChar = label_SpecialChar;
-		PasswordValidation.label_LongEnough = label_LongEnough;
-		PasswordValidation.label_ShortEnough = label_ShortEnough;
-		PasswordValidation.validPassword = validPassword;
-		
-		return List.of(label_Requirements, label_UpperCase, label_LowerCase, label_NumericDigit,
-				label_SpecialChar,label_LongEnough,label_ShortEnough,validPassword);
-		
-		
-	}
-	
-	private static void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x, double y){
-		l.setFont(Font.font(ff, f));
-		l.setMinWidth(w);
-		l.setAlignment(p);
-		l.setLayoutX(x);
-		l.setLayoutY(y);		
-	}
 
 }
