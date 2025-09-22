@@ -30,12 +30,13 @@ public class PasswordValidation {
 		Scanner input = new Scanner(System.in);
 		String inputLine = "";
 		
-		//Start
+	//Start of program
 		System.out.println("Enter a password below or enter newline to quit");
 		
 		//Prompt user to enter password
 		System.out.println("\nEnter your password: \n");
 
+		//loop until a empty line is entered.
 		while (input.hasNextLine()) 
 		{
 			inputLine = input.nextLine();		// Fetch the next line
@@ -46,28 +47,33 @@ public class PasswordValidation {
 			}
 			else {
 				//get input and check first password for validity
-				adminPassword1 = input.nextLine();
+				adminPassword1 = inputLine;
+				//prompt user if password is invalid
 				if(!checkValidity()) {
-					System.out.println("Error password was invalid,"
-							+ "Please re-enter your password: \n");
+					System.out.println("\nPlease enter a new password: \n");
+					//reset the password
 					adminPassword1 = "";
+					continue;
 				}
 				
 				//prompt user to reenter password
-				System.out.println("\nPlease re-enter your password: \n");
+				System.out.println("\nPlease enter your password again: \n");
 				adminPassword2 = input.nextLine();
 				
 				//compare passwords and prompt if invalid
-				if(adminPassword1.compareTo(adminPassword2) == 0) 
+				if(adminPassword1.compareTo(adminPassword2) != 0) 
 				{
+					//passwords do not match, prompt user to re-try.
 					System.out.println("\n\n--Error passwords do not match!--\n\n"
 							+ "please re-enter your passwords: \n");
 					
+					//reset passwords and loop
 					adminPassword1 = "";			
 					adminPassword2 = "";
 					continue;
 					
 				}
+				//user entered two valid passwords and is prompted again to enter a new password
 				else 
 					System.out.println("Password Accepted!");
 				
@@ -87,21 +93,17 @@ public class PasswordValidation {
 	
 	
 	/*******
-	 * <p> Title: updatePassword - Public Method </p>
+	 * <p> Title: checkValidity - Public Method </p>
 	 * 
-	 * <p> Description: This method is called every time the user changes the password (e.g., with 
-	 * every key pressed) using the GUI from the PasswordEvaluationGUITestbed.  It resets the 
-	 * messages associated with each of the requirements and then evaluates the current password
-	 * with respect to those requirements.  The results of that evaluation are display via the View
-	 * to the user and via the console.</p>
+	 * <p> Description: This method is called every time the user enters the password using the 
+	 * requirements set and then evaluates the entered password with respect to those requirements.  
+	 * The results of that evaluation are displayed to the user in console.</p>
 	 */
 	
 	static public boolean checkValidity() {		
-		// If the input is empty, clear the aspects of the user interface having to do with the
-		// user input and tell the user that the input is empty.
+		// If the input is empty, return false and prompt to re-enter password.
 		if (adminPassword1.isEmpty()) {
 			return false;
-
 		}
 		else
 		{
@@ -114,8 +116,8 @@ public class PasswordValidation {
 				// Since the output is not empty, at least one requirement have not been satisfied.
 				System.out.println(errMessage);			// Display the message to the console
 				
-				// Tell the user that the password is not valid with a red message
-				System.out.println("Failure! The password is not valid.");	
+				// Tell the user that the password is not valid.
+				System.out.println("\nFailure! The password did not satisfy the conditions above!.");	
 				return false;
 			}
 			else {
@@ -129,7 +131,8 @@ public class PasswordValidation {
 	/*******
 	 * <p> Title: passwordEvaluator - Protected Method </p>
 	 * 
-	 * <p> Description: 
+	 * <p> Description: Goes through the password and checks if it is valid, returning the proper
+	 * error message if not.
 	 * 
 	 * 
 	 * 
@@ -196,6 +199,7 @@ public class PasswordValidation {
 			if(input.length() > 32) {
 				System.out.println("Password is too long!");
 				foundTooLong = true;
+			}
 			
 			// Go to the next character if there is one
 			currentCharNdx++;
@@ -203,91 +207,32 @@ public class PasswordValidation {
 				running = false;
 			else
 				currentChar = input.charAt(currentCharNdx);
-			}
 			System.out.println();
 		}
 		
 		// Construct a String with a list of the requirement elements that were found.
 		String errMessage = "";
 		if (!foundUpperCase)
-			errMessage += "Upper case; ";
+			errMessage += "Upper case | ";
 		
 		if (!foundLowerCase)
-			errMessage += "Lower case; ";
+			errMessage += "Lower case | ";
 		
 		if (!foundNumericDigit)
-			errMessage += "Numeric digits; ";
+			errMessage += "Numeric digits | ";
 			
 		if (!foundSpecialChar)
-			errMessage += "Special character; ";
+			errMessage += "Special character | ";
 			
 		if (!foundLongEnough)
-			errMessage += "Long Enough; ";
+			errMessage += "Long Enough | ";
 		
 		if(foundTooLong)
-			errMessage += "Password Length; ";
+			errMessage += "Password Length | ";
 		
 		if (errMessage == "")
 			return "";
 		
-		// If it gets here, there something was not found, so return an appropriate message
-		passwordIndexofError = currentCharNdx;
-		return errMessage + "conditions were not satisfied";
+		return errMessage + "\n--conditions were not satisfied--";
 	}
-	
-	
-	/*******
-	 * <p> Title: printErrorMessages - Protected Method </p>
-	 * 
-	 * <p> Description: 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * </p>
-	 */
-	
-	static protected void printErrorMessages() {
-		
-		//
-		if (foundUpperCase) {
-			System.out.println("At least one upper case letter - Not yet satisfied");
-			
-			System.out.println("At least one upper case letter - Satisfied");
-		}
-
-		if (foundLowerCase) {
-			System.out.println("At least one lower case letter - Not yet satisfied");
-
-			System.out.println("At least one lower case letter - Satisfied");
-		}
-
-		if (foundNumericDigit) {
-			System.out.println("At least one numeric digit - Not yet satisfied");
-
-			System.out.println("At least one numeric digit - Satisfied");
-		}
-
-		if (foundSpecialChar) {
-			System.out.println("At least one special character - Not yet satisfied");
-
-			System.out.println("At least one special character - Satisfied");
-		}
-
-		if (foundLongEnough) {
-			System.out.println("At least eight characters - Not yet satisfied");
-
-			System.out.println("At least eight characters - Satisfied");
-		}
-		if (foundTooLong) {
-			System.out.println("At most thirty-two characters - Satisfied");
-
-			System.out.println("At most thirty-two characters - Not yet satisfied");
-		}
-	}
-
-	
-
 }
