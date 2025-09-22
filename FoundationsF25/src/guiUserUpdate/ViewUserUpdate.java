@@ -417,20 +417,22 @@ public class ViewUserUpdate {
 		setupButtonUI(button_UpdateEmailAddress, "Dialog", 18, 275, Pos.CENTER, 500, 393);
 		button_UpdateEmailAddress.setOnAction((event) -> {
 			result = dialogUpdateEmailAddresss.showAndWait();
-			error = emailRecognizer.emailRecognizer.validateEmail(result);
-			if (Model.showErrorMessage(error)) {
-				result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
-				theDatabase.getUserAccountDetails(theUser.getUserName());
-				String newEmail = theDatabase.getCurrentEmailAddress();
-				theUser.setEmailAddress(newEmail);
-				if (newEmail == null || newEmail.length() < 1)
-					label_CurrentEmailAddress.setText("<none>");
-				else
-					label_CurrentEmailAddress.setText(newEmail);
-				System.out.println("*** email correctly updated");
-			} else {
-				label_ErrorMessage.setText("In Email: " + error);
-				System.out.println("*** There is a problem with this inputted email");
+			if (!result.isEmpty()) {
+				error = emailRecognizer.emailRecognizer.validateEmail(result.get());
+				if (Model.showErrorMessage(error)) {
+					result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
+					theDatabase.getUserAccountDetails(theUser.getUserName());
+					String newEmail = theDatabase.getCurrentEmailAddress();
+					theUser.setEmailAddress(newEmail);
+					if (newEmail == null || newEmail.length() < 1)
+						label_CurrentEmailAddress.setText("<none>");
+					else
+						label_CurrentEmailAddress.setText(newEmail);
+					System.out.println("*** email correctly updated");
+				} else {
+					label_ErrorMessage.setText("In Email: " + error);
+					System.out.println("*** There is a problem with this inputted email");
+				}
 			}
 		});
 
