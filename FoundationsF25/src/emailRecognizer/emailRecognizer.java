@@ -45,21 +45,21 @@ public class emailRecognizer {
 	 * @return
 	 */
 	static public String validateEmail(String result) {
-			inputIndex = result.length(); // updates the length of the input index
-			int symbolCount = 0; // the count for a specified symbol
-			int atSymbol = 0; // remembers if the email has a domain
+		inputIndex = result.length(); // updates the length of the input index
+		int symbolCount = 0; // the count for a specified symbol
+		int atSymbol = 0; // remembers if the email has a domain
 
-			// Checks email length
-			if (inputIndex > 254) {
-				return errorMessage = "Your email is too long";
-			}
+		// Checks email length
+		if (inputIndex > 254) {
+			return errorMessage = "Your email is too long";
+		}
 
-			// Checks for any inappropriate characters or dots in inappropriate places
-			for (int i = 0; i < inputIndex; i++) {
-				for (int j = 0; j < notAllowedCharSize; j++) {
+		// Checks for any inappropriate characters or dots in inappropriate places
+		for (int i = 0; i < inputIndex; i++) {
+			for (int j = 0; j < notAllowedCharSize; j++) {
 
-					// Checks for inappropriate characters
-					if (result.get().charAt(i) == notAllowedChar[j]) {
+				// Checks for inappropriate characters
+				if (result.charAt(i) == notAllowedChar[j]) {
 					if (result.charAt(i) == notAllowedChar[j]) {
 
 						// If it's only one @ symbol continue
@@ -92,51 +92,52 @@ public class emailRecognizer {
 					}
 				}
 			}
+		}
 
-			symbolCount = 0;
+		symbolCount = 0;
 
-			// Checks for extra dots and a minimum char limit for the TLD
-			for (int i = 0; i < inputIndex; i++) {
-				if (result.charAt(i) == '@') {
+		// Checks for extra dots and a minimum char limit for the TLD
+		for (int i = 0; i < inputIndex; i++) {
+			if (result.charAt(i) == '@') {
 
-					// Remembers the @ symbol was in the input
-					atSymbol = 1;
+				// Remembers the @ symbol was in the input
+				atSymbol = 1;
 
-					// you cannot start with a hyphen after the @
-					if (result.charAt(i + 1) == '-') {
-						return errorMessage = "You cannont use a hyphen after the @ symbol";
-					}
+				// you cannot start with a hyphen after the @
+				if (result.charAt(i + 1) == '-') {
+					return errorMessage = "You cannont use a hyphen after the @ symbol";
+				}
 
-					for (int j = i; j < inputIndex; j++) {
-						if (result.charAt(j) == '.') {
+				for (int j = i; j < inputIndex; j++) {
+					if (result.charAt(j) == '.') {
 
-							// Checks the minimum of two characters for the TLD
-							if (j + 3 > inputIndex) {
-								return errorMessage = "You must have a valid TLD (.com, .net, etc) for your email";
-							}
+						// Checks the minimum of two characters for the TLD
+						if (j + 3 > inputIndex) {
+							return errorMessage = "You must have a valid TLD (.com, .net, etc) for your email";
+						}
 
-							// you cannot end with a hyphen after the @ before the TLD
-							if (result.charAt(j - 1) == '-') {
-								return errorMessage = "You cannont use a hyphen right before the TLD (.com, .net, etc)";
-							}
+						// you cannot end with a hyphen after the @ before the TLD
+						if (result.charAt(j - 1) == '-') {
+							return errorMessage = "You cannont use a hyphen right before the TLD (.com, .net, etc)";
+						}
 
-							// Checks for only alphabetic characters for the TLD
-							for (int k = j + 1; k < inputIndex; k++) {
-								if (!Character.isLetter(result.charAt(k))) {
-									return errorMessage = "You must have a valid TLD (.com, .net, etc)";
-								}
+						// Checks for only alphabetic characters for the TLD
+						for (int k = j + 1; k < inputIndex; k++) {
+							if (!Character.isLetter(result.charAt(k))) {
+								return errorMessage = "You must have a valid TLD (.com, .net, etc)";
 							}
 						}
 					}
 				}
 			}
+		}
 
-			// if there is no @ symbol issue the correct output
-			if (atSymbol == 0) {
-				return errorMessage = "You must use an @ symbol and a domain in your email";
-			}
+		// if there is no @ symbol issue the correct output
+		if (atSymbol == 0) {
+			return errorMessage = "You must use an @ symbol and a domain in your email";
+		}
 
-			return "";
+		return "";
 	}
 
 	static public void testing(int number, String Email) {
