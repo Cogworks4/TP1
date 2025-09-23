@@ -23,6 +23,15 @@ import javafx.stage.Stage;
 import database.Database;
 import entityClasses.User;
 import guiListUsers.ViewListUsers;
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.ComboBoxListCell;
+import javafx.scene.layout.StackPane;
+import javafx.scene.control.ListView;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class ViewListUsers {
 	
@@ -37,6 +46,7 @@ public class ViewListUsers {
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
 	
+	
 	// GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
 	// and a button to allow this user to update the account settings.
 	protected static Label label_PageTitle = new Label();
@@ -44,9 +54,11 @@ public class ViewListUsers {
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
+
+	protected static ListView<String> list_Users = new ListView<>();
 	
 	// This is a separator and it is used to partition the GUI for various tasks
-	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
+	protected static Line line_Separator2 = new Line(20, 525, width-20,525);
 	
 	// GUI Area 3: This is last of the GUI areas.  It is used for quitting the application, logging
 	// out, and on other pages a return is provided so the user can return to a previous page when
@@ -67,7 +79,6 @@ public class ViewListUsers {
 	public static Scene theListUsersScene = null;	// The Scene each invocation populates
 	
 	public static void displayListUsers(Stage ps, User user) {
-		
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
@@ -75,6 +86,13 @@ public class ViewListUsers {
 		// If not yet established, populate the static aspects of the GUI by creating the 
 		// singleton instance of this class
 		if (theView == null) theView = new ViewListUsers();
+		
+		list_Users.setItems(FXCollections.observableArrayList("Single","Double","Suite","Family App"));
+		list_Users.setLayoutX(20);
+		list_Users.setLayoutY(line_Separator1.getStartY() + 8);
+		list_Users.setPrefWidth(width - 40);
+		list_Users.setPrefHeight(line_Separator2.getStartY() - line_Separator1.getStartY() - 16);
+
 		
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.  This page is different from the others.  Since there are two 
@@ -100,8 +118,7 @@ public ViewListUsers() {
 
 		label_UserDetails.setText("User: " + theUser.getUserName());
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
-		
-		
+	
 		// GUI Area 3		
 		setupButtonUI(button_Return, "Dialog", 18, 210, Pos.CENTER, 20, 540);
 		button_Return.setOnAction((event) -> {ControllerListUsers.performReturn(); });
@@ -111,7 +128,7 @@ public ViewListUsers() {
 		// Due to the very dynamic nature of this page, setting the widget into the Root Pane has 
 		// has been delegated to the repaintTheWindow and doSelectUser controller methods.
 		// Don't follow this pattern if formatting of the page does not change dynamically.
-	}	
+	}
 
 	/*-*******************************************************************************************
 
