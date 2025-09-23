@@ -46,7 +46,6 @@ public class ViewListUsers {
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
 	
-	
 	// GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
 	// and a button to allow this user to update the account settings.
 	protected static Label label_PageTitle = new Label();
@@ -87,13 +86,17 @@ public class ViewListUsers {
 		// singleton instance of this class
 		if (theView == null) theView = new ViewListUsers();
 		
-		list_Users.setItems(FXCollections.observableArrayList("Single","Double","Suite","Family App"));
+		ViewListUsers.list_Users.setItems(javafx.collections.FXCollections.observableArrayList(
+			    "user001\tAlice Johnson\talice@example.com\tAdmin, Editor",
+			    "user002\tBob Martin\tbob@example.com\tViewer",
+			    "user003\tCarol Diaz\tcarol@example.com\tManager, Billing"
+			));
 		list_Users.setLayoutX(20);
 		list_Users.setLayoutY(line_Separator1.getStartY() + 8);
 		list_Users.setPrefWidth(width - 40);
 		list_Users.setPrefHeight(line_Separator2.getStartY() - line_Separator1.getStartY() - 16);
+		list_Users.setStyle("-fx-font-family: 'Monospaced'; -fx-font-size: 14;");
 
-		
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.  This page is different from the others.  Since there are two 
 		// modes (1: user has not been selected, and 2: user has been selected) there are two
