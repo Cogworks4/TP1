@@ -3,13 +3,19 @@ package oneTimePassword;
 import java.util.ArrayList;
 import java.util.List;
 
+import database.Database;
+import entityClasses.User;
+import guiAddRemoveRoles.ViewAddRemoveRoles;
 import javafx.geometry.Pos;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 
 
@@ -21,6 +27,10 @@ public class ViewOneTimePassword {
 	Attributes
 	
 	*/
+	
+	// These are the application values required by the user interface
+
+	// These are the application values required by the user interface
 	
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
@@ -74,6 +84,82 @@ public class ViewOneTimePassword {
 	protected static Button button_return = new Button("Return");
 	protected static Button button_quit = new Button("Quit");
 	protected static Button button_logout = new Button("Logout");
+	
+	// These attributes are used to configure the page and populate it with this user's information
+	private static ViewOneTimePassword theView;	// Used to determine if instantiation of the class
+													// is needed
+	// Reference for the in-memory database so this package has access
+	private static Database theDatabase = applicationMain.FoundationsMain.database;		
+
+	protected static Stage theStage;			// The Stage that JavaFX has established for us
+	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets 
+	protected static User theUser;				// The current user of the application
+		
+	public static Scene theOneTimePasswordScene = null;	// The Scene each invocation populates
+	protected static String theSelectedUser = "";	// The user whose roles are being updated
+	
+	
+	
+	/*-*******************************************************************************************
+
+	Constructors
+	
+	*/
+
+	/**********
+	 * <p> Method: displayAddRemoveRoles(Stage ps, User user) </p>
+	 * 
+	 * <p> Description: This method is the single entry point from outside this package to cause
+	 * the AddRevove page to be displayed.
+	 * 
+	 * It first sets up very shared attributes so we don't have to pass parameters.
+	 * 
+	 * It then checks to see if the page has been setup.  If not, it instantiates the class, 
+	 * initializes all the static aspects of the GUI widgets (e.g., location on the page, font,
+	 * size, and any methods to be performed).
+	 * 
+	 * After the instantiation, the code then populates the elements that change based on the user
+	 * and the system's current state.  It then sets the Scene onto the stage, and makes it visible
+	 * to the user.
+	 * 
+	 * @param ps specifies the JavaFX Stage to be used for this GUI and it's methods
+	 * 
+	 * @param user specifies the User whose roles will be updated
+	 *
+	 */
+	public static void displayOneTimePassword(Stage ps, User user) {
+		
+	}
+	
+	
+	/**********
+	 * <p> Method: GUIOneTimePasswordPage() </p>
+	 * 
+	 * <p> Description: This method initializes all the elements of the graphical user interface.
+	 * This method determines the location, size, font, color, and change and event handlers for
+	 * each GUI object. </p>
+	 * 
+	 * This is a singleton, so this is performed just one.  Subsequent uses fill in the changeable
+	 * fields using the displayOneTimePassword method.</p>
+	 * 
+	 */
+	public ViewOneTimePassword() {
+	// This page is used by all roles, so we do not specify the role being used		
+		
+	// Create the Pane for the list of widgets and the Scene for the window
+	theRootPane = new Pane();
+	theOneTimePasswordScene = new Scene(theRootPane, width, height);
+				
+	// Populate the window with the title and other common widgets and set their static state
+	
+	//GUI Area 1
+	label_pageTitle.setText("One Time Password Page");
+	setupLabelUI(label_pageTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
+	
+	label_User.setText("User: " + theUser.getUserName());
+	setupLabelUI(label_User, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
+		
+	}
 	
 	
 	
