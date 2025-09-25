@@ -86,11 +86,9 @@ public class ViewListUsers {
 		// singleton instance of this class
 		if (theView == null) theView = new ViewListUsers();
 		
-		ViewListUsers.list_Users.setItems(javafx.collections.FXCollections.observableArrayList(
-			    "user001\tAlice Johnson\talice@example.com\tAdmin, Editor",
-			    "user002\tBob Martin\tbob@example.com\tViewer",
-			    "user003\tCarol Diaz\tcarol@example.com\tManager, Billing"
-			));
+		ViewListUsers.list_Users.setItems(
+		    javafx.collections.FXCollections.observableArrayList(theDatabase.getAllUsersFormatted())
+		);
 		list_Users.setLayoutX(20);
 		list_Users.setLayoutY(line_Separator1.getStartY() + 8);
 		list_Users.setPrefWidth(width - 40);

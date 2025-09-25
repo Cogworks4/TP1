@@ -34,10 +34,6 @@ public class ControllerListUsers {
 			ViewListUsers.theStage.show();
 		}
 		
-		protected static void updateList() {
-			
-		}
-		
 		protected static void performReturn() {
 			guiAdminHome.ViewAdminHome.displayAdminHome(ViewListUsers.theStage,
 					ViewListUsers.theUser);
