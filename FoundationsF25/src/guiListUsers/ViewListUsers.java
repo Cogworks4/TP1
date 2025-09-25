@@ -23,15 +23,7 @@ import javafx.stage.Stage;
 import database.Database;
 import entityClasses.User;
 import guiListUsers.ViewListUsers;
-import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.ComboBoxListCell;
-import javafx.scene.layout.StackPane;
 import javafx.scene.control.ListView;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
 public class ViewListUsers {
 	

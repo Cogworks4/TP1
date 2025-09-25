@@ -11,15 +11,7 @@ package guiListUsers;
  *  
  */
 
-
-import database.Database;
-
-
 public class ControllerListUsers {
-	
-		// Reference for the in-memory database so this package has access
-		private static Database theDatabase = applicationMain.FoundationsMain.database;	
-		
 		protected static void repaintTheWindow() {
 			ViewListUsers.theRootPane.getChildren().setAll(
 					ViewListUsers.label_PageTitle, ViewListUsers.label_UserDetails,
