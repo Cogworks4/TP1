@@ -19,6 +19,7 @@ import javafx.stage.Stage;
 import database.Database;
 import entityClasses.User;
 import guiUserUpdate.ViewUserUpdate;
+import guiListUsers.ViewListUsers;
 
 /*******
  * <p> Title: GUIAdminHomePage Class. </p>

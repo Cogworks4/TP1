@@ -479,6 +479,47 @@ public class Database {
 	    }
 	    return "";
 	}
+	
+	
+	/*******
+	 * <p> Method: List<String> getAllUsersFormatted() </p>
+	 * 
+	 * <p> Description: get a list of all of the users for the listUsers page.</p>
+	 * 
+	 * @param 
+	 *  
+	 * @return the role for the code or an empty string.
+	 * 
+	 */
+	// Obtain a list of all users formatted for the list users page
+	public List<String> getAllUsersFormatted() {
+	    List<String> users = new ArrayList<>();
+	    String query = "SELECT userName, firstName, lastName, emailAddress, adminRole, newRole1, newRole2 FROM userDB";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        ResultSet rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            String username = rs.getString("userName");
+	            String name = rs.getString("firstName") + " " + rs.getString("lastName");
+	            String email = rs.getString("emailAddress");
+
+	            // Collect roles into a string
+	            List<String> roles = new ArrayList<>();
+	            if (rs.getBoolean("adminRole")) roles.add("Admin");
+	            if (rs.getBoolean("newRole1")) roles.add("Role1");
+	            if (rs.getBoolean("newRole2")) roles.add("Role2");
+
+	            String roleStr = String.join(", ", roles);
+
+	            // Format exactly like your JavaFX list expects
+	            users.add(username + "\t" + name + "\t" + email + "\t" + roleStr);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return users;
+	}
+
 
 	
 	/*******
