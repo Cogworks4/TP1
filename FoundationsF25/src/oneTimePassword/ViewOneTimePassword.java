@@ -2,10 +2,10 @@ package oneTimePassword;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import database.Database;
 import entityClasses.User;
-import guiAddRemoveRoles.ViewAddRemoveRoles;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -52,29 +52,40 @@ public class ViewOneTimePassword {
 	protected static ComboBox <String> combobox_selectUser = new ComboBox <String>();
 	protected static List<String> selectUserList = new ArrayList<String>();
 	
+	
+	// Area 2b:
+	// This window generates when admin chooses the user to send password to
+	// It prompts them to choose how they want the password to generated with either
+	// random or by creating it themselves.
 	protected static Label label_generate = new Label("Create password:");
 	protected static ComboBox <String> combobox_randOrCreate = new ComboBox <String>();
 	protected static List<String> selectGenList = new ArrayList<String>();
 	
-	// Area 2b: 
+	// Area 2c: 
 	// This window generates if admin selects the password to be created 
 	// instead of randomized. The act of selecting "create a password", generates 
 	// a text box for admin to input their own password.
 	protected static TextField textField_createPass = new TextField();
-	protected static Button button_cretePassword = new Button("Create Password");
+	protected static Button button_checkPass = new Button("Check if Password is Valid");
+	protected static Label passReqs = new Label("Password must include:\n"
+			+ " 1 UpperCase\n"
+			+ " 1 LowerCase\n"
+			+ " 1 SpeicalChar\n"
+			+ " 8 characters min\n"
+			+ "35 characters max");
 	
 	
-	// Area 2c:
+	// Area 2d:
 	// This window generates if admin selects the password to be randomized 
 	// instead of created. The act of selecting "randomize a password", generates 
 	// a random password, and displays it.
 	protected static Button button_randomizePass = new Button("Generate Random Password");
-	protected static Label displayRandomPassword = new Label();
+	protected static Label displayRandomPassword = new Label("One Time Password: ");
 	
 	// Area 3:
 	// button at the bottom activates after you select how to generate the OTP, if "create" is 
 	// selected then user needs to input a valid password, and then button activates.
-	protected static Button button_sendOneTime = new Button("Send One Time Password");
+	public static Button button_sendOneTime = new Button("Send One Time Password");
 
 	//add line separator
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -96,7 +107,9 @@ public class ViewOneTimePassword {
 	protected static User theUser;				// The current user of the application
 		
 	public static Scene theOneTimePasswordScene = null;	// The Scene each invocation populates
-	protected static String theSelectedUser = "";	// The user whose roles are being updated
+	protected static String theSelectedUser = "";	// The user whose is getting sent a OTP
+	protected static String theSelectedGen = "";	// The way to generate the password
+	protected static String Password = "";
 	
 	
 	
@@ -129,6 +142,22 @@ public class ViewOneTimePassword {
 	 */
 	public static void displayOneTimePassword(Stage ps, User user) {
 		
+		// Establish the references to the GUI and the current user
+		theStage = ps;
+		theUser = user;
+		
+		// If not yet established, populate the static aspects of the GUI by creating the 
+		// singleton instance of this class
+		if (theView == null) theView = new ViewOneTimePassword();
+		
+		// Populate the dynamic aspects of the GUI with the data from the user and the current
+		// state of the system.  This page is different from the others.  Since there are two 
+		// modes (1: user has not been selected, and 2: user has been selected) there are two
+		// lists of widgets to be displayed.  For this reason, we have implemented the following 
+		// two controller methods to deal with this dynamic aspect.
+		ControllerOneTimePassword.repaintTheWindow();
+		ControllerOneTimePassword.doAction();
+		
 	}
 	
 	
@@ -158,7 +187,90 @@ public class ViewOneTimePassword {
 	
 	label_User.setText("User: " + theUser.getUserName());
 	setupLabelUI(label_User, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
+	
+	setupButtonUI(button_UpdateThisUser, "Dialog", 18, 170, Pos.CENTER, 610, 45);
+	button_UpdateThisUser.setOnAction((event) -> 
+		{guiUserUpdate.ViewUserUpdate.displayUserUpdate(theStage, theUser); });
 		
+	// GUI Area 2a
+	setupLabelUI(label_SelectUser, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 130);
+	
+	setupComboBoxUI(combobox_selectUser, "Dialog", 16, 250, 280, 125);
+	List<String> userList = theDatabase.getUserList();
+	combobox_selectUser.setItems(FXCollections.observableArrayList(userList));
+	combobox_selectUser.getSelectionModel().select(0);
+	combobox_selectUser.getSelectionModel().selectedItemProperty()
+	.addListener((ObservableValue<? extends String> observable, 
+		String oldvalue, String newValue) -> {ControllerOneTimePassword.doAction();});
+	
+	// GUI Area 2b
+	setupLabelUI(label_generate, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 200);
+	
+	setupComboBoxUI(combobox_randOrCreate, "Dialog", 16, 250, 280, 200);
+	selectGenList.clear();
+	selectGenList.add("<Select generation>");
+	selectGenList.add("Create");
+	selectGenList.add("Randomize");
+	
+	combobox_randOrCreate.setItems(FXCollections
+			.observableArrayList(selectGenList));
+	combobox_randOrCreate.getSelectionModel().select(0);
+	combobox_randOrCreate.getSelectionModel().selectedItemProperty()
+	.addListener((ObservableValue<? extends String> observable, 
+		String oldvalue, String newValue) -> {ControllerOneTimePassword.doAction();});
+
+	
+	// GUI Area 2c
+	setupTextUI(textField_createPass, "Arial", 18, 300, Pos.BASELINE_LEFT, 20, 270, true);
+	textField_createPass.setPromptText("Enter the Password");
+	textField_createPass.textProperty().addListener((observable, oldValue,newValue) -> {
+		ControllerOneTimePassword.createPass();
+		});
+	
+	setupLabelUI(passReqs, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 300);
+	
+	
+	setupButtonUI(button_checkPass, "Dialog", 15, 170, Pos.BASELINE_RIGHT, 570, 200);
+	button_checkPass.setOnAction((event) ->
+			{
+				if(ControllerOneTimePassword.checkPass())
+					button_sendOneTime.setDisable(false);
+				else System.out.println("failed");
+				});
+	
+	
+	// GUI Area 2d
+	
+	//button_randomizePass
+	setupButtonUI(button_randomizePass, "Dialog", 15, 170, Pos.BASELINE_RIGHT, 570, 200);
+	button_randomizePass.setOnAction((event) ->
+			{ControllerOneTimePassword.generateRand(); });
+	
+	setupLabelUI(displayRandomPassword, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 270);
+	System.out.println(Password);
+	
+
+	
+	// GUI Area 3
+	setupButtonUI(button_sendOneTime, "Dialog", 18, 170, Pos.CENTER, 285, 470);
+	button_sendOneTime.setOnAction((event) ->
+			{ControllerOneTimePassword.setOneTime(); });
+	button_sendOneTime.setDisable(true);
+	
+	
+	
+	// GUI Area 4
+	setupButtonUI(button_return, "Dialog", 18, 210, Pos.CENTER, 20, 540);
+	button_return.setOnAction((event) -> {ControllerOneTimePassword.performReturn(); });
+
+	setupButtonUI(button_logout, "Dialog", 18, 210, Pos.CENTER, 300, 540);
+	button_logout.setOnAction((event) -> {ControllerOneTimePassword.performLogout(); });
+
+	setupButtonUI(button_quit, "Dialog", 18, 210, Pos.CENTER, 570, 540);
+	button_quit.setOnAction((event) -> {ControllerOneTimePassword.performQuit(); });
+	
+	
+	
 	}
 	
 	
@@ -177,7 +289,7 @@ public class ViewOneTimePassword {
 	 * @param y		The location from the top (y axis)
 	 */
 	
-	private static void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x,
+	protected static void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x,
 			double y){
 		l.setFont(Font.font(ff, f));
 		l.setMinWidth(w);
@@ -222,6 +334,19 @@ public class ViewOneTimePassword {
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);
+	}
+	
+	/**********
+	 * Private local method to initialize the standard fields for a text field
+	 */
+	private void setupTextUI(TextField t, String ff, double f, double w, Pos p, double x, double y, boolean e){
+		t.setFont(Font.font(ff, f));
+		t.setMinWidth(w);
+		t.setMaxWidth(w);
+		t.setAlignment(p);
+		t.setLayoutX(x);
+		t.setLayoutY(y);		
+		t.setEditable(e);
 	}
 
 }
