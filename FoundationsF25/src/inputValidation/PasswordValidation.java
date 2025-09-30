@@ -139,7 +139,7 @@ public class PasswordValidation {
 	 * </p>
 	 */
 	
-	protected static String passwordEvaluator(String input) {
+	public static String passwordEvaluator(String input) {
 		
 		// The following are the local variable used to perform the Directed Graph simulation
 		passwordErrorMessage = "";

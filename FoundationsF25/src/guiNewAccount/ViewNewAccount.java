@@ -9,6 +9,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import database.Database;
@@ -60,6 +61,12 @@ public class ViewNewAccount {
 
 	// This alert is used should the user enter two passwords that do not match
 	protected static Alert alertUsernamePasswordError = new Alert(AlertType.INFORMATION);
+	
+	// This alert is used should the Username be invalid
+	protected static Alert alertUsernameInvalidError = new Alert(AlertType.INFORMATION);
+	
+	// This alert is used should the password be invalid
+	protected static Alert alertPasswordInvalidError = new Alert(AlertType.INFORMATION);
 
     protected static Button button_Quit = new Button("Quit");
 
@@ -190,6 +197,15 @@ public class ViewNewAccount {
 		alertUsernamePasswordError.setTitle("Passwords Do Not Match");
 		alertUsernamePasswordError.setHeaderText("The two passwords must be identical.");
 		alertUsernamePasswordError.setContentText("Correct the passwords and try again.");
+		
+		// If the Username is invalid, this alert dialog will tell the user
+		alertUsernameInvalidError.setTitle("Invalid Username");
+		alertUsernameInvalidError.setHeaderText("Usernames cannot contain special characters or spaces.\n"
+											  + "Username length cannot be less than 4 or greater than 32.");
+		alertUsernameInvalidError.setContentText("Correct the username and try again");
+		
+		// if the password is invalid, this alert dialog will tell the user dynamically what is wrong
+		ControllerNewAccount.UpdatePwdInvalid();
 
         // Set up the account creation and login
         setupButtonUI(button_UserSetup, "Dialog", 18, 200, Pos.CENTER, 475, 210);
