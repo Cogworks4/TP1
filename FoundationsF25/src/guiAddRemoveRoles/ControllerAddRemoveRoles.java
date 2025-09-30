@@ -4,6 +4,8 @@ import database.Database;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.Alert;
+
 
 public class ControllerAddRemoveRoles {
 	
@@ -217,6 +219,30 @@ public class ControllerAddRemoveRoles {
 		// If the selection is the list header (e.g., "<Select a role>") don't do anything
 		if (ViewAddRemoveRoles.theRemoveRole.compareTo("<Select a role>") != 0) {
 			
+			
+			// Get who is currently logged in
+			String currentUser = ViewAddRemoveRoles.theUser.getUserName();
+			String targetUser = ViewAddRemoveRoles.theSelectedUser;
+			String roleBeingRemoved = ViewAddRemoveRoles.theRemoveRole;
+
+			// Only apply constraints if trying to remove the admin role
+			if (roleBeingRemoved.equalsIgnoreCase("Admin")) {
+
+			    // Rule 1: Prevent self-removal of admin role
+			    if (currentUser.equals(targetUser)) {
+			        showError("You cannot remove your own admin role.");
+			        return;
+			    }
+
+			    // Rule 2: Prevent removing the last admin
+			    int adminCount = theDatabase.getNumberOfAdmins();
+			    boolean targetIsAdmin = true; // assume role is currently assigned if it's in the remove list
+
+			    if (targetIsAdmin && adminCount <= 1) {
+			        showError("You cannot remove the last remaining admin.");
+			        return;
+			    }
+			}
 			// If an actual role was selected, update the database entry for that user for the role
 			if (theDatabase.updateUserRole(ViewAddRemoveRoles.theSelectedUser, 
 					ViewAddRemoveRoles.theRemoveRole, "false") ) {
@@ -228,6 +254,15 @@ public class ControllerAddRemoveRoles {
 				setupSelectedUser();
 			}				
 		}
+	}
+	
+	// helper method for showing errors
+	private static void showError(String msg) {
+	    Alert alert = new Alert(Alert.AlertType.ERROR);
+	    alert.setTitle("Error");
+	    alert.setHeaderText("Role Removal Blocked");
+	    alert.setContentText(msg);
+	    alert.showAndWait();
 	}
 	
 	
