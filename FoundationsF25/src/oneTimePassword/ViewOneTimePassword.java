@@ -5,7 +5,6 @@ import java.util.List;
 
 import database.Database;
 import entityClasses.User;
-import guiAddRemoveRoles.ViewAddRemoveRoles;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -96,7 +95,8 @@ public class ViewOneTimePassword {
 	protected static User theUser;				// The current user of the application
 		
 	public static Scene theOneTimePasswordScene = null;	// The Scene each invocation populates
-	protected static String theSelectedUser = "";	// The user whose roles are being updated
+	protected static String theSelectedUser = "";	// The user whose is getting sent a OTP
+	protected static String theSelectedGen = "";	// The way to generate the password
 	
 	
 	
