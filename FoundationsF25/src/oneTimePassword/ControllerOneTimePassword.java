@@ -1,9 +1,6 @@
 package oneTimePassword;
 
 import database.Database;
-import javafx.collections.FXCollections;
-import javafx.geometry.Pos;
-import javafx.scene.control.ComboBox;
 
 public class ControllerOneTimePassword {
 	
