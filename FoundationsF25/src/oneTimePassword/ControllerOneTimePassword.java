@@ -29,10 +29,15 @@ public class ControllerOneTimePassword {
 	 * easily accessible values without needing to do a query. </p>
 	 * 
 	 */
-	protected static void selectUser() {
+	protected static void doAction() {
 		ViewOneTimePassword.theSelectedUser = 
 				(String) ViewOneTimePassword.combobox_selectUser.getValue();
 		theDatabase.getUserAccountDetails(ViewOneTimePassword.theSelectedUser);
+		
+		ViewOneTimePassword.theSelectedGen = 
+				(String) ViewOneTimePassword.combobox_randOrCreate.getValue();
+		
+		repaintTheWindow();
 	}
 	
 	/**********
@@ -66,37 +71,91 @@ public class ControllerOneTimePassword {
 					ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
 					ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit);
 		}
-		if(ViewOneTimePassword.theSelectedGen.compareTo("Create") == 0) {
+		if(ViewOneTimePassword.theSelectedGen.compareTo("<Select generation>") == 0 
+				&& ViewOneTimePassword.theSelectedUser.compareTo("<Select a User>") != 0) {
+			ViewOneTimePassword.theRootPane.getChildren().clear();
 			ViewOneTimePassword.theRootPane.getChildren().addAll(
 					ViewOneTimePassword.label_pageTitle, ViewOneTimePassword.label_User, 
 					ViewOneTimePassword.button_UpdateThisUser, ViewOneTimePassword.line_Separator1,
 					ViewOneTimePassword.label_SelectUser, ViewOneTimePassword.combobox_selectUser,
 					ViewOneTimePassword.label_generate, ViewOneTimePassword.combobox_randOrCreate,
-					ViewOneTimePassword.textField_createPass,ViewOneTimePassword.line_Separator4,
+					ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
+					ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit);
+			
+		}
+		else if(ViewOneTimePassword.theSelectedGen.compareTo("Create") == 0
+				&& ViewOneTimePassword.theSelectedUser.compareTo("<Select a User>") != 0) {
+			ViewOneTimePassword.theRootPane.getChildren().clear();
+			ViewOneTimePassword.theRootPane.getChildren().addAll(
+					ViewOneTimePassword.label_pageTitle, ViewOneTimePassword.label_User, 
+					ViewOneTimePassword.button_UpdateThisUser, ViewOneTimePassword.line_Separator1,
+					ViewOneTimePassword.label_SelectUser, ViewOneTimePassword.combobox_selectUser,
+					ViewOneTimePassword.label_generate, ViewOneTimePassword.combobox_randOrCreate,
+					ViewOneTimePassword.button_checkPass, ViewOneTimePassword.passReqs,
+					ViewOneTimePassword.textField_createPass, ViewOneTimePassword.line_Separator4,
 					ViewOneTimePassword.button_return, ViewOneTimePassword.button_logout, 
-					ViewOneTimePassword.button_quit);
+					ViewOneTimePassword.button_quit, ViewOneTimePassword.button_sendOneTime);
 			
 					
 		}
-		else if(ViewOneTimePassword.theSelectedGen.compareTo("Randomize") == 0) {
+		else if(ViewOneTimePassword.theSelectedGen.compareTo("Randomize") == 0
+				&& ViewOneTimePassword.theSelectedUser.compareTo("<Select a User>") != 0) {
+			
+			ViewOneTimePassword.theRootPane.getChildren().clear();
 			ViewOneTimePassword.theRootPane.getChildren().addAll(
-					ViewOneTimePassword.label_pageTitle, ViewOneTimePassword.label_User, 
-					ViewOneTimePassword.button_UpdateThisUser, ViewOneTimePassword.line_Separator1,
-					ViewOneTimePassword.label_SelectUser, ViewOneTimePassword.combobox_selectUser,
-					ViewOneTimePassword.label_generate, ViewOneTimePassword.combobox_randOrCreate,
-					ViewOneTimePassword.button_randomizePass, ViewOneTimePassword.displayRandomPassword,
-					ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
-					ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit);	
+			ViewOneTimePassword.label_pageTitle, ViewOneTimePassword.label_User, 
+			ViewOneTimePassword.button_UpdateThisUser, ViewOneTimePassword.line_Separator1,
+			ViewOneTimePassword.label_SelectUser, ViewOneTimePassword.combobox_selectUser,
+			ViewOneTimePassword.label_generate, ViewOneTimePassword.combobox_randOrCreate,
+			ViewOneTimePassword.button_randomizePass, ViewOneTimePassword.displayRandomPassword,
+			ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
+			ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit, 
+			ViewOneTimePassword.button_sendOneTime);	
 		}
-				
 			ViewOneTimePassword.theStage.setTitle("CSE 360 Foundation Code: Admin Opertaions Page");
 			ViewOneTimePassword.theStage.setScene(ViewOneTimePassword.theOneTimePasswordScene);
 			ViewOneTimePassword.theStage.show();
 	}
 	
-//	private static void setupGeneration() {
-//		
-//	}
+	
+	protected static void setOneTime() {
+		
+		
+		
+		
+	}
+	
+	protected static void generateRand() {
+		ViewOneTimePassword.Password = ModelOneTimePassword.generateRandomPassword();
+		System.out.println(ModelOneTimePassword.password);
+		ViewOneTimePassword.displayRandomPassword.setText("One Time Password: " + ViewOneTimePassword.Password);
+		ViewOneTimePassword.button_sendOneTime.setDisable(false);
+		
+		
+	}
+	
+	protected static boolean checkPass() {
+		inputValidation.PasswordValidation.adminPassword1 = ViewOneTimePassword.Password;
+		inputValidation.PasswordValidation.adminPassword2 = ViewOneTimePassword.Password;
+		if(inputValidation.PasswordValidation.checkValidity()) {
+			System.out.println("Password was Valid!");
+			return true;
+		}
+		else {
+			ViewOneTimePassword.textField_createPass.clear();
+			System.out.println("Password was not Valid!");
+			return false;
+		}
+
+		
+		
+	}
+	
+	protected static void createPass() {
+		ViewOneTimePassword.Password = ViewOneTimePassword.textField_createPass.getText();
+		System.out.println(ViewOneTimePassword.Password);
+		
+	}
 	
 	/**********
 	 * <p> Method: performReturn() </p>
@@ -108,10 +167,6 @@ public class ControllerOneTimePassword {
 	protected static void performReturn() {
 		guiAdminHome.ViewAdminHome.displayAdminHome(ViewOneTimePassword.theStage,
 				ViewOneTimePassword.theUser);
-	}
-	
-	protected static void setOneTime() {
-		
 	}
 	
 	/**********
