@@ -1,6 +1,7 @@
 package usernameRecognizer;
 
 
+
 /*
  * * Rules:
  *  - Length: 4 to 32 inclusive
@@ -12,6 +13,7 @@ package usernameRecognizer;
  * 
  * 
  * */
+
 
 
 
@@ -197,4 +199,5 @@ public class usernameRecognizer {
 			usernameTest(11, "jim_"); // invalid, ends with special
 			usernameTest(12, "jimjimjimjimjimjimjimjimjimjim_p"); // valid, 32 chars
 		}
+
 }

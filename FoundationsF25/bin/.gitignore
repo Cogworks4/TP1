@@ -1,2 +1,8 @@
 /database/
-/applicationMain/
+/emailRecognizer/
+/guiAddRemoveRoles/
+/guiAdminHome/
+/guiFirstAdmin/
+/guiNewAccount/
+/guiUserUpdate/
+/oneTimePassword/

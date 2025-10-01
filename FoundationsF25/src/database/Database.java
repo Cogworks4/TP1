@@ -8,6 +8,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDateTime;
+import java.sql.Timestamp;
 
 import entityClasses.User;
 
@@ -121,8 +123,39 @@ public class Database {
 	    String invitationCodesTable = "CREATE TABLE IF NOT EXISTS InvitationCodes ("
 	            + "code VARCHAR(10) PRIMARY KEY, "
 	    		+ "emailAddress VARCHAR(255), "
-	            + "role VARCHAR(10))";
+	            + "role VARCHAR(10), "
+	    		+ "deadline TIMESTAMP)";
 	    statement.execute(invitationCodesTable);
+	    
+	}
+	
+	
+	// helper method to check how many admins there are 
+	public int getNumberOfAdmins() {
+	    int count = 0;
+	    String query = "SELECT COUNT(*) AS total FROM userDB WHERE adminRole = TRUE";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            count = rs.getInt("total");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return count;
+	}
+	
+	// delete user from database
+	public boolean deleteUser(String username) {
+	    String query = "DELETE FROM userDB WHERE userName = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, username);
+	        int rowsAffected = pstmt.executeUpdate();
+	        return rowsAffected > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
 	}
 
 
@@ -388,14 +421,15 @@ public class Database {
 	 * 
 	 */
 	// Generates a new invitation code and inserts it into the database.
-	public String generateInvitationCode(String emailAddress, String role) {
+	public String generateInvitationCode(String emailAddress, String role, LocalDateTime deadline) {
 	    String code = UUID.randomUUID().toString().substring(0, 6); // Generate a random 6-character code
-	    String query = "INSERT INTO InvitationCodes (code, emailaddress, role) VALUES (?, ?, ?)";
+	    String query = "INSERT INTO InvitationCodes (code, emailaddress, role, deadline) VALUES (?, ?, ?, ?)";
 
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 	        pstmt.setString(1, code);
 	        pstmt.setString(2, emailAddress);
 	        pstmt.setString(3, role);
+	        pstmt.setTimestamp(4,  Timestamp.valueOf(deadline));
 	        pstmt.executeUpdate();
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -479,6 +513,47 @@ public class Database {
 	    }
 	    return "";
 	}
+	
+	
+	/*******
+	 * <p> Method: List<String> getAllUsersFormatted() </p>
+	 * 
+	 * <p> Description: get a list of all of the users for the listUsers page.</p>
+	 * 
+	 * @param 
+	 *  
+	 * @return the role for the code or an empty string.
+	 * 
+	 */
+	// Obtain a list of all users formatted for the list users page
+	public List<String> getAllUsersFormatted() {
+	    List<String> users = new ArrayList<>();
+	    String query = "SELECT userName, firstName, lastName, emailAddress, adminRole, newRole1, newRole2 FROM userDB";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        ResultSet rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            String username = rs.getString("userName");
+	            String name = rs.getString("firstName") + " " + rs.getString("lastName");
+	            String email = rs.getString("emailAddress");
+
+	            // Collect roles into a string
+	            List<String> roles = new ArrayList<>();
+	            if (rs.getBoolean("adminRole")) roles.add("Admin");
+	            if (rs.getBoolean("newRole1")) roles.add("Role1");
+	            if (rs.getBoolean("newRole2")) roles.add("Role2");
+
+	            String roleStr = String.join(", ", roles);
+
+	            // Format exactly like your JavaFX list expects
+	            users.add(username + "\t" + name + "\t" + email + "\t" + roleStr);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return users;
+	}
+
 
 	
 	/*******
@@ -493,7 +568,7 @@ public class Database {
 	 */
 	// For a given invitation code, return the associated email address of an empty string
 	public String getEmailAddressUsingCode (String code ) {
-	    String query = "SELECT emailAddress FROM InvitationCodes WHERE code = ?";
+	    String query = "SELECT emailAddress FROM InvitationCodes WHERE deadline > CURRENT_TIMESTAMP AND code = ?";
 	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
 	        pstmt.setString(1, code);
 	        ResultSet rs = pstmt.executeQuery();
