@@ -126,6 +126,9 @@ public class ControllerNewAccount {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	protected static boolean UpdatePwdInvalid() {
 		String password = ViewNewAccount.text_Password1.getText();
 
@@ -133,11 +136,12 @@ public class ControllerNewAccount {
 
 		int bitmap = 0;
 
-		String[] errCode = { "U", "Low", "N", "S", "Lon", "P" };
+		String[] errCode = { "Upper case", "Lower case", "Numeric digits", "Special character", "Long Enough",
+		"Password Length" };
 		String[] messages = { "Upper Case", "Lower Case", "Numeric Digits", "Special Characters",
 				"Password is longer than 7", "Password is shorter than 32" };
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < errCode.length; i++) {
 			if (PwdError.contains(errCode[i])) {
 				bitmap |= (1 << i);
 			}
