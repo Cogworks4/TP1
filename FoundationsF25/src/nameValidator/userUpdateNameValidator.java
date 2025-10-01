@@ -17,10 +17,10 @@ public class userUpdateNameValidator {
 	// Character limit: must be between 2 and 25 characters
 	// Allowed characters: [a-zA-Z\\s'-]
 	// First character must be upper case
-	public static List<String> validateGenericName(String name, String fieldName) {
+	public static String validateGenericName(String name, String fieldName) {
 	    List<String> errors = new ArrayList<>();
 		if (name == null || name.trim().isEmpty())
-	        return List.of(fieldName + " cannot be empty");
+	        return (fieldName + " cannot be empty");
 	    if (name.length() < 2)
 	        errors.add("must be at least 2 characters");
 	    if (!name.matches("^[a-zA-Z\\s'-]+$")) {
@@ -31,23 +31,23 @@ public class userUpdateNameValidator {
 	    if (!Character.isUpperCase(name.charAt(0))) {
 	    	errors.add("must start with a capital letter");
 	    }
-	    if (errors.isEmpty()) return List.of(); // No errors
+	    if (errors.isEmpty()) return ""; // No errors
 	    
-	    String formatted = fieldName + ": " + String.join("; ", errors);
-	    return List.of(formatted);
+	    String formatted =fieldName + ":\n" + String.join(".\n", errors);
+	    return formatted;
 	    
 	}
 	//These methods are case specific and call on the generic method
-	public static List<String> validateFirstName(String name) { return validateGenericName(name, "First Name"); }
-	public static List<String> validateLastName(String name) { return validateGenericName(name, "Last Name"); }
-	public static List<String> validatePreferredName(String name) { return validateGenericName(name, "Preferred Name"); }
+	public static String validateFirstName(String name) { return validateGenericName(name, "First Name"); }
+	public static String validateLastName(String name) { return validateGenericName(name, "Last Name"); }
+	public static String validatePreferredName(String name) { return validateGenericName(name, "Preferred Name"); }
 	
 	// Middle Name has an additional requirement that if
 	// the first character is the only character it must be capitalized
-	public static List<String> validateMiddleName(String name) {
+	public static String validateMiddleName(String name) {
 		if (name.length() == 1 && Character.isLetter(name.charAt(0))) {
-			if (!Character.isUpperCase(name.charAt(0))) return List.of("Middle Name must start with a capital letter.");
-			return List.of();
+			if (!Character.isUpperCase(name.charAt(0))) return ("Middle Name must start with a capital letter.");
+			return "";
 		}
 		return validateGenericName(name, "Middle Name");
 	}

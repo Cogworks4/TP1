@@ -16,8 +16,16 @@ public class Model {
 			ViewUserUpdate.button_ProceedToUserHomePage.setLayoutY(450);
 			ViewUserUpdate.label_ErrorMessage.setText("");
 			return true;
-		} else
-			ViewUserUpdate.button_ProceedToUserHomePage.setLayoutY(500);
+		} else {
+			int tot = 0;
+			for (int i = 0; i < error.length(); i++) {
+	            char c = error.charAt(i);
+	            
+	            if (c == '\n') {
+	                tot ++;
+	            }
+			ViewUserUpdate.button_ProceedToUserHomePage.setLayoutY(500 + ((tot-1) * 25));
+			}}
 		return false;
 
 	}
