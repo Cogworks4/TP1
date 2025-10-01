@@ -139,6 +139,10 @@ public class ViewNewAccount {
 		
 		// Get the email address associated with the invitation code
 		emailAddress = theDatabase.getEmailAddressUsingCode(theInvitationCode);
+		if (emailAddress.length() == 0) {
+		    ViewInvitationCodeHasExpired.showAndWait(); 
+		    return;
+		}
 		
     	// Place all of the established GUI elements into the pane
     	theRootPane.getChildren().clear();
@@ -267,4 +271,13 @@ public class ViewNewAccount {
 		t.setLayoutY(y);		
 		t.setEditable(e);
 	}	
+	
+	// alert for expired invitation
+	public static Alert ViewInvitationCodeHasExpired = new Alert(AlertType.ERROR);
+
+	static {
+	    ViewInvitationCodeHasExpired.setTitle("Expired Invitation Code");
+	    ViewInvitationCodeHasExpired.setHeaderText("The invitation code has expired.");
+	    ViewInvitationCodeHasExpired.setContentText("This invitation code is no longer valid. Please request a new one.");
+	}
 }
