@@ -303,13 +303,13 @@ public class ViewUserUpdate {
 		button_UpdateFirstName.setOnAction((event) -> {
 			result = dialogUpdateFirstName.showAndWait();
 			result.ifPresent(name -> {
-				List<String> validationError = userUpdateNameValidator.validateFirstName(name);
-				if (validationError.isEmpty()) {
+				error = userUpdateNameValidator.validateFirstName(name);
+				if (Model.showErrorMessage(error)) {
 					theDatabase.updateFirstName(theUser.getUserName(), name);
 				} else {
 					// sends error to console - can comment out if needed
 					System.out.println("Validation failed:");
-					System.out.println(validationError);
+					label_ErrorMessage.setText(error);
 					return; // skip update
 					// Validation failed — skip the update
 					// GUI error message can be added here later
@@ -332,13 +332,13 @@ public class ViewUserUpdate {
 			result = dialogUpdateMiddleName.showAndWait();
 			// calls InputValidator and if no errors, saves input to database
 			result.ifPresent(name -> {
-				List<String> validationError = userUpdateNameValidator.validateMiddleName(name);
-				if (validationError.isEmpty()) {
+				error = userUpdateNameValidator.validateMiddleName(name);
+				if (Model.showErrorMessage(error)) {
 					theDatabase.updateMiddleName(theUser.getUserName(), name);
 				} else {
 					// sends error to console - can comment out if needed
 					System.out.println("Validation failed:");
-					System.out.println(validationError);
+					label_ErrorMessage.setText(error);
 					return; // skip update
 					// Validation failed — skip the update
 					// GUI error message can be added here later
@@ -361,13 +361,13 @@ public class ViewUserUpdate {
 			result = dialogUpdateLastName.showAndWait();
 			// calls InputValidator and if no errors, saves input to database
 			result.ifPresent(name -> {
-				List<String> validationError = userUpdateNameValidator.validateLastName(name);
-				if (validationError.isEmpty()) {
+				error = userUpdateNameValidator.validateLastName(name);
+				if (Model.showErrorMessage(error)) {
 					theDatabase.updateLastName(theUser.getUserName(), name);
 				} else {
 					// sends error to console - can comment out if needed
 					System.out.println("Validation failed:");
-					System.out.println(validationError);
+					label_ErrorMessage.setText(error);
 					return; // skip update
 					// Validation failed — skip the update
 					// GUI error message can be added here later
@@ -390,13 +390,13 @@ public class ViewUserUpdate {
 			result = dialogUpdatePreferredFirstName.showAndWait();
 			// calls InputValidator and if no errors, saves input to database
 			result.ifPresent(name -> {
-				List<String> validationError = userUpdateNameValidator.validatePreferredName(name);
-				if (validationError.isEmpty()) {
+				error = userUpdateNameValidator.validatePreferredName(name);
+				if (Model.showErrorMessage(error)) {
 					theDatabase.updatePreferredFirstName(theUser.getUserName(), name);
 				} else {
 					// sends error to console - can comment out if needed
 					System.out.println("Validation failed:");
-					System.out.println(validationError);
+					label_ErrorMessage.setText(error);
 					return; // skip update
 					// Validation failed — skip the update
 					// GUI error message can be added here later
