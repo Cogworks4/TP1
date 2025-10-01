@@ -66,6 +66,7 @@ public class ViewFirstAdmin {
 	protected static Label label_PasswordsDoNotMatch = new Label();
 	protected static Label label_UsernameError = new Label();
 	protected static TextField text_AdminUsername = new TextField();
+	protected static Label label_PasswordError = new Label();
 	protected static PasswordField text_AdminPassword1 = new PasswordField();
 	protected static PasswordField text_AdminPassword2 = new PasswordField();
 	private static Button button_AdminSetup = new Button("Setup Admin Account");
@@ -187,7 +188,6 @@ public class ViewFirstAdmin {
 		// Label to display error messages detected in username
 		setupLabelUI(label_UsernameError, "Arial", 10, width, Pos.BASELINE_LEFT, 50, 195);
 		label_UsernameError.setTextFill(Color.RED);
-		
 
 		// Establish the text input operand field for the password
 		setupTextUI(text_AdminPassword1, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 210, true);
@@ -195,6 +195,9 @@ public class ViewFirstAdmin {
 		text_AdminPassword1.textProperty().addListener((observable, oldValue, newValue) -> {
 			ControllerFirstAdmin.setAdminPassword1();
 		});
+
+		// Label to display error messages detected in password1
+		setupLabelUI(label_PasswordError, "Arial", 10, width, Pos.BASELINE_LEFT, 50, 245);
 
 		// Establish the text input operand field for the password
 		setupTextUI(text_AdminPassword2, "Arial", 18, 300, Pos.BASELINE_LEFT, 50, 260, true);
@@ -220,7 +223,7 @@ public class ViewFirstAdmin {
 		// Place all of the just-initialized GUI elements into the pane
 		theRootPane.getChildren().addAll(label_ApplicationTitle, label_TitleLine1, label_TitleLine2, text_AdminUsername,
 				text_AdminPassword1, text_AdminPassword2, button_AdminSetup, label_PasswordsDoNotMatch,
-				label_UsernameError, button_Quit);
+				label_UsernameError, label_PasswordError, button_Quit);
 	}
 
 	/*-********************************************************************************************
