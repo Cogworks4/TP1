@@ -418,7 +418,7 @@ public class ViewUserUpdate {
 		button_UpdateEmailAddress.setOnAction((event) -> {
 			result = dialogUpdateEmailAddresss.showAndWait();
 			if (!result.isEmpty()) {
-				error = emailRecognizer.emailRecognizer.validateEmail(result.get());
+				error = emailRecognizer.emailRecognizer.checkForValidEmail(result.get());
 				if (Model.showErrorMessage(error)) {
 					result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
 					theDatabase.getUserAccountDetails(theUser.getUserName());

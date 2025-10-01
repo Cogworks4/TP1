@@ -1,4 +1,4 @@
-package src.emailRecognizer;
+package emailRecognizer;
 
 
 public class emailRecognizer {
@@ -360,7 +360,7 @@ public class emailRecognizer {
         case 3:
             // State 3 is not a final state, so we can return a very specific error message
             emailRecognizerErrorMessage +=
-				"A Email character imediately after the @ symobl must be A-Z, a-z, 0-9.\n";
+				"A Email character imediately after the @ symbol must be A-Z, a-z, 0-9.\n";
 			return emailRecognizerErrorMessage;
         
         case 4:
@@ -403,3 +403,4 @@ public class emailRecognizer {
 			return "";
 		}
 	}
+}
