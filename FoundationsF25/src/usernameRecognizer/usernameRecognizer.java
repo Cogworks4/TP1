@@ -1,5 +1,20 @@
 package usernameRecognizer;
 
+
+/*
+ * * Rules:
+ *  - Length: 4 to 32 inclusive
+ *  - Allowed: A–Z, a–z, 0–9, and special characters { '.', '_', '-' }
+ *  - Cannot start with a special character
+ *  - Cannot end with a special character
+ *  - No consecutive special characters
+ *  - No whitespace or other characters
+ * 
+ * 
+ * */
+
+
+
 public class usernameRecognizer {
 
 	// Error state info
