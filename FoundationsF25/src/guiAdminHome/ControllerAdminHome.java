@@ -1,6 +1,16 @@
 package guiAdminHome;
 
 import database.Database;
+import javafx.scene.control.ChoiceDialog;
+import java.util.List;
+import java.util.Optional;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import java.time.LocalDateTime;
+import java.sql.Timestamp;
+
+
+
 
 /*******
  * <p> Title: GUIAdminHomePage Class. </p>
@@ -64,10 +74,13 @@ public class ControllerAdminHome {
 			return;
 		}
 		
+		
+		//deadline instituted for 24 hours to respond to invitation
+		LocalDateTime deadline = LocalDateTime.now().plusHours(24);
 		// Inform the user that the invitation has been sent and display the invitation code
 		String theSelectedRole = (String) ViewAdminHome.combobox_SelectRole.getValue();
 		String invitationCode = theDatabase.generateInvitationCode(emailAddress,
-				theSelectedRole);
+				theSelectedRole, deadline);
 		String msg = "Code: " + invitationCode + " for role " + theSelectedRole + 
 				" was sent to: " + emailAddress;
 		System.out.println(msg);
@@ -105,11 +118,8 @@ public class ControllerAdminHome {
 	 * this function has not yet been implemented. </p>
 	 */
 	protected static void setOnetimePassword () {
-		System.out.println("\n*** WARNING ***: One-Time Password Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("One-Time Password Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("One-Time Password Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+		oneTimePassword.ViewOneTimePassword.displayOneTimePassword(ViewAdminHome.theStage,
+				ViewAdminHome.theUser);
 	}
 	
 	/**********
@@ -117,15 +127,70 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: deleteUser () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method to select a user from the database and delete
+	 * their account </p>
 	 */
 	protected static void deleteUser() {
-		System.out.println("\n*** WARNING ***: Delete User Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.setTitle("*** WARNING ***");
-		ViewAdminHome.alertNotImplemented.setHeaderText("Delete User Issue");
-		ViewAdminHome.alertNotImplemented.setContentText("Delete User Not Yet Implemented");
-		ViewAdminHome.alertNotImplemented.showAndWait();
+		
+		// This method creates a GUI widget that will allow an admin to select
+		// and delete another user. The selected user cannot be the current user
+		// and cannot be the last admin
+		
+		List<String> usernames = theDatabase.getUserList();
+		// Remove the "<Select a User>" entry
+		usernames.remove(0);
+		
+		// Widget attributes for the GUI 
+		ChoiceDialog<String> dialog = new ChoiceDialog<>(usernames.get(0), usernames);
+		dialog.setTitle("Delete User");
+		dialog.setHeaderText("Select a user to delete:");
+		dialog.setContentText("Username:");
+
+		Optional<String> result = dialog.showAndWait();
+		if (!result.isPresent()) return;  // User cancelled
+		String usernameToDelete = result.get();
+		
+		
+		boolean found = theDatabase.getUserAccountDetails(usernameToDelete);
+		if (!found) {
+		    showError("Could not find user details for " + usernameToDelete);
+		    return;
+		}
+		// Attributes for deletion validation
+		boolean targetIsAdmin = theDatabase.getCurrentAdminRole();
+		String currentUsername = ViewAdminHome.theUser.getUserName();
+		boolean isDeletingSelf = usernameToDelete.equals(currentUsername);
+		int adminCount = theDatabase.getNumberOfAdmins();
+		
+		// Block deleting your own admin account
+		if (isDeletingSelf) {
+		    showError("You cannot delete your own account as an admin.");
+		    return;
+		}
+		// Block deleting the last remaining admin
+		if (targetIsAdmin && adminCount <= 1) {
+		    showError("You cannot delete the last remaining admin.");
+		    return;
+		}
+		
+		// Confirm with user before deleting
+		Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+		confirm.setTitle("Confirm Deletion");
+		confirm.setHeaderText("Are you sure you want to delete this user?");
+		confirm.setContentText("This action cannot be undone.");
+
+		Optional<ButtonType> confirmationResult = confirm.showAndWait();
+		if (confirmationResult.isEmpty() || confirmationResult.get() != ButtonType.OK) {
+		    return; // User canceled
+		}
+		
+		// Display result to user
+		boolean success = theDatabase.deleteUser(usernameToDelete); 
+		if (success) {
+		    showInfo("User deleted successfully.");
+		} else {
+		    showError("Failed to delete user.");
+		}
 	}
 	
 	/**********
@@ -200,5 +265,22 @@ public class ControllerAdminHome {
 	 */
 	protected static void performQuit() {
 		System.exit(0);
+	}
+	
+	// helper method for showing errors
+	private static void showError(String msg) {
+	    Alert alert = new Alert(Alert.AlertType.ERROR);
+	    alert.setTitle("Error");
+	    alert.setHeaderText("Cannot Continue");
+	    alert.setContentText(msg);
+	    alert.showAndWait();
+	}
+	// helper method for showing info
+	private static void showInfo(String msg) {
+	    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+	    alert.setTitle("Info");
+	    alert.setHeaderText(null);
+	    alert.setContentText(msg);
+	    alert.showAndWait();
 	}
 }

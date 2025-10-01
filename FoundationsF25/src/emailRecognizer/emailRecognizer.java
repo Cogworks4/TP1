@@ -198,7 +198,6 @@ public class emailRecognizer {
 					
 					// Count the odd digit
 					emailSize++;
-					
 				}
 				// If it is none of those characters, the FSM halts
 				else 
@@ -404,4 +403,3 @@ public class emailRecognizer {
 			return "";
 		}
 	}
-}

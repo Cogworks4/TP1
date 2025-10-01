@@ -214,6 +214,7 @@ public class Model {
 		foundSpecialChar = false;			// Reset the Boolean flag
 		foundNumericDigit = false;			// Reset the Boolean flag
 		foundLongEnough = false;			// Reset the Boolean flag
+		foundShortEnough = true;
 		
 		// This flag determines whether the directed graph (FSM) loop is operating or not
 		running = true;						// Start the loop
@@ -245,8 +246,8 @@ public class Model {
 				foundLongEnough = true;
 			}
 			if (currentCharNdx > 32) {
-				System.out.println("Less than 32 characters found");
-				foundShortEnough = true;
+				System.out.println("more than 32 characters found");
+				foundShortEnough = false;
 			}
 			
 			// Go to the next character if there is one

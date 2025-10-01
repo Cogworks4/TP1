@@ -16,5 +16,29 @@ package guiFirstAdmin;
  */
 
 public class ModelFirstAdmin {
+	
+	
 
+	/**
+	 * Takes in error message is input parameter, if there is an error
+	 * adjust UI elements to accomadate error message returns true if no error appears
+	 * returns false otherwise
+	 * 
+	 * @param errorMessage - string input, error message returned textbox check
+	 * @return  - boolean value, true if there is error, false otherwise
+	 */
+	static boolean guiUsernameErrors(String errorMessage) {
+		if (errorMessage.length() <= 0) {
+			ViewFirstAdmin.label_UsernameError.setText("");
+			ViewFirstAdmin.text_AdminPassword1.setLayoutY(210);
+			ViewFirstAdmin.text_AdminPassword2.setLayoutY(260);
+			return true;
+		}
+		else {
+			ViewFirstAdmin.label_UsernameError.setText("*" + errorMessage);
+			ViewFirstAdmin.text_AdminPassword1.setLayoutY(215);
+			ViewFirstAdmin.text_AdminPassword2.setLayoutY(265);
+			return false;
+		}
+	}
 }
