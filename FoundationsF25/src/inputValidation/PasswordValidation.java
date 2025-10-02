@@ -15,6 +15,10 @@ public class PasswordValidation {
 	public static boolean foundLongEnough = false;
 	public static boolean foundTooLong = false;
 	public static boolean running = false;
+	private static int state = 0;
+	private static int nextState = 0;
+	private static boolean finalState = false;
+	
 	
 	public static String passwordErrorMessage = "";		// The error message text
 	public static String passwordInput = "";
@@ -81,12 +85,6 @@ public class PasswordValidation {
 						+ "\nEnter your password: \n");
 			}
 		}
-
-
-		
-		
-
-
 		
 	}
 
@@ -128,6 +126,52 @@ public class PasswordValidation {
 		}
 	}
 	
+	private static boolean isLower(char c){
+		if(c >= 'a' && c <= 'z') {
+		foundLowerCase = true;
+		return true;
+		}
+		else {
+			return false;
+		}
+	}
+	private static boolean isUpper(char c){
+		if(c >= 'A' && c <= 'Z') {
+			foundUpperCase = true;
+			return true;
+			}
+			else {
+				return false;
+			}
+	}
+	private static boolean isNum(char c){
+		if(c >= '0' && c <= '9') {
+		foundNumericDigit = true;
+		return true;
+		}
+		else {
+			return false;
+		}
+	}
+	private static boolean isAlphaNum(char c){
+		return isLower(c) || isUpper(c) || isNum(c);
+	}
+	private static boolean isSpecial(char c){
+		if ("~`!@#$%^&*()_-+={}[]|\\:;\"'<>,.?/".indexOf(c) >= 0)
+		{
+			foundSpecialChar = true;
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+	
+	
+	
+	private static boolean isValid(char c) {
+		return isAlphaNum(c) || isSpecial(c);
+	}
 	/*******
 	 * <p> Title: passwordEvaluator - Protected Method </p>
 	 * 
@@ -159,55 +203,72 @@ public class PasswordValidation {
 		// local variable is a working copy of the input.
 		passwordInput = input;				// Save a copy of the input
 		
-		// The following are the attributes associated with each of the requirements
-		foundUpperCase = false;				// Reset the Boolean flag
-		foundLowerCase = false;				// Reset the Boolean flag
-		foundNumericDigit = false;			// Reset the Boolean flag
-		foundSpecialChar = false;			// Reset the Boolean flag
-		foundNumericDigit = false;			// Reset the Boolean flag
-		foundLongEnough = false;			// Reset the Boolean flag
-		foundTooLong = false;
-		
+
+		// Initialize FSM
 		// This flag determines whether the directed graph (FSM) loop is operating or not
 		running = true;						// Start the loop
+		nextState = -1;
+		finalState = false;
+		state = 0;
+		
+		foundUpperCase = false;
+		foundLowerCase = false;
+		foundNumericDigit = false;
+		foundSpecialChar = false;
+		foundLongEnough = false;
+		foundTooLong = false;
 
 		// The Directed Graph simulation continues until the end of the input is reached or at some
 		// state the current character does not match any valid transition
 		while (running) {
-			// The cascading if statement sequentially tries the current character against all of
-			// the valid transitions, each associated with one of the requirements
-			if (currentChar >= 'A' && currentChar <= 'Z') {
-				System.out.println("Upper case letter found");
-				foundUpperCase = true;
-			} else if (currentChar >= 'a' && currentChar <= 'z') {
-				System.out.println("Lower case letter found");
-				foundLowerCase = true;
-			} else if (currentChar >= '0' && currentChar <= '9') {
-				System.out.println("Digit found");
-				foundNumericDigit = true;
-			} else if ("~`!@#$%^&*()_-+={}[]|\\:;\"'<>,.?/".indexOf(currentChar) >= 0) {
-				System.out.println("Special character found");
-				foundSpecialChar = true;
-			} else {
-				passwordIndexofError = currentCharNdx;
-				return "*** Error *** An invalid character has been found!";
-			}
-			if (currentCharNdx >= 7) {
-				System.out.println("At least 8 characters found");
-				foundLongEnough = true;
-			}
-			if(input.length() > 32) {
-				System.out.println("Password is too long!");
-				foundTooLong = true;
-			}
-			
+			switch(state) {
+			case 0:
+				if(isValid(currentChar)) {
+					nextState = 1;
+				}
+				else {
+					running = false;
+					return "*** Error *** An invalid character has been found!";
+				}
+				break;
+						
+			case 1:
+				if(isValid(currentChar)) {
+					nextState = 1;
+				}
+				else {
+					return "*** Error *** An invalid character has been found!";
+				}
+				if(currentCharNdx >= 7 && currentCharNdx < 32)
+				{
+					System.out.println("At least 8 characters found");
+					foundLongEnough = true;
+					foundTooLong = false;
+				}
+				else if(currentCharNdx < 7){
+					foundLongEnough = false;
+					foundTooLong = false;
+
+				}
+				else if(currentCharNdx >= 32){
+					System.out.println("Password is too long!");
+					foundLongEnough = true;
+					foundTooLong = true;
+				}
+				break;
+			}			
 			// Go to the next character if there is one
 			currentCharNdx++;
 			if (currentCharNdx >= input.length())
 				running = false;
 			else
 				currentChar = input.charAt(currentCharNdx);
-			System.out.println();
+			
+			if (running) {
+				state = nextState;
+				finalState = (state == 1);
+				nextState = -1;
+			}
 		}
 		
 		// Construct a String with a list of the requirement elements that were found.
