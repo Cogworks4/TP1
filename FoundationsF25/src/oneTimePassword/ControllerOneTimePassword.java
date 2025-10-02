@@ -61,7 +61,7 @@ public class ControllerOneTimePassword {
 					ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit);
 		}
 		else {
-			// Show all the fields after user has been selected
+			// Show next fields after user has been selected
 			ViewOneTimePassword.theRootPane.getChildren().addAll(
 					ViewOneTimePassword.label_pageTitle, ViewOneTimePassword.label_User, 
 					ViewOneTimePassword.button_UpdateThisUser, ViewOneTimePassword.line_Separator1,
@@ -70,6 +70,7 @@ public class ControllerOneTimePassword {
 					ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
 					ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit);
 		}
+		// Shows and ask for generation method after user has been selected
 		if(ViewOneTimePassword.theSelectedGen.compareTo("<Select generation>") == 0 
 				&& ViewOneTimePassword.theSelectedUser.compareTo("<Select a User>") != 0) {
 			ViewOneTimePassword.theRootPane.getChildren().clear();
@@ -83,6 +84,7 @@ public class ControllerOneTimePassword {
 			ViewOneTimePassword.button_sendOneTime.setDisable(true);
 			
 		}
+		// Shows if user chooses to "create" a password
 		else if(ViewOneTimePassword.theSelectedGen.compareTo("Create") == 0
 				&& ViewOneTimePassword.theSelectedUser.compareTo("<Select a User>") != 0) {
 			ViewOneTimePassword.theRootPane.getChildren().clear();
@@ -101,6 +103,7 @@ public class ControllerOneTimePassword {
 			
 					
 		}
+		// Shows if user chooses to "Randomize" a password
 		else if(ViewOneTimePassword.theSelectedGen.compareTo("Randomize") == 0
 				&& ViewOneTimePassword.theSelectedUser.compareTo("<Select a User>") != 0) {
 			
@@ -117,29 +120,42 @@ public class ControllerOneTimePassword {
 			ViewOneTimePassword.button_sendOneTime.setDisable(true);
 			ViewOneTimePassword.Password = "";
 		}
+			// creates the the stage and scene displaying it with the added elements 
 			ViewOneTimePassword.theStage.setTitle("CSE 360 Foundation Code: Admin Opertaions Page");
 			ViewOneTimePassword.theStage.setScene(ViewOneTimePassword.theOneTimePasswordScene);
 			ViewOneTimePassword.theStage.show();
 	}
 	
 	
+	/**********
+	 * <p> Method: setOneTime() </p>
+	 * 
+	 * <p> Description: This method calls the database and updates the password in it, as well as adding
+	 * that the password is a OTP to the OTP table in the database so user can enter a new password when
+	 * logging in with a OTP </p>
+	 * 
+	 */
 	protected static void setOneTime() {
 		theDatabase.updatePassword(ViewOneTimePassword.theSelectedUser, ViewOneTimePassword.Password);
 		ViewUserUpdate.label_CurrentPassword.setText(ViewOneTimePassword.Password);
 		theDatabase.addOneTimePassword(ViewOneTimePassword.theSelectedUser, ViewOneTimePassword.Password);
-		
-		
-		
 	}
 	
+	
+	/**********
+	 * <p> Method: generateRand() </p>
+	 * 
+	 * <p> Description: This method calls a random password generator that user can see and enables the ability to 
+	 * submit the password and change it </p>
+	 * 
+	 */
 	protected static void generateRand() {
 		ViewOneTimePassword.Password = ModelOneTimePassword.generateRandomPassword();
 		System.out.println(ModelOneTimePassword.password);
 		ViewOneTimePassword.displayRandomPassword.setText("One Time Password: " + ViewOneTimePassword.Password);
 		ViewOneTimePassword.button_sendOneTime.setDisable(false);
-		
-		
 	}
+	
 	
 	/**********
 	 * <p> Method: checkPass() </p>
@@ -159,10 +175,8 @@ public class ControllerOneTimePassword {
 			System.out.println("Password was not Valid!");
 			return false;
 		}
-
-		
-		
 	}
+	
 	
 	/**********
 	 * <p> Method: createPass() </p>
@@ -176,6 +190,7 @@ public class ControllerOneTimePassword {
 		
 	}
 	
+	
 	/**********
 	 * <p> Method: performReturn() </p>
 	 * 
@@ -188,6 +203,7 @@ public class ControllerOneTimePassword {
 				ViewOneTimePassword.theUser);
 	}
 	
+	
 	/**********
 	 * <p> Method: performLogout() </p>
 	 * 
@@ -199,6 +215,7 @@ public class ControllerOneTimePassword {
 	protected static void performLogout() {
 		guiUserLogin.ViewUserLogin.displayUserLogin(ViewOneTimePassword.theStage);
 	}
+	
 	
 	/**********
 	 * <p> Method: performQuit() </p>

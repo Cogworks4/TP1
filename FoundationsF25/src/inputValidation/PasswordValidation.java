@@ -37,7 +37,7 @@ public class PasswordValidation {
 		Scanner input = new Scanner(System.in);
 		String inputLine = "";
 		
-	//Start of program
+		//Start of program
 		System.out.println("Enter a password below or enter newline to quit");
 		
 		//Prompt user to enter password
@@ -243,7 +243,7 @@ public class PasswordValidation {
 		nextState = -1;
 		state = 0;
 		
-		foundUpperCase = false;
+		foundUpperCase = false;				//reset flags after every call in-case an invalid password was passed
 		foundLowerCase = false;
 		foundNumericDigit = false;
 		foundSpecialChar = false;
@@ -254,9 +254,8 @@ public class PasswordValidation {
 		// state the current character does not match any valid transition
 		while (running) {
 			switch(state) {
-			case 0: //case where is first character inputed and if it is a alphanumeric character 
-					//if something else is inputed then user is notified and has to re-enter password.
-				if(isValid(currentChar)) {
+			case 0: 							//case where is first character inputed and if it is a alphanumeric character 
+				if(isValid(currentChar)) { 		//if something else is inputed then user is notified and has to re-enter password.
 					nextState = 1;
 				}
 				else {
@@ -265,17 +264,16 @@ public class PasswordValidation {
 				}
 				break;
 						
-			case 1: //case where input is a alphanumeric character and satisfies the length of the password
-					//if something else is inputed then user is notified and has to re-enter password.
-				if(isValid(currentChar)) {
+			case 1:								 //case where input is a alphanumeric character and satisfies the length of the password
+				if(isValid(currentChar)) {		 //if something else is inputed then user is notified and has to re-enter password.
 					nextState = 1;
 				}
 				else {
 					running = false;
 					return "*** Error *** An invalid character has been found!";
 				}
-				if(currentCharNdx >= 7 && currentCharNdx < 32)
-				{
+				if(currentCharNdx >= 7 && currentCharNdx < 32)		//checks if password is in correct length
+				{													//and sets flags according to
 					foundLongEnough = true;
 					foundTooLong = false;
 				}
@@ -297,6 +295,7 @@ public class PasswordValidation {
 			else
 				currentChar = input.charAt(currentCharNdx);
 			
+			//update states
 			if (running) { state = nextState; nextState = -1;}
 		}
 
@@ -305,34 +304,34 @@ public class PasswordValidation {
 		
 		for (Requirement r : Requirement.values()) {
 	        switch (r) {
-	            case UPPERCASE:
+	            case UPPERCASE:							//verifies if a UpperCase is used
 	                if (!foundUpperCase)
 	                	errMessage += "Upper case | ";
-	                break;
-	            case LOWERCASE:
+	                break;								
+	            case LOWERCASE:							//verifies if a LowerCase is used
 	                if (!foundLowerCase)
 	                	errMessage += "Lower case | ";
 	                break;
-	            case DIGIT:
+	            case DIGIT:								//verifies if a Digit is used
 	                if (!foundNumericDigit) 
 	                	errMessage += "Numeric digits | ";
 	                break;
 	            case SPECIAL:
-	                if (!foundSpecialChar) 
+	                if (!foundSpecialChar) 				//verifies if a Special Character is used
 	                	errMessage += "Special character | ";
 	                break;
 	            case LONG_ENOUGH:
-	                if (!foundLongEnough) 
+	                if (!foundLongEnough) 				//verifies if a password is greater than 7 characters
 	                	errMessage += "Long Enough | ";
 	                break;
 	            case TOO_LONG:
-	                if (foundTooLong) 
+	                if (foundTooLong) 					//verifies if a password is less than 32 characters
 	                	errMessage += "Password Length | ";
 	                break;
 	        }
 	    }
-		if (errMessage == "")
+		if (errMessage == "")							//if none of the conditions are invalidated then pass no error message 
 			return "";
-		return errMessage + "\n--conditions were not satisfied--";
-	}
+		return errMessage + "\n--conditions were not satisfied--";	// if some condition is invalid then pass which ones were unsatisfied
+	}																// and triggers a re-prompt to user for a new password 
 }
