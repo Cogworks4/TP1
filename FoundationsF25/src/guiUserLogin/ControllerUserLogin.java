@@ -69,7 +69,6 @@ public class ControllerUserLogin {
     			theDatabase.getCurrentNewRole1(), theDatabase.getCurrentNewRole2());
     	
     	if(theDatabase.checkIfOneTime(password, username)) {
-    		System.out.println("checkpoint1");
     		forcePasswordChange.ViewForcePasswordChange.displayForcePasswordChange(ts, user);
     		return;
     	}
