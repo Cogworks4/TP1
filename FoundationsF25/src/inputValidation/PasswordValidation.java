@@ -2,12 +2,12 @@ package inputValidation;
 
 import java.util.Scanner;
 
-//TP1 Version
 public class PasswordValidation {
 	
-	public static String adminPassword1 = "";			// global passwords
+	public static String adminPassword1 = "";			// passwords of input
 	public static String adminPassword2 = "";			//
 	
+	// Flags set to check if password is valid
 	public static boolean foundUpperCase = false;
 	public static boolean foundLowerCase = false;
 	public static boolean foundNumericDigit = false;
@@ -15,24 +15,60 @@ public class PasswordValidation {
 	public static boolean foundLongEnough = false;
 	public static boolean foundTooLong = false;
 	public static boolean running = false;
+	
+	// States for FSM
 	private static int state = 0;
 	private static int nextState = 0;
 	
-	
+	// Input and errors
 	public static String passwordErrorMessage = "";		// The error message text
 	public static String passwordInput = "";
 	public static int passwordIndexofError = -1;		// The index where the error was located
 	
+	// Current char and its index that is being evaluated 
 	private static char currentChar;					// The current character in the line
-	private static int currentCharNdx;	
+	private static int currentCharNdx;					// Current index of character 
 	
+	// Enumeration of requirements to check and produce error messages
 	private static enum Requirement {
 	    UPPERCASE, LOWERCASE, DIGIT, SPECIAL, LONG_ENOUGH, TOO_LONG
 	}
 	
 	
-	
+	/*******
+	 * <p> Title: PasswordValidation main method that setups a console test and version</p>
+	 * 
+	 * <p> Description: This main method creates and input scanner for user to input a password
+	 * and checks it. Ending the program if a a newline is entered, reprompts the user if it is invalid  </p>
+	 * and resets the loop if valid as well to accept another password.
+	 * 
+	 * @param String[] args   The array of command lines parameters.
+	 */
 	public static void main(String[] args) {
+		
+		// Set to true/false if wanting to run program as test cases or interact in console, respectively
+		boolean runTest = true; 
+		
+		if(runTest) 
+		{
+			//Positive test cases, should pass
+			System.out.println("-----------Positve Test cases----------");
+			testCases(1, "Asu_#360");
+			testCases(2, "R@nd0m-542");
+			testCases(3, "A1B@e345");
+			testCases(4, "@nth0nyM");
+			testCases(5, "mYf@V0rit3FoOd");
+		
+			System.out.println("\n\n\n----------Negative Test cases----------");
+			//Negative test cases, shouldn't pass
+			testCases(6, "1234");
+			testCases(7, "password");
+			testCases(8, "FavoiteTeam");
+			testCases(9, "passwordWasTaken!");
+			testCases(10, "ranOutOfIdeas");
+		
+		return;
+		}
 		
 		Scanner input = new Scanner(System.in);
 		String inputLine = "";
@@ -90,6 +126,21 @@ public class PasswordValidation {
 		}
 		
 	}
+	
+	/*******
+	 * <p> Title: checkValidity - Public Method </p>
+	 * 
+	 * <p> Description: This method is called every time the user enters the password using the 
+	 * requirements set and then evaluates the entered password with respect to those requirements.  
+	 * The results of that evaluation are displayed to the user in console.</p>
+	 */
+	static public void testCases(int num, String pass) {
+		// Case 1
+		adminPassword1 = pass;
+		System.out.println(num + "\n" + pass);
+		checkValidity();
+	}
+	
 
 	
 	
