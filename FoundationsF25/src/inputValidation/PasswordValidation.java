@@ -17,7 +17,6 @@ public class PasswordValidation {
 	public static boolean running = false;
 	private static int state = 0;
 	private static int nextState = 0;
-	private static boolean finalState = false;
 	
 	
 	public static String passwordErrorMessage = "";		// The error message text
@@ -26,6 +25,10 @@ public class PasswordValidation {
 	
 	private static char currentChar;					// The current character in the line
 	private static int currentCharNdx;	
+	
+	private static enum Requirement {
+	    UPPERCASE, LOWERCASE, DIGIT, SPECIAL, LONG_ENOUGH, TOO_LONG
+	}
 	
 	
 	
@@ -126,6 +129,11 @@ public class PasswordValidation {
 		}
 	}
 	
+	/*******
+	 * <p> Title: isLower - Private Method </p>
+	 * 
+	 * <p> Description: This method is called to check if character input is a lower case letter.</p>
+	 */
 	private static boolean isLower(char c){
 		if(c >= 'a' && c <= 'z') {
 		foundLowerCase = true;
@@ -135,6 +143,12 @@ public class PasswordValidation {
 			return false;
 		}
 	}
+	
+	/*******
+	 * <p> Title: isUpper - Private Method </p>
+	 * 
+	 * <p> Description: This method is called to check if character input is an upper case letter.</p>
+	 */
 	private static boolean isUpper(char c){
 		if(c >= 'A' && c <= 'Z') {
 			foundUpperCase = true;
@@ -144,6 +158,12 @@ public class PasswordValidation {
 				return false;
 			}
 	}
+	
+	/*******
+	 * <p> Title: isNum - Private Method </p>
+	 * 
+	 * <p> Description: This method is called to check if character input is a number.</p>
+	 */
 	private static boolean isNum(char c){
 		if(c >= '0' && c <= '9') {
 		foundNumericDigit = true;
@@ -153,9 +173,22 @@ public class PasswordValidation {
 			return false;
 		}
 	}
+	
+	/*******
+	 * <p> Title: isAlphaNum - Private Method </p>
+	 * 
+	 * <p> Description: This method is called to check if character input is alphanumeric.</p>
+	 */
 	private static boolean isAlphaNum(char c){
 		return isLower(c) || isUpper(c) || isNum(c);
+		
 	}
+	
+	/*******
+	 * <p> Title: isLower - Private Method </p>
+	 * 
+	 * <p> Description: This method is called to check if character input is a special.</p>
+	 */
 	private static boolean isSpecial(char c){
 		if ("~`!@#$%^&*()_-+={}[]|\\:;\"'<>,.?/".indexOf(c) >= 0)
 		{
@@ -167,22 +200,22 @@ public class PasswordValidation {
 		}
 	}
 	
-	
-	
+	/*******
+	 * <p> Title: isValid - Private Method </p>
+	 * 
+	 * <p> Description: This method is called to check if character input is a valid input.</p>
+	 */
 	private static boolean isValid(char c) {
 		return isAlphaNum(c) || isSpecial(c);
 	}
-	/*******
-	 * <p> Title: passwordEvaluator - Protected Method </p>
-	 * 
-	 * <p> Description: Goes through the password and checks if it is valid, returning the proper
-	 * error message if not.
-	 * 
-	 * 
-	 * 
-	 * </p>
-	 */
 	
+	
+	/*******
+	 * <p> Title: passwordEvaluator - Public Method </p>
+	 * 
+	 * <p> Description: This method evaluates the password by going through each character and 
+	 * creates an error message based on if the password is valid or not.</p>
+	 */
 	public static String passwordEvaluator(String input) {
 		
 		// The following are the local variable used to perform the Directed Graph simulation
@@ -208,7 +241,6 @@ public class PasswordValidation {
 		// This flag determines whether the directed graph (FSM) loop is operating or not
 		running = true;						// Start the loop
 		nextState = -1;
-		finalState = false;
 		state = 0;
 		
 		foundUpperCase = false;
@@ -222,7 +254,8 @@ public class PasswordValidation {
 		// state the current character does not match any valid transition
 		while (running) {
 			switch(state) {
-			case 0:
+			case 0: //case where is first character inputed and if it is a alphanumeric character 
+					//if something else is inputed then user is notified and has to re-enter password.
 				if(isValid(currentChar)) {
 					nextState = 1;
 				}
@@ -232,16 +265,17 @@ public class PasswordValidation {
 				}
 				break;
 						
-			case 1:
+			case 1: //case where input is a alphanumeric character and satisfies the length of the password
+					//if something else is inputed then user is notified and has to re-enter password.
 				if(isValid(currentChar)) {
 					nextState = 1;
 				}
 				else {
+					running = false;
 					return "*** Error *** An invalid character has been found!";
 				}
 				if(currentCharNdx >= 7 && currentCharNdx < 32)
 				{
-					System.out.println("At least 8 characters found");
 					foundLongEnough = true;
 					foundTooLong = false;
 				}
@@ -251,7 +285,6 @@ public class PasswordValidation {
 
 				}
 				else if(currentCharNdx >= 32){
-					System.out.println("Password is too long!");
 					foundLongEnough = true;
 					foundTooLong = true;
 				}
@@ -264,36 +297,42 @@ public class PasswordValidation {
 			else
 				currentChar = input.charAt(currentCharNdx);
 			
-			if (running) {
-				state = nextState;
-				finalState = (state == 1);
-				nextState = -1;
-			}
+			if (running) { state = nextState; nextState = -1;}
 		}
-		
+
 		// Construct a String with a list of the requirement elements that were found.
 		String errMessage = "";
-		if (!foundUpperCase)
-			errMessage += "Upper case | ";
 		
-		if (!foundLowerCase)
-			errMessage += "Lower case | ";
-		
-		if (!foundNumericDigit)
-			errMessage += "Numeric digits | ";
-			
-		if (!foundSpecialChar)
-			errMessage += "Special character | ";
-			
-		if (!foundLongEnough)
-			errMessage += "Long Enough | ";
-		
-		if(foundTooLong)
-			errMessage += "Password Length | ";
-		
+		for (Requirement r : Requirement.values()) {
+	        switch (r) {
+	            case UPPERCASE:
+	                if (!foundUpperCase)
+	                	errMessage += "Upper case | ";
+	                break;
+	            case LOWERCASE:
+	                if (!foundLowerCase)
+	                	errMessage += "Lower case | ";
+	                break;
+	            case DIGIT:
+	                if (!foundNumericDigit) 
+	                	errMessage += "Numeric digits | ";
+	                break;
+	            case SPECIAL:
+	                if (!foundSpecialChar) 
+	                	errMessage += "Special character | ";
+	                break;
+	            case LONG_ENOUGH:
+	                if (!foundLongEnough) 
+	                	errMessage += "Long Enough | ";
+	                break;
+	            case TOO_LONG:
+	                if (foundTooLong) 
+	                	errMessage += "Password Length | ";
+	                break;
+	        }
+	    }
 		if (errMessage == "")
 			return "";
-		
 		return errMessage + "\n--conditions were not satisfied--";
 	}
 }
