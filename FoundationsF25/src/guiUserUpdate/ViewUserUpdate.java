@@ -77,7 +77,7 @@ public class ViewUserUpdate {
 	// These are dynamic labels and they change based on the user and user
 	// interactions.
 	private static Label label_CurrentUsername = new Label();
-	private static Label label_CurrentPassword = new Label();
+	public static Label label_CurrentPassword = new Label();
 	private static Label label_CurrentFirstName = new Label();
 	private static Label label_CurrentMiddleName = new Label();
 	private static Label label_CurrentLastName = new Label();
@@ -107,6 +107,7 @@ public class ViewUserUpdate {
 	// change the
 	// the values of the various account detail items.
 	private static TextInputDialog dialogUpdateFirstName;
+	private static TextInputDialog dialogUpdatePassword;
 	private static TextInputDialog dialogUpdateMiddleName;
 	private static TextInputDialog dialogUpdateLastName;
 	private static TextInputDialog dialogUpdatePreferredFirstName;
@@ -253,6 +254,7 @@ public class ViewUserUpdate {
 		theUserUpdateScene = new Scene(theRootPane, width, height);
 
 		// Initialize the pop-up dialogs to an empty text filed.
+		dialogUpdatePassword = new TextInputDialog("");
 		dialogUpdateFirstName = new TextInputDialog("");
 		dialogUpdateMiddleName = new TextInputDialog("");
 		dialogUpdateLastName = new TextInputDialog("");
@@ -260,6 +262,9 @@ public class ViewUserUpdate {
 		dialogUpdateEmailAddresss = new TextInputDialog("");
 
 		// Establish the label for each of the dialogs.
+		dialogUpdatePassword.setTitle("Update Password");
+		dialogUpdatePassword.setHeaderText("Update your Password");
+		
 		dialogUpdateFirstName.setTitle("Update First Name");
 		dialogUpdateFirstName.setHeaderText("Update your First Name");
 
@@ -291,10 +296,24 @@ public class ViewUserUpdate {
 		setupLabelUI(label_CurrentUsername, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 100);
 		setupButtonUI(button_UpdateUsername, "Dialog", 18, 275, Pos.CENTER, 500, 93);
 
-		// password
+		// Password
 		setupLabelUI(label_Password, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 150);
 		setupLabelUI(label_CurrentPassword, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 150);
 		setupButtonUI(button_UpdatePassword, "Dialog", 18, 275, Pos.CENTER, 500, 143);
+		button_UpdatePassword.setOnAction((event) -> { 
+			result = dialogUpdatePassword.showAndWait();
+			result.ifPresent(name -> {
+				inputValidation.PasswordValidation.adminPassword1 = name;
+				inputValidation.PasswordValidation.adminPassword2 = name;
+				if(inputValidation.PasswordValidation.checkValidity()) {
+					theDatabase.updatePassword(theUser.getUserName(), name);
+					label_CurrentPassword.setText(name);
+				} else {
+					System.out.println("Validation failed:");
+					return; // skip update
+				}
+			});
+		});
 
 		// First Name
 		setupLabelUI(label_FirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 200);

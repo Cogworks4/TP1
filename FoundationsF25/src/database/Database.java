@@ -127,6 +127,12 @@ public class Database {
 	    		+ "deadline TIMESTAMP)";
 	    statement.execute(invitationCodesTable);
 	    
+	    // Create table for password
+	    String oneTimePasswordTable = "CREATE TABLE IF NOT EXISTS OneTimePassword ("
+	            + "pass VARCHAR(255), "
+	    		+ "userName VARCHAR(255))";
+	    statement.execute(oneTimePasswordTable);
+	    
 	}
 	
 	
@@ -436,6 +442,31 @@ public class Database {
 	    }
 	    return code;
 	}
+	
+	/*******
+	 * <p> Method: String addOneTimePassword(String userName, String password) </p>
+	 * 
+	 * <p> Description: Add userName and One Time Password to database.</p>
+	 * 
+	 * @param userName specifies the user name for this user.
+	 * 
+	 * @param password specified the password for this user.
+	 * 
+	 * @return void
+	 * 
+	 */
+	// Generates a new invitation code and inserts it into the database.
+	public void addOneTimePassword(String userName, String password) {
+	    String query = "INSERT INTO OneTimePassword (pass, userName) VALUES (?, ?)";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, password);
+	        pstmt.setString(2, userName);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
 
 	
 	/*******
@@ -581,6 +612,64 @@ public class Database {
 		return "";
 	}
 	
+	/*******
+	 * <p> Method: String getEmailAddressUsingCode (String code ) </p>
+	 * 
+	 * <p> Description: Get the email addressed associated with an invitation code.</p>
+	 * 
+	 * @param code is the 6 character String invitation code
+	 *  
+	 * @return the email address for the code or an empty string.
+	 * 
+	 */
+	// For a given invitation code, return the associated email address of an empty string
+	public String getOneTimeGivenUser (String user ) {
+	    String query = "SELECT pass FROM OneTimePassword WHERE userName = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, user);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	            return rs.getString("pass");
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+		return "";
+	}
+	
+	/*******
+	 * <p> Method: boolean checkIfOneTime (String pass, String userName ) </p>
+	 * 
+	 * <p> Description: Check if user/pass is a one time password.</p>
+	 * 
+	 * @param pass is the users password that is logging in
+	 * @param username is the users userName that is logging in
+	 *  
+	 * @return true if one time password does exist, false otherwise
+	 * 
+	 */
+	// For a given invitation code, return the associated email address of an empty string
+	public boolean checkIfOneTime (String pass, String userName) {
+	    String query = "SELECT pass, userName FROM OneTimePassword";
+	    String oneTimePass = "";
+	    String user = "";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        ResultSet rs = pstmt.executeQuery();
+	        while(rs.next()) {
+	        oneTimePass = rs.getString("pass");
+	        user = rs.getString("userName");
+	        System.out.println(oneTimePass + " " + user);
+			if (pass.compareTo(oneTimePass) == 0 && userName.compareTo(user) == 0) {
+	            return true;
+	        }
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+		return false;
+	}
+	
 	
 	/*******
 	 * <p> Method: void removeInvitationAfterUse(String code) </p>
@@ -615,6 +704,42 @@ public class Database {
 		return;
 	}
 	
+	/*******
+	 * <p> Method: void removeOneTimeAfterUse(String pass) </p>
+	 * 
+	 * <p> Description: Remove a one time password record once it is used.</p>
+	 * 
+	 * @param pass is the character String One Time Password
+	 *  
+	 */
+	// Remove a Password using the user name after called
+	public void removeOneTimePassword(String user) {
+	    String query = "SELECT COUNT(*) AS count FROM OneTimePassword WHERE userName = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, user);
+	        ResultSet rs = pstmt.executeQuery();
+	        if (rs.next()) {
+	        	int counter = rs.getInt(1);
+	            // Only do the remove if the code is still in the invitation table
+	        	if (counter > 0) {
+        			query = "DELETE FROM OneTimePassword WHERE userName = ?";
+	        		try (PreparedStatement pstmt2 = connection.prepareStatement(query)) {
+	        			pstmt2.setString(1, user);
+	        			pstmt2.executeUpdate();
+	        		}catch (SQLException e) {
+	        	        e.printStackTrace();
+	        	    }
+	        	}
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+		return;
+	}
+	
+	
+	
+	
 	
 	/*******
 	 * <p> Method: String getFirstName(String username) </p>
@@ -641,6 +766,30 @@ public class Database {
 	        e.printStackTrace();
 	    }
 		return null;
+	}
+
+	/*******
+	 * <p> Method: void updatePassword(String username, String password) </p>
+	 * 
+	 * <p> Description: Update the password of a user given that user's username and the new
+	 *		password.</p>
+	 * 
+	 * @param username is the username of the user
+	 * 
+	 * @param password is the password for the user
+	 *  
+	 */
+	// update the password
+	public void updatePassword(String username, String password) {
+	    String query = "UPDATE userDB SET password = ? WHERE username = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, password);
+	        pstmt.setString(2, username);
+	        pstmt.executeUpdate();
+	        currentPassword = password;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
 	}
 	
 

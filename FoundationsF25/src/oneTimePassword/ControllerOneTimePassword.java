@@ -1,6 +1,7 @@
 package oneTimePassword;
 
 import database.Database;
+import guiUserUpdate.ViewUserUpdate;
 
 public class ControllerOneTimePassword {
 	
@@ -16,13 +17,14 @@ public class ControllerOneTimePassword {
 
 	// Reference for the in-memory database so this package has access
 	private static Database theDatabase = applicationMain.FoundationsMain.database;		
+	public static boolean isOneTimePassword = false;
 
 	
 	/**********
-	 * <p> Method: doSelectUser() </p>
+	 * <p> Method: doAction() </p>
 	 * 
 	 * <p> Description: This method uses the ComboBox widget, fetches which item in the ComboBox
-	 * was selected (a user in this case), and establishes that user and the current user, setting
+	 * was selected, and establishes that user and the current user, setting
 	 * easily accessible values without needing to do a query. </p>
 	 * 
 	 */
@@ -78,6 +80,7 @@ public class ControllerOneTimePassword {
 					ViewOneTimePassword.label_generate, ViewOneTimePassword.combobox_randOrCreate,
 					ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
 					ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit);
+			ViewOneTimePassword.button_sendOneTime.setDisable(true);
 			
 		}
 		else if(ViewOneTimePassword.theSelectedGen.compareTo("Create") == 0
@@ -92,6 +95,9 @@ public class ControllerOneTimePassword {
 					ViewOneTimePassword.textField_createPass, ViewOneTimePassword.line_Separator4,
 					ViewOneTimePassword.button_return, ViewOneTimePassword.button_logout, 
 					ViewOneTimePassword.button_quit, ViewOneTimePassword.button_sendOneTime);
+			ViewOneTimePassword.button_sendOneTime.setDisable(true);
+			ViewOneTimePassword.Password = "";
+			
 			
 					
 		}
@@ -100,14 +106,16 @@ public class ControllerOneTimePassword {
 			
 			ViewOneTimePassword.theRootPane.getChildren().clear();
 			ViewOneTimePassword.theRootPane.getChildren().addAll(
-			ViewOneTimePassword.label_pageTitle, ViewOneTimePassword.label_User, 
-			ViewOneTimePassword.button_UpdateThisUser, ViewOneTimePassword.line_Separator1,
-			ViewOneTimePassword.label_SelectUser, ViewOneTimePassword.combobox_selectUser,
-			ViewOneTimePassword.label_generate, ViewOneTimePassword.combobox_randOrCreate,
-			ViewOneTimePassword.button_randomizePass, ViewOneTimePassword.displayRandomPassword,
-			ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
-			ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit, 
-			ViewOneTimePassword.button_sendOneTime);	
+					ViewOneTimePassword.label_pageTitle, ViewOneTimePassword.label_User, 
+					ViewOneTimePassword.button_UpdateThisUser, ViewOneTimePassword.line_Separator1,
+					ViewOneTimePassword.label_SelectUser, ViewOneTimePassword.combobox_selectUser,
+					ViewOneTimePassword.label_generate, ViewOneTimePassword.combobox_randOrCreate,
+					ViewOneTimePassword.button_randomizePass, ViewOneTimePassword.displayRandomPassword,
+					ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
+					ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit, 
+					ViewOneTimePassword.button_sendOneTime);
+			ViewOneTimePassword.button_sendOneTime.setDisable(true);
+			ViewOneTimePassword.Password = "";
 		}
 			ViewOneTimePassword.theStage.setTitle("CSE 360 Foundation Code: Admin Opertaions Page");
 			ViewOneTimePassword.theStage.setScene(ViewOneTimePassword.theOneTimePasswordScene);
@@ -116,7 +124,9 @@ public class ControllerOneTimePassword {
 	
 	
 	protected static void setOneTime() {
-		
+		theDatabase.updatePassword(ViewOneTimePassword.theSelectedUser, ViewOneTimePassword.Password);
+		ViewUserUpdate.label_CurrentPassword.setText(ViewOneTimePassword.Password);
+		theDatabase.addOneTimePassword(ViewOneTimePassword.theSelectedUser, ViewOneTimePassword.Password);
 		
 		
 		
@@ -131,6 +141,12 @@ public class ControllerOneTimePassword {
 		
 	}
 	
+	/**********
+	 * <p> Method: checkPass() </p>
+	 * 
+	 * <p> Description: This method calls PasswordValidation and checks if password is valid. </p>
+	 * 
+	 */
 	protected static boolean checkPass() {
 		inputValidation.PasswordValidation.adminPassword1 = ViewOneTimePassword.Password;
 		inputValidation.PasswordValidation.adminPassword2 = ViewOneTimePassword.Password;
@@ -148,6 +164,12 @@ public class ControllerOneTimePassword {
 		
 	}
 	
+	/**********
+	 * <p> Method: createPass() </p>
+	 * 
+	 * <p> Description: This method creates a password and saves it to View to use. </p>
+	 * 
+	 */
 	protected static void createPass() {
 		ViewOneTimePassword.Password = ViewOneTimePassword.textField_createPass.getText();
 		System.out.println(ViewOneTimePassword.Password);
