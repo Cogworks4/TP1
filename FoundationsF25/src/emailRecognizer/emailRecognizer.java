@@ -280,8 +280,7 @@ public class emailRecognizer {
 
                 // A-Z, a-z, 0-9 -> State 6
                 if ((currentChar >= 'A' && currentChar <= 'Z' ) ||		// Check for A-Z
-						(currentChar >= 'a' && currentChar <= 'z' ) ||	// Check for a-z
-						(currentChar >= '0' && currentChar <= '9' )) {	// Check for 0-9
+						(currentChar >= 'a' && currentChar <= 'z' )) {
 					nextState = 6;
 					
 					// Count the odd digit
@@ -393,7 +392,7 @@ public class emailRecognizer {
 			    return emailRecognizerErrorMessage;
             } else {
                 emailRecognizerErrorMessage +=
-				    "A character in the Email TLD must be A-Z, a-z, 0-9.\n";
+				    "A character in the Email TLD must be A-Z, a-z.\n";
 			    return emailRecognizerErrorMessage;
             }
 			
