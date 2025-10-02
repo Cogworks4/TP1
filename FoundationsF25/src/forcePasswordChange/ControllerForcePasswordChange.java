@@ -18,16 +18,25 @@ public class ControllerForcePasswordChange {
 	private static Database theDatabase = applicationMain.FoundationsMain.database;	
 	
 	
+	/**********
+	 * <p> Method: paintTheWindow() </p>
+	 * 
+	 * <p> Description: This method paints the window and resets all the attributes </p>
+	 * 
+	 */
 	protected static void paintTheWindow() {
-	ViewForcePasswordChange.theRootPane.getChildren().clear();
+		// Clears the previous children
+		ViewForcePasswordChange.theRootPane.getChildren().clear();
 
-	ViewForcePasswordChange.textField_createPass1.clear();
-	ViewForcePasswordChange.textField_createPass2.clear();
-	ViewForcePasswordChange.label_Pass1Valid.setText("");
-	ViewForcePasswordChange.label_Pass2Valid.setText("");
-	ViewForcePasswordChange.button_setPass.setDisable(true);
+		// Clears all the text field and resets the button to default
+		ViewForcePasswordChange.textField_createPass1.clear();
+		ViewForcePasswordChange.textField_createPass2.clear();
+		ViewForcePasswordChange.label_Pass1Valid.setText("");
+		ViewForcePasswordChange.label_Pass2Valid.setText("");
+		ViewForcePasswordChange.button_setPass.setDisable(true);
     
-	ViewForcePasswordChange.theRootPane.getChildren().addAll(
+		// Adds the children to the scene
+		ViewForcePasswordChange.theRootPane.getChildren().addAll(
 			ViewForcePasswordChange.label_pageTitle, ViewForcePasswordChange.label_User,
 			ViewForcePasswordChange.prompt, ViewForcePasswordChange.line_Separator1,
 			ViewForcePasswordChange.label_Password1, ViewForcePasswordChange.textField_createPass1,
@@ -36,9 +45,10 @@ public class ControllerForcePasswordChange {
 			ViewForcePasswordChange.button_checkPass, ViewForcePasswordChange.button_setPass,
 			ViewForcePasswordChange.line_Separator4, ViewForcePasswordChange.button_quit);
 	
-	ViewForcePasswordChange.theStage.setTitle("CSE 360 Foundation Code: Change Password Page");
-	ViewForcePasswordChange.theStage.setScene(ViewForcePasswordChange.theForcePaswordChangeScene);
-	ViewForcePasswordChange.theStage.show();
+		// Sets title of stage and sets scene
+		ViewForcePasswordChange.theStage.setTitle("CSE 360 Foundation Code: Change Password Page");
+		ViewForcePasswordChange.theStage.setScene(ViewForcePasswordChange.theForcePaswordChangeScene);
+		ViewForcePasswordChange.theStage.show();
 
 	}
 	/**********
@@ -50,12 +60,13 @@ public class ControllerForcePasswordChange {
 	protected static boolean checkPass() {
 		inputValidation.PasswordValidation.adminPassword1 = ViewForcePasswordChange.Password1;
 		inputValidation.PasswordValidation.adminPassword2 = ViewForcePasswordChange.Password2;
+		// checks if password is valid and equal and saves it to actualPassword in View
 		if(inputValidation.PasswordValidation.checkValidity()) {
 			System.out.println("Password was Valid!");
 			ViewForcePasswordChange.actualPassword = ViewForcePasswordChange.Password1;
 			return true;
 		}
-		else {
+		else {	//clears password inputs if invalid
 			ViewForcePasswordChange.textField_createPass1.clear();
 			ViewForcePasswordChange.textField_createPass2.clear();
 			System.out.println("Password was not Valid!");
@@ -78,6 +89,13 @@ public class ControllerForcePasswordChange {
 		
 	}
 	
+	/**********
+	 * <p> Method: setPassword() </p>
+	 * 
+	 * <p> Description: This method sets the password and saves it to the database to use, 
+	 * removing it when after password is changed. </p>
+	 * 
+	 */
 	protected static void setPassword() {
 		theDatabase.updatePassword(ViewForcePasswordChange.user, ViewForcePasswordChange.actualPassword);		
 		theDatabase.removeOneTimePassword(ViewForcePasswordChange.user);

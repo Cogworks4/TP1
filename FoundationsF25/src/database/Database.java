@@ -443,6 +443,7 @@ public class Database {
 	    return code;
 	}
 	
+	
 	/*******
 	 * <p> Method: String addOneTimePassword(String userName, String password) </p>
 	 * 
@@ -585,7 +586,6 @@ public class Database {
 	    return users;
 	}
 
-
 	
 	/*******
 	 * <p> Method: String getEmailAddressUsingCode (String code ) </p>
@@ -612,14 +612,15 @@ public class Database {
 		return "";
 	}
 	
+	
 	/*******
-	 * <p> Method: String getEmailAddressUsingCode (String code ) </p>
+	 * <p> Method: String getOneTimeGivenUser (String user ) </p>
 	 * 
-	 * <p> Description: Get the email addressed associated with an invitation code.</p>
+	 * <p> Description: Get the OTP associated with an user name.</p>
 	 * 
-	 * @param code is the 6 character String invitation code
+	 * @param user is the userName of the current user
 	 *  
-	 * @return the email address for the code or an empty string.
+	 * @return the OTP that is associated with the user
 	 * 
 	 */
 	// For a given invitation code, return the associated email address of an empty string
@@ -636,6 +637,7 @@ public class Database {
 	    }
 		return "";
 	}
+	
 	
 	/*******
 	 * <p> Method: boolean checkIfOneTime (String pass, String userName ) </p>
@@ -704,12 +706,13 @@ public class Database {
 		return;
 	}
 	
+	
 	/*******
-	 * <p> Method: void removeOneTimeAfterUse(String pass) </p>
+	 * <p> Method: void removeOneTimeAfterUse(String user) </p>
 	 * 
 	 * <p> Description: Remove a one time password record once it is used.</p>
 	 * 
-	 * @param pass is the character String One Time Password
+	 * @param pass is the character String userName 
 	 *  
 	 */
 	// Remove a Password using the user name after called
@@ -736,9 +739,6 @@ public class Database {
 	    }
 		return;
 	}
-	
-	
-	
 	
 	
 	/*******
@@ -768,6 +768,7 @@ public class Database {
 		return null;
 	}
 
+	
 	/*******
 	 * <p> Method: void updatePassword(String username, String password) </p>
 	 * 

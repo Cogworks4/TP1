@@ -302,6 +302,7 @@ public class ViewUserUpdate {
 		setupButtonUI(button_UpdatePassword, "Dialog", 18, 275, Pos.CENTER, 500, 143);
 		button_UpdatePassword.setOnAction((event) -> { 
 			result = dialogUpdatePassword.showAndWait();
+			// Calls passwordValidator and checks if password has the necessary requirements 
 			result.ifPresent(name -> {
 				inputValidation.PasswordValidation.adminPassword1 = name;
 				inputValidation.PasswordValidation.adminPassword2 = name;
@@ -309,6 +310,7 @@ public class ViewUserUpdate {
 					theDatabase.updatePassword(theUser.getUserName(), name);
 					label_CurrentPassword.setText(name);
 				} else {
+					// Tells console that validation failed
 					System.out.println("Validation failed:");
 					return; // skip update
 				}
