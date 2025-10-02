@@ -117,7 +117,6 @@ public class ViewForcePasswordChange {
 		
 		// If not yet established, populate the static aspects of the GUI by creating the 
 		// singleton instance of this class
-		System.out.println("checkpoint2");
 		if (theView == null) theView = new ViewForcePasswordChange();
 		
 		ControllerForcePasswordChange.paintTheWindow();
@@ -137,7 +136,6 @@ public class ViewForcePasswordChange {
 	 * 
 	 */
 	public ViewForcePasswordChange() {
-	System.out.println("checkpoint3");
 	user = theUser.getUserName();
 	// This page is used by all roles, so we do not specify the role being used		
 		

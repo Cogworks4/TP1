@@ -126,6 +126,7 @@ public class Database {
 	            + "role VARCHAR(10), "
 	    		+ "deadline TIMESTAMP)";
 	    statement.execute(invitationCodesTable);
+	    
 	    // Create table for password
 	    String oneTimePasswordTable = "CREATE TABLE IF NOT EXISTS OneTimePassword ("
 	            + "pass VARCHAR(255), "
@@ -161,7 +162,6 @@ public class Database {
 	        e.printStackTrace();
 	        return false;
 	    }
-	    
 	}
 
 

@@ -19,7 +19,6 @@ public class ControllerForcePasswordChange {
 	
 	
 	protected static void paintTheWindow() {
-		System.out.println("checkpoint5");
 	ViewForcePasswordChange.theRootPane.getChildren().clear();
 
 	ViewForcePasswordChange.textField_createPass1.clear();
@@ -82,7 +81,6 @@ public class ControllerForcePasswordChange {
 	protected static void setPassword() {
 		theDatabase.updatePassword(ViewForcePasswordChange.user, ViewForcePasswordChange.actualPassword);		
 		theDatabase.removeOneTimePassword(ViewForcePasswordChange.user);
-		System.out.println("ch4");
 		guiUserLogin.ViewUserLogin.displayUserLogin(ViewForcePasswordChange.theStage);
 		
 	}
