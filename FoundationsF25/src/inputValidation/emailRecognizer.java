@@ -1,4 +1,4 @@
-package emailRecognizer;
+package inputValidation;
 
 
 public class emailRecognizer {

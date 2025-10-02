@@ -1,4 +1,4 @@
-package nameValidator;
+package inputValidation;
 
 import java.util.List;
 import java.util.ArrayList;

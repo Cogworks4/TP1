@@ -1,4 +1,4 @@
-package usernameRecognizer;
+package inputValidation;
 
 
 

@@ -13,8 +13,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import nameValidator.userUpdateNameValidator;
 import entityClasses.User;
+import inputValidation.userUpdateNameValidator;
 
 /*******
  * <p>
@@ -437,7 +437,7 @@ public class ViewUserUpdate {
 		button_UpdateEmailAddress.setOnAction((event) -> {
 			result = dialogUpdateEmailAddresss.showAndWait();
 			if (!result.isEmpty()) {
-				error = emailRecognizer.emailRecognizer.checkForValidEmail(result.get());
+				error = inputValidation.emailRecognizer.checkForValidEmail(result.get());
 				if (Model.showErrorMessage(error)) {
 					result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
 					theDatabase.getUserAccountDetails(theUser.getUserName());
