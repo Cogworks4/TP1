@@ -68,6 +68,12 @@ public class ControllerUserLogin {
     			theDatabase.getCurrentAdminRole(), 
     			theDatabase.getCurrentNewRole1(), theDatabase.getCurrentNewRole2());
     	
+    	if(theDatabase.checkIfOneTime(password, username)) {
+    		System.out.println("checkpoint1");
+    		forcePasswordChange.ViewForcePasswordChange.displayForcePasswordChange(ts, user);
+    		return;
+    	}
+    	
     	// See which home page dispatch to use
 		int numberOfRoles = theDatabase.getNumberOfRoles(user);		
 		System.out.println("*** The number of roles: "+ numberOfRoles);

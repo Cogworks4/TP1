@@ -45,7 +45,7 @@ public class ViewOneTimePassword {
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 
 	// Area 2a: add main elements to window
-	//This allows the admin to select a user of the system to send a OTP.
+	// This allows the admin to select a user of the system to send a OTP.
 	// The act of selecting a user causes the change is the GUI. The Admin does
 	// not need to push a button to make this happen.
 	protected static Label label_SelectUser = new Label("Select a user:");
@@ -120,7 +120,7 @@ public class ViewOneTimePassword {
 	*/
 
 	/**********
-	 * <p> Method: displayAddRemoveRoles(Stage ps, User user) </p>
+	 * <p> Method: displayOneTimePassword(Stage ps, User user) </p>
 	 * 
 	 * <p> Description: This method is the single entry point from outside this package to cause
 	 * the AddRevove page to be displayed.
