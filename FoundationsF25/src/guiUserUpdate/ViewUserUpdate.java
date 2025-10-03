@@ -304,14 +304,14 @@ public class ViewUserUpdate {
 			result = dialogUpdatePassword.showAndWait();
 			// Calls passwordValidator and checks if password has the necessary requirements 
 			result.ifPresent(name -> {
-				error = inputValidation.PasswordValidation.passwordEvaluator(name);			
+				error = Model.guiPwdError(inputValidation.PasswordValidation.passwordEvaluator(name));			
 				if(Model.showErrorMessage(error)) {
 					theDatabase.updatePassword(theUser.getUserName(), name);
 					label_CurrentPassword.setText(name);
 				} else {
 					// Tells console that validation failed
 					System.out.println("Validation failed:");
-					label_ErrorMessage.setText("In Password: " + error);
+					label_ErrorMessage.setText( error);
 					return; // skip update
 				}
 			});
