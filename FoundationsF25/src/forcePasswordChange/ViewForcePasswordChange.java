@@ -6,6 +6,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
@@ -38,12 +39,12 @@ public class ViewForcePasswordChange {
 	// Area 2: Change password
 	// This forces the user to change their password after using a OTP
 	protected static Label label_Password1 = new Label("Enter a Password:");
-	protected static TextField textField_createPass1 = new TextField();
+	protected static PasswordField textField_createPass1 = new PasswordField();
 	protected static Label label_Pass1Valid = new Label("");
 	
 	// Re-enter the password
 	protected static Label label_Password2 = new Label("Re-enter Password:");
-	protected static TextField textField_createPass2 = new TextField();
+	protected static PasswordField textField_createPass2 = new PasswordField();
 	protected static Label label_Pass2Valid = new Label("");
 	
 	// List the requirements of the password

@@ -11,6 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
@@ -63,7 +64,7 @@ public class ViewOneTimePassword {
 	// This window generates if admin selects the password to be created 
 	// instead of randomized. The act of selecting "create a password", generates 
 	// a text box for admin to input their own password.
-	protected static TextField textField_createPass = new TextField();
+	protected static PasswordField textField_createPass = new PasswordField();
 	protected static Button button_checkPass = new Button("Check if Password is Valid");
 	protected static Label passReqs = new Label("Password must include:\n"
 			+ " 1 UpperCase\n"
@@ -83,6 +84,7 @@ public class ViewOneTimePassword {
 	// Area 3:
 	// button at the bottom activates after you select how to generate the OTP, if "create" is 
 	// selected then user needs to input a valid password, and then button activates.
+	public static Label label_confirmation = new Label();
 	public static Button button_sendOneTime = new Button("Send One Time Password");
 
 	//add line separator
@@ -254,10 +256,15 @@ public class ViewOneTimePassword {
 	
 	
 	// GUI Area 3
+
+	// The confirmation that the password has been changed 
+	setupLabelUI(label_confirmation, "Arial", 20, 300, Pos.BASELINE_CENTER, 250, 430);
+	
 	// The submit password button that updates the database with the OTP and changes the users password
 	setupButtonUI(button_sendOneTime, "Dialog", 18, 170, Pos.CENTER, 285, 470);
 	button_sendOneTime.setOnAction((event) ->
-			{ControllerOneTimePassword.setOneTime(); });
+			{ControllerOneTimePassword.setOneTime(); 
+			label_confirmation.setText("Password set to: " + Password);});
 	button_sendOneTime.setDisable(true);
 	
 	
