@@ -53,7 +53,7 @@ public class ControllerNewAccount {
 		int roleCode = 0;
 		User user = null;
 		// Make sure the Username is valid
-		if (usernameRecognizer.usernameRecognizer.usernameValidate(ViewNewAccount.text_Username.getText())
+		if (inputValidation.usernameRecognizer.usernameValidate(ViewNewAccount.text_Username.getText())
 				.length() == 0) {
 			if (UpdatePwdInvalid()) {
 				// Make sure the two passwords are the same.

@@ -29,8 +29,6 @@ public class ViewOneTimePassword {
 	*/
 	
 	// These are the application values required by the user interface
-
-	// These are the application values required by the user interface
 	
 	private static double width = applicationMain.FoundationsMain.WINDOW_WIDTH;
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
@@ -181,7 +179,7 @@ public class ViewOneTimePassword {
 				
 	// Populate the window with the title and other common widgets and set their static state
 	
-	//GUI Area 1
+	//GUI Area 1: creates the "title" part of the page letting user know what page it is and gives an option to return to UserUpdate
 	label_pageTitle.setText("One Time Password Page");
 	setupLabelUI(label_pageTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
 	
@@ -192,9 +190,11 @@ public class ViewOneTimePassword {
 	button_UpdateThisUser.setOnAction((event) -> 
 		{guiUserUpdate.ViewUserUpdate.displayUserUpdate(theStage, theUser); });
 		
-	// GUI Area 2a
+	// GUI Area 2a: Is what is initially shown asking user to select a user
+	// Label of a prompt to select the user via a combo-box
 	setupLabelUI(label_SelectUser, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 130);
 	
+	// The combo-box where the user is selected to send a OTP to
 	setupComboBoxUI(combobox_selectUser, "Dialog", 16, 250, 280, 125);
 	List<String> userList = theDatabase.getUserList();
 	combobox_selectUser.setItems(FXCollections.observableArrayList(userList));
@@ -203,9 +203,11 @@ public class ViewOneTimePassword {
 	.addListener((ObservableValue<? extends String> observable, 
 		String oldvalue, String newValue) -> {ControllerOneTimePassword.doAction();});
 	
-	// GUI Area 2b
+	// GUI Area 2b: After user selects the user to send a OTP to ask user if the password should be randomized or created by them
+	// Label which ask user to select how password should be generated
 	setupLabelUI(label_generate, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 200);
 	
+	// The combo-box where user chooses the generation method
 	setupComboBoxUI(combobox_randOrCreate, "Dialog", 16, 250, 280, 200);
 	selectGenList.clear();
 	selectGenList.add("<Select generation>");
@@ -220,16 +222,17 @@ public class ViewOneTimePassword {
 		String oldvalue, String newValue) -> {ControllerOneTimePassword.doAction();});
 
 	
-	// GUI Area 2c
+	// GUI Area 2c: If user selects password to be created, creates a text-box for input and checks the password for validity
+	// The text-field that user enters the password into
 	setupTextUI(textField_createPass, "Arial", 18, 300, Pos.BASELINE_LEFT, 20, 270, true);
 	textField_createPass.setPromptText("Enter the Password");
 	textField_createPass.textProperty().addListener((observable, oldValue,newValue) -> {
 		ControllerOneTimePassword.createPass();
 		});
-	
+	// The requirements of the password are displayed as a reminder of what is needed in the password
 	setupLabelUI(passReqs, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 300);
 	
-	
+	// A button where password is checked for validity and if it is then activates the submit password button
 	setupButtonUI(button_checkPass, "Dialog", 15, 170, Pos.BASELINE_RIGHT, 570, 200);
 	button_checkPass.setOnAction((event) ->
 			{
@@ -240,18 +243,18 @@ public class ViewOneTimePassword {
 	
 	
 	// GUI Area 2d
-	
-	//button_randomizePass
+	// The random password generator that generates a different password with each press for the OTP
 	setupButtonUI(button_randomizePass, "Dialog", 15, 170, Pos.BASELINE_RIGHT, 570, 200);
 	button_randomizePass.setOnAction((event) ->
 			{ControllerOneTimePassword.generateRand(); });
 	
+	// Displays this random password so user knows the random password
 	setupLabelUI(displayRandomPassword, "Arial", 20, 300, Pos.BASELINE_LEFT, 20, 270);
 	System.out.println(Password);
 	
-
 	
 	// GUI Area 3
+	// The submit password button that updates the database with the OTP and changes the users password
 	setupButtonUI(button_sendOneTime, "Dialog", 18, 170, Pos.CENTER, 285, 470);
 	button_sendOneTime.setOnAction((event) ->
 			{ControllerOneTimePassword.setOneTime(); });
@@ -260,6 +263,7 @@ public class ViewOneTimePassword {
 	
 	
 	// GUI Area 4
+	// The "exit" buttons where the user can return to previous page, logout, or close the program
 	setupButtonUI(button_return, "Dialog", 18, 210, Pos.CENTER, 20, 540);
 	button_return.setOnAction((event) -> {ControllerOneTimePassword.performReturn(); });
 
@@ -272,8 +276,6 @@ public class ViewOneTimePassword {
 	
 	
 	}
-	
-	
 	
 
 
@@ -288,7 +290,6 @@ public class ViewOneTimePassword {
 	 * @param x		The location from the left edge (x axis)
 	 * @param y		The location from the top (y axis)
 	 */
-	
 	protected static void setupLabelUI(Label l, String ff, double f, double w, Pos p, double x,
 			double y){
 		l.setFont(Font.font(ff, f));

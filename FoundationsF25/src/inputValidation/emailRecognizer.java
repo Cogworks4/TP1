@@ -1,4 +1,4 @@
-package emailRecognizer;
+package inputValidation;
 
 
 public class emailRecognizer {
@@ -31,14 +31,18 @@ public class emailRecognizer {
 	private static int currentCharNdx;					// The index of the current character
 	private static boolean running;						// The flag that specifies if the FSM is 
 														// running
-	private static int emailSize = 0;			// A numeric value may not exceed 254 characters
-    private static int TLDSize = 0;			// A numeric value must be more than 1
-
+	private static int emailSize = 0;					// A numeric value may not exceed 254 characters
+    private static int TLDSize = 0;						// A numeric value must be more than 1
+    private static int atsymbol = 0;
+    private static boolean lastWasHyphen = false; 		// last domain char was '-'
+    private static boolean inTLD = false;         		// we are in the TLD (state 6)
+    private static boolean invalidChar = false;
+    
 	// Private method to display debugging data
 	private static void displayDebuggingInfo() {
 		// Display the current state of the FSM as part of an execution trace
 		if (currentCharNdx >= inputLine.length())
-			// display the line with the current state numbers alignedz
+			// display the line with the current state numbers aligned
 			System.out.println(((state > 99) ? " " : (state > 9) ? "  " : "   ") + state + 
 					((finalState) ? "       F   " : "           ") + "None");
 		else
@@ -75,6 +79,11 @@ public class emailRecognizer {
 		}
 		
 		// The local variables used to perform the Finite State Machine simulation
+		TLDSize = 0;						// This is the size of the TLD
+		atsymbol = 0;					// This is the bool for the '@' symbol
+		lastWasHyphen = false;				// Hyphen as last char
+		inTLD = false;						// if we're in state 6
+		invalidChar = false;
 		state = 0;							// This is the FSM state number
 		inputLine = input;					// Save the reference to the input line as a global
 		currentCharNdx = 0;					// The index of the current character
@@ -155,13 +164,16 @@ public class emailRecognizer {
 					emailSize++;
 				}				
 				// If it is none of those characters, the FSM halts
-				else
+				else {
+					invalidChar = true;
 					running = false;
+				}
 				
 				// The execution of this state is finished
 				// If the size is larger than 16, the loop must stop
-				if (emailSize > 254)
+				if (emailSize > 254) {
 					running = false;
+				}
 				break;			
 				
 			case 2: 
@@ -189,6 +201,8 @@ public class emailRecognizer {
 
             case 3:
                 // State 3 deals with what precedes the @ symbol
+            	
+            	atsymbol += 1; // this means an @ symbol is present, more than one is invalid
 
                 // A-Z, a-z, 0-9 -> State 4
                 if ((currentChar >= 'A' && currentChar <= 'Z' ) ||		// Check for A-Z
@@ -211,90 +225,79 @@ public class emailRecognizer {
             case 4:
                 // State 4 deals with hypens in the domain
 
-                // - -> State 4
-                if ((currentChar == '-')) {	// Check for 0-9
-					nextState = 4;
-					
-					// Count the odd digit
-					emailSize++;
-					
-				}
-                else if ((currentChar >= 'A' && currentChar <= 'Z' ) ||		// Check for A-Z
-						(currentChar >= 'a' && currentChar <= 'z' ) ||	// Check for a-z
-						(currentChar >= '0' && currentChar <= '9' )) {	// Check for 0-9
-					nextState = 5;
-					
-					// Count the odd digit
-					emailSize++;
-					
-				}
-                else if (currentChar == '.'){
-                    nextState = 6;
-
-                    // Count the odd digit
+                if (currentChar == '-') { // sends to state 4 again
+                    nextState = 4;
                     emailSize++;
+                    lastWasHyphen = true;
+                } else if ((currentChar >= 'A' && currentChar <= 'Z') ||
+                           (currentChar >= 'a' && currentChar <= 'z') ||
+                           (currentChar >= '0' && currentChar <= '9')) { // else brings to state 5
+                    nextState = 5;
+                    emailSize++;
+                    lastWasHyphen = false;
+                } else if (currentChar == '.') {
+                    if (!lastWasHyphen) {           // sends to state 6 to start the TLD
+                        nextState = 6;
+                        emailSize++;
+                        inTLD = true;
+                        TLDSize = 0;                // start counting TLD anew
+                    } else {
+                        running = false;            // reject "-."
+                    }
+                } else {
+                    running = false;
                 }
-				// If it is none of those characters, the FSM halts
-				else 
-					running = false;
-                
-				// The execution of this state is finished
-				// If the size is larger than 16, the loop must stop
-				if (emailSize > 254)
-					running = false;
-				break;
+                if (emailSize > 254) running = false;
+                break;
             case 5:
                 // State 5 deals with hypens in the domain being preceded by AN
                 // or a . symbol that starts the TLD
+            	
+            	if (currentChar == '@') {
+            		atsymbol += 1;
+            	}
 
-                // - -> State 4
-                if ((currentChar == '-')) {	// Check for 0-9
-					nextState = 4;
-					
-					// Count the odd digit
-					emailSize++;
-					
-				}
-				else if ((currentChar == '.')) {	// Check for 0-9
-					nextState = 6;
-					
-					// Count the odd digit
-					emailSize++;
-					
-				}
-                else if ((currentChar >= 'A' && currentChar <= 'Z' ) ||		// Check for A-Z
-						(currentChar >= 'a' && currentChar <= 'z' ) ||	// Check for a-z
-						(currentChar >= '0' && currentChar <= '9' )) {	// Check for 0-9
-					nextState = 5;
-					
-					// Count the odd digit
-					emailSize++;
-					
-				}
-				// If it is none of those characters, the FSM halts
-				else 
-					running = false;
+                if (currentChar == '-') {
+                    nextState = 4;
+                    emailSize++;
+                    lastWasHyphen = true;
+                } else if (currentChar == '.') {
+                    if (!lastWasHyphen) {           // only allow label end if not '-'
+                        nextState = 6;
+                        emailSize++;
+                        inTLD = true;
+                        TLDSize = 0;
+                    } else {
+                        running = false;            // reject "-."
+                    }
+                } else if ((currentChar >= 'A' && currentChar <= 'Z') ||
+                           (currentChar >= 'a' && currentChar <= 'z') ||
+                           (currentChar >= '0' && currentChar <= '9')) {
+                    nextState = 5;
+                    emailSize++;
+                    lastWasHyphen = false;
+                } else {
+                    running = false;
+                }
+                if (emailSize > 254) running = false;
+                break; 
                 
             case 6:
                 // State 6 deals with only AN in the TLD and a minimum char limit
-
-                // A-Z, a-z, 0-9 -> State 6
-                if ((currentChar >= 'A' && currentChar <= 'Z' ) ||		// Check for A-Z
-						(currentChar >= 'a' && currentChar <= 'z' )) {
-					nextState = 6;
-					
-					// Count the odd digit
-					emailSize++;
-
-                    // Count the TLD length
-                    TLDSize++;
-					
-				}
-                // If it is none of those characters, the FSM halts
-				else 
-					running = false;
-                
-
+                TLDSize++;
+            	
+                if ((currentChar >= 'A' && currentChar <= 'Z') ||
+                        (currentChar >= 'a' && currentChar <= 'z')) {
+                        nextState = 6;
+                        emailSize++;
+                        lastWasHyphen = false; // not relevant in TLD, but keep tidy
+                    } else if (currentChar == ' '){
+                        running = false;
+                    } else {
+                    	invalidChar = true;
+                    	running = false;
+                    }
+                break;
 			}
 			
 			if (running) {
@@ -331,75 +334,93 @@ public class emailRecognizer {
 		
 		// The following code is a slight variation to support just console output.
 		switch (state) {
-		case 0:
-			// State 0 is not a final state, so we can return a very specific error message
-			emailRecognizerErrorMessage += "A Email must start with A-Z, a-z, or 0-9.\n";
-			return emailRecognizerErrorMessage;
-
-		case 1:
-			// State 1 is not a final state, so we can return a very specifc error message
-
-			emailRecognizerErrorMessage +=
-				"A Email character must be A-Z, a-z, 0-9, +, _, or -.\n";
-			return emailRecognizerErrorMessage;
-
-			// else {
-			// 		// Email is valid
-			// 		emailRecognizerIndexofError = -1;
-			// 		emailRecognizerErrorMessage = "";
-			// 		return emailRecognizerErrorMessage;
-			// }
-
-		case 2:
-			// State 2 is not a final state, so we can return a very specific error message
-			emailRecognizerErrorMessage +=
-				"A Email character after a period must be A-Z, a-z, 0-9.\n";
-			return emailRecognizerErrorMessage;
-        
-        case 3:
-            // State 3 is not a final state, so we can return a very specific error message
-            emailRecognizerErrorMessage +=
-				"A Email character imediately after the @ symbol must be A-Z, a-z, 0-9.\n";
-			return emailRecognizerErrorMessage;
-        
-        case 4:
-            // State 4 is not a final state, so we can return a very specific error message
-            emailRecognizerErrorMessage +=
-				"A Email character in the domain must be A-Z, a-z, 0-9, -, or a period to start the TLD.\n";
-			return emailRecognizerErrorMessage;
-
-        case 5:
-            // State 5 is not a final state, so we can return a very specific error message
-            if (currentChar == '-'){
-                emailRecognizerErrorMessage +=
-				    "A Email domain cannot end with a - right before the TLD.\n";
-			    return emailRecognizerErrorMessage;
-            } 
-            else if (currentChar == '.'){
-                emailRecognizerErrorMessage +=
-				    "A Email domain must have a valid TLD.\n";
-			    return emailRecognizerErrorMessage;
-            } else {
-                emailRecognizerErrorMessage +=
-				    "A character in the Email domain must be A-Z, a-z, 0-9.\n";
-			    return emailRecognizerErrorMessage;
-            }
-        
-        case 6:
-            if (TLDSize >= 2){
-                emailRecognizerErrorMessage +=
-				    "A Email TLD must have at least two characters.\n";
-			    return emailRecognizerErrorMessage;
-            } else {
-                emailRecognizerErrorMessage +=
-				    "A character in the Email TLD must be A-Z, a-z.\n";
-			    return emailRecognizerErrorMessage;
-            }
-			
+	    case 0:
+	    		// If it fails in state 0 then improper first char
+	        emailRecognizerErrorMessage += "An email must start with A-Z, a-z, or 0-9.\n";
+	        return emailRecognizerErrorMessage;
+	    case 1:
+	    		// Possible improper char, or no @ symbol
+	        if (invalidChar) {
+	        	emailRecognizerErrorMessage +=
+		                "An email character must be A-Z, a-z, 0-9, +, _, or -.\n";
+	        } else {
+	            emailRecognizerErrorMessage += "An email must contain an '@' symbol.\n";
+	        }
+	        return emailRecognizerErrorMessage;
+	    case 2:
+	    		// improper char after a period
+	        emailRecognizerErrorMessage +=
+	            "After a dot in the local part, use A-Z, a-z, or 0-9 (no consecutive dots).\n";
+	        return emailRecognizerErrorMessage;
+	    case 3:
+	    		// improper char after @ symbol
+	        emailRecognizerErrorMessage +=
+	            "Immediately after '@' you must have A-Z, a-z, or 0-9.\n";
+	        return emailRecognizerErrorMessage;
+	    case 4:
+	    		// Can't use a hyphen before the period
+	    	emailRecognizerErrorMessage +=
+            "You may not use a hyphen directly before the period in a TLD.\n";
+        return emailRecognizerErrorMessage;
+	    case 5:
+	    		// Possible too many @ symbols, invalid char, or a improper domain label
+	        if (lastWasHyphen && inTLD) {
+	            emailRecognizerErrorMessage +=
+	                "A domain label cannot end with '-' before the TLD dot.\n";
+	        } else if (atsymbol > 1) {
+	        	emailRecognizerErrorMessage +=
+		                "A valid email can only have one @ symbol.\n";
+	        }else{
+	            emailRecognizerErrorMessage +=
+	                "Domain characters must be A-Z, a-z, 0-9, '-' or '.' (dot starts the TLD).\n";
+	        }
+	        return emailRecognizerErrorMessage;
+	    case 6:
+	    		// Final State, checks for valid TLD length, otherwise invalidChar is true
+	        if (TLDSize < 2) {
+	            emailRecognizerErrorMessage +=
+	                "An email TLD must have at least two letters.\n";
+	            return emailRecognizerErrorMessage;
+	        } else if (invalidChar){
+	        	emailRecognizerErrorMessage +=
+		             "An email TLD must have A-Z, a-z.\n";
+		        return emailRecognizerErrorMessage;
+	        } else {
+	        	return "";
+	        }
 		default:
 			// This is for the case where we have a state that is outside of the valid range.
 			// This should not happen
 			return "";
 		}
+	}
+	
+	// Console Test 
+	public static void emailTest(int number, String email) {
+		String result = checkForValidEmail(email);
+		System.out.println(number + ". " + email);
+		if (!result.isEmpty()) {
+			System.out.println(result + "\n");
+		} else {
+			System.out.println("Valid username\n");
+		}
+	}
+
+	public static void main(String[] args) {
+		// Run test cases
+		emailTest(1, ".exmaplename@where.com"); // Started with a period
+		emailTest(2, "example..name@where.com"); // Consecutive periods
+		emailTest(3, "examplename.@where.com"); // Period before the @
+		emailTest(4, "example+-.name@where.com"); // Valid
+		emailTest(5, "ex@mplen@me@where.com"); // Multiple @ symbols
+		emailTest(6, "examplename@-where.com"); // Hyphen after the @
+		emailTest(7, "examplename@where-.com"); // Hyphen before the TLD
+		emailTest(8, "examplename@wher.e.com"); // Multiple periods in the domain
+		emailTest(9, "examplename@whe-re.com"); // valid
+		emailTest(10, "examplename@where.r6"); // invalid numeric value
+		emailTest(11, "examplename@where.k$"); // invalid special char
+		emailTest(12, "examplenamewhere.com"); // invalid no @ symbol
+		emailTest(13, "exampl/ename@where.com"); // invalid character
+		emailTest(14, "Test@gmail.com"); // valid
 	}
 }

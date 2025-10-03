@@ -68,8 +68,9 @@ public class ControllerUserLogin {
     			theDatabase.getCurrentAdminRole(), 
     			theDatabase.getCurrentNewRole1(), theDatabase.getCurrentNewRole2());
     	
+    	// If user logs in with a OTP, it forces them to change the password on next scene 
     	if(theDatabase.checkIfOneTime(password, username)) {
-    		forcePasswordChange.ViewForcePasswordChange.displayForcePasswordChange(ts, user);
+    		forcePasswordChange.ViewForcePasswordChange.displayForcePasswordChange(theStage, user);
     		return;
     	}
     	

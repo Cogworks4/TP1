@@ -43,7 +43,7 @@ public class ControllerFirstAdmin {
 	protected static void setAdminUsername() {
 		adminUsername = ViewFirstAdmin.text_AdminUsername.getText();
 		usernameValid = ModelFirstAdmin
-				.guiUsernameErrors(usernameRecognizer.usernameRecognizer.usernameValidate(adminUsername));
+				.guiUsernameErrors(inputValidation.usernameRecognizer.usernameValidate(adminUsername));
 	}
 
 	/**********

@@ -13,8 +13,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import nameValidator.userUpdateNameValidator;
 import entityClasses.User;
+import inputValidation.userUpdateNameValidator;
 
 /*******
  * <p>
@@ -302,6 +302,7 @@ public class ViewUserUpdate {
 		setupButtonUI(button_UpdatePassword, "Dialog", 18, 275, Pos.CENTER, 500, 143);
 		button_UpdatePassword.setOnAction((event) -> { 
 			result = dialogUpdatePassword.showAndWait();
+			// Calls passwordValidator and checks if password has the necessary requirements 
 			result.ifPresent(name -> {
 				inputValidation.PasswordValidation.adminPassword1 = name;
 				inputValidation.PasswordValidation.adminPassword2 = name;
@@ -309,6 +310,7 @@ public class ViewUserUpdate {
 					theDatabase.updatePassword(theUser.getUserName(), name);
 					label_CurrentPassword.setText(name);
 				} else {
+					// Tells console that validation failed
 					System.out.println("Validation failed:");
 					return; // skip update
 				}
@@ -437,7 +439,7 @@ public class ViewUserUpdate {
 		button_UpdateEmailAddress.setOnAction((event) -> {
 			result = dialogUpdateEmailAddresss.showAndWait();
 			if (!result.isEmpty()) {
-				error = emailRecognizer.emailRecognizer.checkForValidEmail(result.get());
+				error = inputValidation.emailRecognizer.checkForValidEmail(result.get());
 				if (Model.showErrorMessage(error)) {
 					result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
 					theDatabase.getUserAccountDetails(theUser.getUserName());
