@@ -462,6 +462,7 @@ public class ViewUserUpdate {
 		// Set up the button to proceed to this user's home page
 		setupButtonUI(button_ProceedToUserHomePage, "Dialog", 18, 300, Pos.CENTER, width / 2 - 150, 450);
 		button_ProceedToUserHomePage.setOnAction((event) -> {
+			Model.showErrorMessage("");
 			ControllerUserUpdate.goToUserHomePage(theStage, theUser);
 		});
 
