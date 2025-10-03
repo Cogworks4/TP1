@@ -145,20 +145,28 @@ public class usernameRecognizer {
 					return errorMsg + "Username can't start with the '" + c0 + "' character.";
 
 				case 1:
-					if (usernameSize < MIN_LEN)
-						return errorMsg + "Username is too short (minimum " + MIN_LEN + " characters).";
-					if (usernameSize > MAX_LEN)
-						return errorMsg + "Username is too long (maximum " + MAX_LEN + " characters).";
-					if (currentCharIndx < input.length()) {
-						char invalidChar = input.charAt(currentCharIndx);
-						if (Character.isWhitespace(invalidChar)) return errorMsg + "Username can't have a space.";
-						if (isSpecialChar(invalidChar)) return errorMsg + "Username cannot have consecutive special characters.";
-						return errorMsg + "Username can't have the '" + invalidChar + "' character.";
-					}
-					// valid
-					indexOfError = -1;
-					errorMsg = "";
-					return "";
+					
+					
+				    if (usernameSize > MAX_LEN) {
+				        return errorMsg + "Username is too long (maximum " + MAX_LEN + " characters).";
+				    }
+
+				    
+				    if (currentCharIndx < input.length()) {
+				        char invalidChar = input.charAt(currentCharIndx);
+				        if (Character.isWhitespace(invalidChar)) return errorMsg + "Username can't have a space.";
+				        if (isSpecialChar(invalidChar)) return errorMsg + "Username cannot have consecutive special characters.";
+				        return errorMsg + "Username can't have the '" + invalidChar + "' character.";
+				    }
+
+				    
+				    if (usernameSize < MIN_LEN)
+				        return errorMsg + "Username is too short (minimum " + MIN_LEN + " characters).";
+
+				    
+				    indexOfError = -1;
+				    errorMsg = "";
+				    return "";
 
 				case 2:
 					if (currentCharIndx >= input.length())
