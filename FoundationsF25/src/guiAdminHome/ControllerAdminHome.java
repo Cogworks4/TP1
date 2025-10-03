@@ -114,8 +114,8 @@ public class ControllerAdminHome {
 	 * 
 	 * Title: setOnetimePassword () Method. </p>
 	 * 
-	 * <p> Description: Protected method that is currently a stub informing the user that
-	 * this function has not yet been implemented. </p>
+	 * <p> Description: Protected method that calls the OneTimePassword scene allowing user
+	 * to create a OTP and change a certain users password. </p>
 	 */
 	protected static void setOnetimePassword () {
 		oneTimePassword.ViewOneTimePassword.displayOneTimePassword(ViewAdminHome.theStage,
