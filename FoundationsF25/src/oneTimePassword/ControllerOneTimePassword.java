@@ -96,7 +96,8 @@ public class ControllerOneTimePassword {
 					ViewOneTimePassword.button_checkPass, ViewOneTimePassword.passReqs,
 					ViewOneTimePassword.textField_createPass, ViewOneTimePassword.line_Separator4,
 					ViewOneTimePassword.button_return, ViewOneTimePassword.button_logout, 
-					ViewOneTimePassword.button_quit, ViewOneTimePassword.button_sendOneTime);
+					ViewOneTimePassword.button_quit, ViewOneTimePassword.button_sendOneTime,
+					ViewOneTimePassword.label_confirmation);
 			ViewOneTimePassword.button_sendOneTime.setDisable(true);
 			ViewOneTimePassword.Password = "";
 			
@@ -116,7 +117,7 @@ public class ControllerOneTimePassword {
 					ViewOneTimePassword.button_randomizePass, ViewOneTimePassword.displayRandomPassword,
 					ViewOneTimePassword.line_Separator4, ViewOneTimePassword.button_return,
 					ViewOneTimePassword.button_logout, ViewOneTimePassword.button_quit, 
-					ViewOneTimePassword.button_sendOneTime);
+					ViewOneTimePassword.button_sendOneTime, ViewOneTimePassword.label_confirmation);
 			ViewOneTimePassword.button_sendOneTime.setDisable(true);
 			ViewOneTimePassword.Password = "";
 		}
