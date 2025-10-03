@@ -23,7 +23,7 @@ public class Model {
 				if (c == '\n') {
 					tot++;
 				}
-				ViewUserUpdate.button_ProceedToUserHomePage.setLayoutY(500 + ((tot - 1) * 25));
+				ViewUserUpdate.button_ProceedToUserHomePage.setLayoutY(505 + ((tot - 1) * 18));
 			}
 		}
 		return false;
