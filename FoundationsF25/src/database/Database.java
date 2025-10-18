@@ -551,6 +551,9 @@ public class Database {
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
+	    for (int i = 0; i < 40; i++) {
+	    	users.add("example user: " + i);
+	    }
 	    return users;
 	}
 
