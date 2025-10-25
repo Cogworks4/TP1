@@ -1,4 +1,4 @@
-package guiRole1;
+package guiStudent;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
