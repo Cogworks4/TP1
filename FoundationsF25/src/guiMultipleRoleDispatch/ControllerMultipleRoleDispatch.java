@@ -37,7 +37,7 @@ public class ControllerMultipleRoleDispatch {
 		} else if (role.compareTo("Role1") == 0) {
 
 			// It is Role1 Role
-			guiRole1.ViewRole1Home.displayRole1Home(
+			guiStudent.ViewRole1Home.displayRole1Home(
 					guiMultipleRoleDispatch.ViewMultipleRoleDispatch.theStage, 
 					guiMultipleRoleDispatch.ViewMultipleRoleDispatch.theUser);
 			
@@ -45,7 +45,7 @@ public class ControllerMultipleRoleDispatch {
 		} else if (role.compareTo("Role2") == 0) {
 			
 			// It is Role 2 Role
-			guiRole2.ViewRole2Home.displayRole2Home(
+			guiStaff.ViewRole2Home.displayRole2Home(
 					guiMultipleRoleDispatch.ViewMultipleRoleDispatch.theStage, 
 					guiMultipleRoleDispatch.ViewMultipleRoleDispatch.theUser);
 			

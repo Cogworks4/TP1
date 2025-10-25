@@ -1,4 +1,4 @@
-package guiRole1;
+package guiStudent;
 
 public class ControllerRole1Home {
 

@@ -1,4 +1,4 @@
-package guiRole2;
+package guiStaff;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
