@@ -102,7 +102,7 @@ public class PostStore {
 	// --- Validation helpers ---
 	/**
 	 * validateForCreateOrUpdate — See implementation notes. Follows validation
-	 * rules: title 1–120, non-empty body, default 'General', ownership checks.
+	 * rules:non-empty body, default 'General', ownership checks.
 	 * 
 	 * @return As declared
 	 */
@@ -315,7 +315,7 @@ public class PostStore {
 	// --- Search with user flag & optional thread filter ---
 	/**
 	 * Searches posts with optional thread filtering and a case-insensitive keyword
-	 * match, then projects each result into a {@link PostListItem} enriched with
+	 * match, then projects each result into a {@link PostListItem} with
 	 * read state and reply counts for the given user.
 	 *
 	 * <p>
