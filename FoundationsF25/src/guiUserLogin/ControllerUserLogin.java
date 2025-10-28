@@ -66,7 +66,7 @@ public class ControllerUserLogin {
     			theDatabase.getCurrentMiddleName(), theDatabase.getCurrentLastName(), 
     			theDatabase.getCurrentPreferredFirstName(), theDatabase.getCurrentEmailAddress(), 
     			theDatabase.getCurrentAdminRole(), 
-    			theDatabase.getCurrentNewRole1(), theDatabase.getCurrentNewRole2());
+    			theDatabase.getCurrentNewStudent(), theDatabase.getCurrentNewStaff());
     	
     	// If user logs in with a OTP, it forces them to change the password on next scene 
     	if(theDatabase.checkIfOneTime(password, username)) {
@@ -86,15 +86,15 @@ public class ControllerUserLogin {
 				if (loginResult) {
 					guiAdminHome.ViewAdminHome.displayAdminHome(theStage, user);
 				}
-			} else if (user.getNewRole1()) {
-				loginResult = theDatabase.loginRole1(user);
+			} else if (user.getNewStudent()) {
+				loginResult = theDatabase.loginStudent(user);
 				if (loginResult) {
-					guiStudent.ViewRole1Home.displayRole1Home(theStage, user);
+					guiStudent.ViewStudentHome.displayStudentHome(theStage, user);
 				}
-			} else if (user.getNewRole2()) {
-				loginResult = theDatabase.loginRole2(user);
+			} else if (user.getNewStaff()) {
+				loginResult = theDatabase.loginStaff(user);
 				if (loginResult) {
-					guiStaff.ViewRole2Home.displayRole2Home(theStage, user);
+					guiStaff.ViewStaffHome.displayStaffHome(theStage, user);
 				}
 				// Other roles
 			} else {
