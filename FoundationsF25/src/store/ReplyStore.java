@@ -253,6 +253,12 @@ public class ReplyStore {
 
 	    Predicate<Reply> pred = r -> !r.isDeleted();
 
+	    // Optional post filter
+	    if (postFilterOpt.isPresent()) {
+	        final UUID pid = postFilterOpt.get();
+	        pred = pred.and(r -> pid.equals(r.getPostId()));
+	    }
+
 	    // Keyword filter (case-insensitive, null-safe on body)
 	    if (!kw.isEmpty()) {
 	        pred = pred.and(r -> {
