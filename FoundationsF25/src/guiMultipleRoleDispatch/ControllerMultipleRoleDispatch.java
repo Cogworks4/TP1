@@ -37,7 +37,7 @@ public class ControllerMultipleRoleDispatch {
 		} else if (role.compareTo("Role1") == 0) {
 
 			// It is Role1 Role
-			guiStudent.ViewRole1Home.displayRole1Home(
+			guiStudent.ViewStudentHome.displayRole1Home(
 					guiMultipleRoleDispatch.ViewMultipleRoleDispatch.theStage, 
 					guiMultipleRoleDispatch.ViewMultipleRoleDispatch.theUser);
 			

@@ -3,6 +3,7 @@ package guiAdminHome;
 import java.util.ArrayList;
 import java.util.List;
 
+import database.Database;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,7 +17,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import database.Database;
 import entityClasses.User;
 import guiUserUpdate.ViewUserUpdate;
 import guiListUsers.ViewListUsers;

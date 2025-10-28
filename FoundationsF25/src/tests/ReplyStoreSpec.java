@@ -2,9 +2,11 @@ package tests;
 
 import store.PostStore;
 import store.ReplyStore;
+
+import java.util.*;
+
 import database.Post;
 import database.Reply;
-import java.util.*;
 
 public class ReplyStoreSpec {
 
@@ -20,6 +22,7 @@ public class ReplyStoreSpec {
         Reply r1 = replies.create(parentPost1.getId(), USER_A, "Thanks!");
         boolean r1ok = r1.getId() != null && parentPost1.getId().equals(r1.getPostId());
         TestHelper.assertTrue(r1ok, "TC-R1: Reply created and linked");
+        replies.delete(r1.getId(), USER_A, true);
 
         // TC-R2: Reject empty reply
         TestHelper.expectException(ReplyStore.ValidationException.class,
@@ -64,6 +67,7 @@ public class ReplyStoreSpec {
         TestHelper.assertTrue(replies.read(e.getId()).get().isDeleted(), "TC-R7: Soft delete reply");
 
         // TC-S2: Keyword search (replies) + subset
+        
         replies.create(parentPost2.getId(), USER_A, "Thanks this helps");
         replies.create(parentPost2.getId(), USER_A, "Great explanation");
         List<Reply> sr = replies.search("thanks", Optional.empty());
@@ -75,7 +79,7 @@ public class ReplyStoreSpec {
         TestHelper.assertTrue(zr.isEmpty(), "TC-S3 (replies): Zero-result search");
 
         // TC-S4: Clear subset
-        replies.search("hello", Optional.empty());
+        List<Reply> gr = replies.search("Thanks", Optional.empty());
         TestHelper.assertTrue(!replies.getSubset().isEmpty(), "TC-S4: Subset non-empty before clear");
         replies.clearSubset();
         TestHelper.assertTrue(replies.getSubset().isEmpty(), "TC-S4: Subset cleared");

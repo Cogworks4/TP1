@@ -89,7 +89,7 @@ public class ControllerUserLogin {
 			} else if (user.getNewRole1()) {
 				loginResult = theDatabase.loginRole1(user);
 				if (loginResult) {
-					guiStudent.ViewRole1Home.displayRole1Home(theStage, user);
+					guiStudent.ViewStudentHome.displayRole1Home(theStage, user);
 				}
 			} else if (user.getNewRole2()) {
 				loginResult = theDatabase.loginRole2(user);
