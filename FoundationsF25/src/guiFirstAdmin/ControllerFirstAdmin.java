@@ -1,6 +1,7 @@
 package guiFirstAdmin;
 
 import java.sql.SQLException;
+
 import database.Database;
 import entityClasses.User;
 import javafx.stage.Stage;

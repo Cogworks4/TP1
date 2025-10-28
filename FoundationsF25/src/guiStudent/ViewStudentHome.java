@@ -28,7 +28,7 @@ import guiUserUpdate.ViewUserUpdate;
  *  
  */
 
-public class ViewRole1Home {
+public class ViewStudentHome {
 	
 	/*-*******************************************************************************************
 
@@ -69,7 +69,7 @@ public class ViewRole1Home {
 	// This is the end of the GUI objects for the page.
 	
 	// These attributes are used to configure the page and populate it with this user's information
-	private static ViewRole1Home theView;		// Used to determine if instantiation of the class
+	private static ViewStudentHome theView;		// Used to determine if instantiation of the class
 												// is needed
 
 	// Reference for the in-memory database so this package has access
@@ -118,7 +118,7 @@ public class ViewRole1Home {
 		theUser = user;
 		
 		// If not yet established, populate the static aspects of the GUI
-		if (theView == null) theView = new ViewRole1Home();		// Instantiate singleton if needed
+		if (theView == null) theView = new ViewStudentHome();		// Instantiate singleton if needed
 		
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.
@@ -144,7 +144,7 @@ public class ViewRole1Home {
 	 * fields using the displayRole2Home method.</p>
 	 * 
 	 */
-	private ViewRole1Home() {
+	private ViewStudentHome() {
 
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
