@@ -56,7 +56,8 @@ public class ViewRole1Home {
 	// GUI ARea 2: This is a stub, so there are no widgets here.  For an actual role page, this are
 	// would contain the widgets needed for the user to play the assigned role.
 	
-	
+	protected static Button button_Thread1 = new Button("General");
+	protected static Button button_Thread2 = new Button("Homework");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -78,6 +79,7 @@ public class ViewRole1Home {
 	protected static Stage theStage;			// The Stage that JavaFX has established for us	
 	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets
 	protected static User theUser;				// The current logged in User
+	protected static int ThreadID;				// The ID of the current thread
 	
 
 	private static Scene theViewRole1HomeScene;	// The shared Scene each invocation populates
@@ -167,7 +169,11 @@ public class ViewRole1Home {
 		
 		// GUI Area 2
 		
-			// This is a stub, so this area is empty
+		setupButtonUI(button_Thread1, "Dialog", 18, 250, Pos.CENTER, 20, 115);
+		button_Thread1.setOnAction((event) -> {ControllerRole1Home.StudentPost("General");});
+		
+		setupButtonUI(button_Thread2, "Dialog", 18, 250, Pos.CENTER, 20, 165);
+		button_Thread2.setOnAction((event) -> {ControllerRole1Home.StudentPost("Homework");});
 		
 		
 		// GUI Area 3
@@ -182,7 +188,7 @@ public class ViewRole1Home {
 		// Place all of the widget items into the Root Pane's list of children
          theRootPane.getChildren().addAll(
 			label_PageTitle, label_UserDetails, button_UpdateThisUser, line_Separator1,
-	        line_Separator4, button_Logout, button_Quit);
+	        line_Separator4, button_Thread1, button_Thread2, button_Logout, button_Quit);
 }
 	
 	

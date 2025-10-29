@@ -1,1 +1,22 @@
+<<<<<<< Updated upstream
 /.DS_Store
+=======
+/oneTimePassword/
+/store/
+/tests/
+/guiStudentPost/
+/guiStudent/
+/applicationMain/
+/database/
+/forcePasswordChange/
+/guiAddRemoveRoles/
+/guiAdminHome/
+/guiFirstAdmin/
+/guiMultipleRoleDispatch/
+/guiNewAccount/
+/guiStaff/
+/guiTools/
+/guiUserLogin/
+/guiUserUpdate/
+/inputValidation/
+>>>>>>> Stashed changes

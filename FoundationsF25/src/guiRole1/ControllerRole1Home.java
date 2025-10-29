@@ -1,5 +1,7 @@
 package guiRole1;
 
+import guiStudent.ViewStudentHome;
+
 public class ControllerRole1Home {
 
 	/*-*******************************************************************************************
@@ -11,6 +13,11 @@ public class ControllerRole1Home {
 	the Model is often just a stub, or will be a singleton instantiated object.
 	
 	 */
+	
+	protected static void StudentPost(String Thread) {
+		guiStudentPost.ViewStudentPost.displayStudentPost(ViewStudentHome.theStage, 
+				ViewStudentHome.theUser, Thread);
+	}
 
 	
  	/**********
