@@ -1,9 +1,10 @@
 package tests;
 
 import store.PostStore;
-import database.Post;
 
 import java.util.*;
+
+import database.Post;
 
 public class PostStoreSpec { 
 

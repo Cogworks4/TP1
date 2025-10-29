@@ -2,6 +2,8 @@ package database;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Post entity. Soft-deleted via isDeleted flag. 
@@ -27,6 +29,7 @@ public class Post {
 
 	private final UUID id;
 	private final String authorId;
+	private final Set<UUID> readByUserIds = new HashSet<>();
 	private String title;
 	private String body;
 	private String thread;
@@ -51,6 +54,53 @@ public class Post {
 	/** Convenience factory */
 	public static Post create(String authorId, String title, String body, String thread, List<String> tags) {
 		return new Post(null, authorId, title, body, thread, tags, null, null, false);
+	}
+	
+	// --- Public Helpers --
+	/**
+	 * Checks whether the specified user has marked this post as read.
+	 *
+	 * <p>This method determines if the given {@code userID} exists
+	 * in the collection tracking which users have read the post.</p>
+	 *
+	 * @param userID the unique identifier of the user to check; may be {@code null}
+	 * @return {@code true} if the user has read the post; {@code false} if the user has not
+	 *         read it or if {@code userID} is {@code null}
+	 */
+	public boolean isReadBy(UUID userID) {
+		return userID != null && readByUserIds.contains(userID);
+	}
+	
+	/**
+	 * Marks this post as read for the specified user.
+	 *
+	 * <p>If the provided {@code userID} is valid, the user is added to the set of
+	 * readers who have seen this post. If {@code userID} is {@code null}, this method
+	 * will perform no action.</p>
+	 *
+	 * @param userID the unique identifier of the user marking the post as read;
+	 *               ignored if {@code null}
+	 */
+	public void markRead(UUID userID) {
+		if (userID != null) {
+			readByUserIds.add(userID);
+		}
+	}
+	
+	/**
+	 * Marks this post as unread for the specified user.
+	 *
+	 * <p>If the provided {@code userID} is valid, the user is removed from the set of
+	 * readers who have seen this post. If {@code userID} is {@code null}, this method
+	 * will perform no action.</p>
+	 *
+	 * @param userID the unique identifier of the user marking the post as unread;
+	 *               ignored if {@code null}
+	 */
+	public void markUnread(UUID userID) {
+		if (userID != null) {
+			readByUserIds.remove(userID);
+		}
 	}
 
 	// --- Getters/Setters ---
@@ -113,6 +163,11 @@ public class Post {
 	public void setDeleted(boolean deleted) {
 		isDeleted = deleted;
 	}
+	
+	// use this if needed for view Posts
+	public Set<UUID> getReadByUserIds() {
+		return new HashSet<>(readByUserIds);
+	}
 
 	@Override
 	/**
@@ -126,4 +181,6 @@ public class Post {
 				+ thread + '\'' + ", createdAt=" + createdAt + ", updatedAt=" + updatedAt + ", isDeleted=" + isDeleted
 				+ '}';
 	}
+	
+	
 }
