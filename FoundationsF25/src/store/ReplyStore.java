@@ -5,8 +5,8 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import database.Post;
-import database.Reply;
+import entityClasses.Post;
+import entityClasses.Reply;
 
 import java.util.ArrayList;
 import java.util.List;

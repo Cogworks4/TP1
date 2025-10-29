@@ -4,7 +4,7 @@ import store.PostStore;
 
 import java.util.*;
 
-import database.Post;
+import entityClasses.Post;
 
 public class PostStoreSpec { 
 
