@@ -5,8 +5,8 @@ import store.ReplyStore;
 
 import java.util.*;
 
-import database.Post;
-import database.Reply;
+import entityClasses.Post;
+import entityClasses.Reply;
 
 public class ReplyStoreSpec {
 

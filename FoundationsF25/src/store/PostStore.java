@@ -5,7 +5,7 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import database.Post;
+import entityClasses.Post;
 
 import java.util.ArrayList;
 import java.util.Comparator;
