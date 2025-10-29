@@ -16,7 +16,7 @@ import guiUserUpdate.ViewUserUpdate;
 /*******
  * <p> Title: GUIReviewerHomePage Class. </p>
  * 
- * <p> Description: The Java/FX-based Role1 Home Page.  The page is a stub for some role needed for
+ * <p> Description: The Java/FX-based Student Home Page.  The page is a stub for some role needed for
  * the application.  The widgets on this page are likely the minimum number and kind for other role
  * pages that may be needed.</p>
  * 
@@ -80,8 +80,8 @@ public class ViewStudentHome {
 	protected static User theUser;				// The current logged in User
 	
 
-	private static Scene theViewRole1HomeScene;	// The shared Scene each invocation populates
-	protected static final int theRole = 2;		// Admin: 1; Role1: 2; Role2: 3
+	private static Scene theViewStudentHomeScene;	// The shared Scene each invocation populates
+	protected static final int theRole = 2;		// Admin: 1; Student: 2; Staff: 3
 
 	/*-*******************************************************************************************
 
@@ -91,10 +91,10 @@ public class ViewStudentHome {
 
 
 	/**********
-	 * <p> Method: displayRole1Home(Stage ps, User user) </p>
+	 * <p> Method: displayStudentHome(Stage ps, User user) </p>
 	 * 
 	 * <p> Description: This method is the single entry point from outside this package to cause
-	 * the Role1 Home page to be displayed.
+	 * the Student Home page to be displayed.
 	 * 
 	 * It first sets up every shared attributes so we don't have to pass parameters.
 	 * 
@@ -111,7 +111,7 @@ public class ViewStudentHome {
 	 * @param user specifies the User for this GUI and it's methods
 	 * 
 	 */
-	public static void displayRole1Home(Stage ps, User user) {
+	public static void displayStudentHome(Stage ps, User user) {
 		
 		// Establish the references to the GUI and the current user
 		theStage = ps;
@@ -128,34 +128,34 @@ public class ViewStudentHome {
 		label_UserDetails.setText("User: " + theUser.getUserName());
 				
 		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundations: Role1 Home Page");
-		theStage.setScene(theViewRole1HomeScene);
+		theStage.setTitle("CSE 360 Foundations: Student Home Page");
+		theStage.setScene(theViewStudentHomeScene);
 		theStage.show();
 	}
 	
 	/**********
-	 * <p> Method: ViewRole1Home() </p>
+	 * <p> Method: ViewStudentHome() </p>
 	 * 
 	 * <p> Description: This method initializes all the elements of the graphical user interface.
 	 * This method determines the location, size, font, color, and change and event handlers for
 	 * each GUI object.</p>
 	 * 
 	 * This is a singleton and is only performed once.  Subsequent uses fill in the changeable
-	 * fields using the displayRole2Home method.</p>
+	 * fields using the displayStaffHome method.</p>
 	 * 
 	 */
 	private ViewStudentHome() {
 
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
-		theViewRole1HomeScene = new Scene(theRootPane, width, height);	// Create the scene
+		theViewStudentHomeScene = new Scene(theRootPane, width, height);	// Create the scene
 		
 		// Set the title for the window
 		
 		// Populate the window with the title and other common widgets and set their static state
 		
 		// GUI Area 1
-		label_PageTitle.setText("Role1 Home Page");
+		label_PageTitle.setText("Student Home Page");
 		setupLabelUI(label_PageTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
 
 		label_UserDetails.setText("User: " + theUser.getUserName());
@@ -172,10 +172,10 @@ public class ViewStudentHome {
 		
 		// GUI Area 3
         setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
-        button_Logout.setOnAction((event) -> {ControllerRole1Home.performLogout(); });
+        button_Logout.setOnAction((event) -> {ControllerStudentHome.performLogout(); });
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
-        button_Quit.setOnAction((event) -> {ControllerRole1Home.performQuit(); });
+        button_Quit.setOnAction((event) -> {ControllerStudentHome.performQuit(); });
 
 		// This is the end of the GUI initialization code
 		

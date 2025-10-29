@@ -1,6 +1,6 @@
 package guiStudent;
 
-public class ControllerRole1Home {
+public class ControllerStudentHome {
 
 	/*-*******************************************************************************************
 
