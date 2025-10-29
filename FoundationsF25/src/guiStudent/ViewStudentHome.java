@@ -1,4 +1,4 @@
-package guiRole1;
+package guiStudent;
 
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -28,7 +28,7 @@ import guiUserUpdate.ViewUserUpdate;
  *  
  */
 
-public class ViewRole1Home {
+public class ViewStudentHome {
 	
 	/*-*******************************************************************************************
 
@@ -70,7 +70,7 @@ public class ViewRole1Home {
 	// This is the end of the GUI objects for the page.
 	
 	// These attributes are used to configure the page and populate it with this user's information
-	private static ViewRole1Home theView;		// Used to determine if instantiation of the class
+	private static ViewStudentHome theView;		// Used to determine if instantiation of the class
 												// is needed
 
 	// Reference for the in-memory database so this package has access
@@ -120,7 +120,7 @@ public class ViewRole1Home {
 		theUser = user;
 		
 		// If not yet established, populate the static aspects of the GUI
-		if (theView == null) theView = new ViewRole1Home();		// Instantiate singleton if needed
+		if (theView == null) theView = new ViewStudentHome();		// Instantiate singleton if needed
 		
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.
@@ -146,7 +146,7 @@ public class ViewRole1Home {
 	 * fields using the displayRole2Home method.</p>
 	 * 
 	 */
-	private ViewRole1Home() {
+	private ViewStudentHome() {
 
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
@@ -170,18 +170,18 @@ public class ViewRole1Home {
 		// GUI Area 2
 		
 		setupButtonUI(button_Thread1, "Dialog", 18, 250, Pos.CENTER, 20, 115);
-		button_Thread1.setOnAction((event) -> {ControllerRole1Home.StudentPost("General");});
+		button_Thread1.setOnAction((event) -> {ControllerStudentHome.StudentPost("General");});
 		
 		setupButtonUI(button_Thread2, "Dialog", 18, 250, Pos.CENTER, 20, 165);
-		button_Thread2.setOnAction((event) -> {ControllerRole1Home.StudentPost("Homework");});
+		button_Thread2.setOnAction((event) -> {ControllerStudentHome.StudentPost("Homework");});
 		
 		
 		// GUI Area 3
         setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
-        button_Logout.setOnAction((event) -> {ControllerRole1Home.performLogout(); });
+        button_Logout.setOnAction((event) -> {ControllerStudentHome.performLogout(); });
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
-        button_Quit.setOnAction((event) -> {ControllerRole1Home.performQuit(); });
+        button_Quit.setOnAction((event) -> {ControllerStudentHome.performQuit(); });
 
 		// This is the end of the GUI initialization code
 		
