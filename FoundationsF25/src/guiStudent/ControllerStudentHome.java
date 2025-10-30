@@ -2,8 +2,6 @@ package guiStudent;
 
 import guiStudent.ViewStudentHome;
 
-import guiStudent.ViewStudentHome;
-
 public class ControllerStudentHome {
 
 	/*-*******************************************************************************************
@@ -16,8 +14,8 @@ public class ControllerStudentHome {
 	
 	 */
 	
-	protected static void StudentPost(String Thread) {
-		guiStudentPost.ViewStudentPost.displayStudentPost(ViewStudentHome.theStage, 
+	protected static void StudentPosts(String Thread) {
+		guiStudentPosts.ViewStudentPosts.displayStudentPosts(ViewStudentHome.theStage, 
 				ViewStudentHome.theUser, Thread);
 	}
 

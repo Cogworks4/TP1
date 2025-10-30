@@ -1,4 +1,4 @@
-package guiStudentPost;
+package guiStudentReplies;
 
 /*******
  * <p> Title: ModelStudentPost Class. </p>
@@ -12,5 +12,5 @@ package guiStudentPost;
  *  
  */
 
-public class ModelStudentPost {
+public class ModelStudentReplies {
 }

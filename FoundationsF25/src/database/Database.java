@@ -63,10 +63,16 @@ public class Database {
 	private boolean currentNewStudent;
 	private boolean currentNewStaff;
 	
-	private String title;
-	private String body;
-	private String author;
-	private String thread;
+	private String postTitle;
+	private String postBody;
+	private String postAuthor;
+	private String postThread;
+	private UUID postId;
+	
+	private String replyBody;
+	private String replyAuthor;
+	private UUID replyPostId;
+	private UUID replyId;
 
 	/*******
 	 * <p> Method: Database </p>
@@ -145,15 +151,16 @@ public class Database {
 	            + "title VARCHAR(255), "
 	            + "body VARCHAR(255), "
 	            + "author VARCHAR(255), "
-	            + "thread VARCHAR(255))";
+	            + "thread VARCHAR(255), "
+	            + "id UUID NOT NULL)";
 	    statement.execute(postsTable);
 	    
 	    // Create table for replies
 	    String replyTable = "CREATE TABLE IF NOT EXISTS ReplyDB ("
-	            + "title VARCHAR(255), "
 	            + "body VARCHAR(255), "
 	            + "author VARCHAR(255), "
-	            + "post VARCHAR(255))";
+	            + "postid UUID NOT NULL, "
+	            + "id UUID NOT NULL)";
 	    statement.execute(replyTable);
 	    
 	}
@@ -188,20 +195,45 @@ public class Database {
 	}
 
 	public void writePost(Post post) throws SQLException {
-		String insertPost = "INSERT INTO PostDB (title, body, author, thread) "
-				+ "VALUES (?, ?, ?, ?)";
+		String insertPost = "INSERT INTO PostDB (title, body, author, thread, id) "
+				+ "VALUES (?, ?, ?, ?, ?)";
 		try(PreparedStatement pstmt = connection.prepareStatement(insertPost)) {
-			title = post.getTitle();
-			pstmt.setString(1, title);
-			body = post.getBody();
-			pstmt.setString(2, body);
-			author = post.getAuthorId();
-			pstmt.setString(3, author);
-			thread = post.getThread();
-			pstmt.setString(4, thread);
+			postTitle = post.getTitle();
+			pstmt.setString(1, postTitle);
+			postBody = post.getBody();
+			pstmt.setString(2, postBody);
+			postAuthor = post.getAuthorId();
+			pstmt.setString(3, postAuthor);
+			postThread = post.getThread();
+			pstmt.setString(4, postThread);
+			postId = post.getId();
+			pstmt.setObject(5, postId);
 		
 			pstmt.executeUpdate();
 		}
+	}
+	
+	public UUID grabPostId(String title){
+//		String query = "SELECT title, id FROM PostDB";
+//
+//	    try (PreparedStatement pstmt = connection.prepareStatement(query);
+//	         ResultSet rs = pstmt.executeQuery()) {
+//
+//	        while (rs.next()) {
+//	        	String Title = rs.getString("title");
+//	        	if (Title.equals(title)) {
+//		            UUID id = rs.getObject("id", UUID.class);
+//		            return id;
+//	        	}
+//	        }
+//
+//	    } catch (SQLException e) {
+//	        e.printStackTrace();
+//	    }
+//	    
+//	    return null;
+		
+		return null;
 	}
 	
 	public List<String> listPosts(String currentThread) {
@@ -226,6 +258,73 @@ public class Database {
 	    }
 
 	    return posts;
+	}
+	
+	public List<String> postContent(String post, String user, String thread){
+		List<String> content = new ArrayList<>();
+		
+		UUID postid = null;
+	    String query = "SELECT title, body, id FROM PostDB";
+	    
+	    try (PreparedStatement pstmt = connection.prepareStatement(query);
+	    		ResultSet rs = pstmt.executeQuery()){
+	    	
+	    	while (rs.next()) {
+	    		String Post = rs.getString("title");
+	    		if (Post.equals(post)) {
+	    			String body = rs.getString("body");
+	    			postid = rs.getObject("id", UUID.class);
+	    			content.add("Post Body:\n");
+	    			content.add("\t" + body);
+	    		}
+	    	}
+	    	
+	    	content.add("--------------------------------------------------------------------------------------------");
+	    	content.add("Post Replies:\n");
+	    	
+	    	
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        content.add("** ERROR ** issue grabbing body of post");
+	        return content;
+	    }
+	    
+	    query = "SELECT author, body, postid FROM ReplyDB";
+	    
+	    try (PreparedStatement pstmt = connection.prepareStatement(query);
+	    		ResultSet rs = pstmt.executeQuery()){
+	    	
+	    	while (rs.next()) {
+	    		UUID Postid = rs.getObject("post", UUID.class);
+	    		if (Postid.equals(postid)) {
+		    		String author = rs.getString("author");
+		    		String body = rs.getString("body");
+		    		content.add(author + " - " + body);
+	    		}
+	    	}
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        content.add("** ERROR ** issue grabbing replies of post");
+	    }
+
+	    return content;
+	}
+	
+	public void writeReply(Reply reply) throws SQLException {
+		String insertPost = "INSERT INTO ReplyDB (body, author, postid, id) "
+				+ "VALUES (?, ?, ?, ?)";
+		try(PreparedStatement pstmt = connection.prepareStatement(insertPost)) {
+			replyBody = reply.getBody();
+			pstmt.setString(1, replyBody);
+			replyAuthor = reply.getAuthorId();
+			pstmt.setString(2, replyAuthor);
+			replyPostId = reply.getPostId();
+			pstmt.setObject(3, replyPostId);
+			replyId = reply.getId();
+			pstmt.setObject(4, replyId);
+		
+			pstmt.executeUpdate();
+		}
 	}
 
 /*******

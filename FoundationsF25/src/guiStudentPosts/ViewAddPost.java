@@ -1,4 +1,4 @@
-package guiStudentPost;
+package guiStudentPosts;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;

@@ -1,4 +1,4 @@
-package guiStudentPost;
+package guiStudentPosts;
 
 /*******
  * <p> Title: ViewStudentPost Class. </p>
@@ -24,13 +24,13 @@ import database.Database;
 import entityClasses.Post;
 import entityClasses.Reply;
 import entityClasses.User;
-import guiStudentPost.ViewStudentPost;
+import guiStudentPosts.ViewStudentPosts;
 import javafx.scene.control.ListView;
 import store.PostStore;
 import store.ReplyStore;
 import java.util.*;
 
-public class ViewStudentPost {
+public class ViewStudentPosts {
 	
 	/*-*******************************************************************************************
 
@@ -68,7 +68,7 @@ public class ViewStudentPost {
 	protected static Button button_AddPost = new Button("Add Post");
 	
 	// These attributes are used to configure the page and populate it with this user's information
-	private static ViewStudentPost theView;	// Used to determine if instantiation of the class
+	private static ViewStudentPosts theView;	// Used to determine if instantiation of the class
 	protected static String CurrentThread;
 												// is needed
 	// Reference for the in-memory database so this package has access
@@ -80,7 +80,7 @@ public class ViewStudentPost {
 	
 	public static Scene theStudentPostScene = null;	// The Scene each invocation populates
 	
-	public static void displayStudentPost(Stage ps, User user, String thread) {
+	public static void displayStudentPosts(Stage ps, User user, String thread) {
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
@@ -93,25 +93,19 @@ public class ViewStudentPost {
 		
 		// If not yet established, populate the static aspects of the GUI by creating the 
 		// singleton instance of this class
-		if (theView == null) theView = new ViewStudentPost();
+		if (theView == null) theView = new ViewStudentPosts();
 		
-		guiStudentPost.ViewStudentPost.PopulateStudentPostList();
-		
-		list_Posts.setLayoutX(20);
-		list_Posts.setLayoutY(line_Separator1.getStartY() + 8);
-		list_Posts.setPrefWidth(width - 40);
-		list_Posts.setPrefHeight(line_Separator2.getStartY() - line_Separator1.getStartY() - 16);
-		list_Posts.setStyle("-fx-font-family: 'Monospaced'; -fx-font-size: 14;");
+		guiStudentPosts.ViewStudentPosts.PopulateStudentPostList();
 
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.  This page is different from the others.  Since there are two 
 		// modes (1: user has not been selected, and 2: user has been selected) there are two
 		// lists of widgets to be displayed.  For this reason, we have implemented the following 
 		// two controller methods to deal with this dynamic aspect.
-		ControllerStudentPost.repaintTheWindow();
+		ControllerStudentPosts.repaintTheWindow();
 	}
 	
-public ViewStudentPost() {
+public ViewStudentPosts() {
 		
 		// This page is used by all roles, so we do not specify the role being used		
 			
@@ -133,10 +127,27 @@ public ViewStudentPost() {
 	
 		// GUI Area 3		
 		setupButtonUI(button_Return, "Dialog", 18, 210, Pos.CENTER, 20, 540);
-		button_Return.setOnAction((event) -> {ControllerStudentPost.performReturn(); });
+		button_Return.setOnAction((event) -> {ControllerStudentPosts.performReturn(); });
 		
 		setupButtonUI(button_AddPost, "Dialog", 18, 210, Pos.CENTER, 300, 540);
-		button_AddPost.setOnAction((event) -> {ControllerStudentPost.performAddPost();});
+		button_AddPost.setOnAction((event) -> {ControllerStudentPosts.performAddPost();});
+		
+		list_Posts.setOnMouseClicked(e -> {
+		    if (e.getClickCount() == 2) {
+		        // Get the selected item
+		        String selectedPost = list_Posts.getSelectionModel().getSelectedItem();
+
+		        if (selectedPost != null) {
+		            // Pass the post title (or ID) to the next page
+		            guiStudentReplies.ViewStudentReplies.displayStudentReplies(
+		                theStage, 
+		                theUser, 
+		                selectedPost,
+		                CurrentThread
+		            );
+		        }
+		    }
+		});
 		
 		// This is the end of the GUI Widgets for the page
 		

@@ -170,10 +170,10 @@ public class ViewStudentHome {
 		// GUI Area 2
 		
 		setupButtonUI(button_Thread1, "Dialog", 18, 250, Pos.CENTER, 20, 115);
-		button_Thread1.setOnAction((event) -> {ControllerStudentHome.StudentPost("General");});
+		button_Thread1.setOnAction((event) -> {ControllerStudentHome.StudentPosts("General");});
 		
 		setupButtonUI(button_Thread2, "Dialog", 18, 250, Pos.CENTER, 20, 165);
-		button_Thread2.setOnAction((event) -> {ControllerStudentHome.StudentPost("Homework");});
+		button_Thread2.setOnAction((event) -> {ControllerStudentHome.StudentPosts("Homework");});
 		
 		
 		// GUI Area 3
