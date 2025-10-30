@@ -17,6 +17,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -25,16 +26,12 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 import database.Database;
-import entityClasses.Post;
-import entityClasses.Reply;
 import entityClasses.User;
-import guiFirstAdmin.ControllerFirstAdmin;
 import guiStudentPosts.ViewStudentPosts;
 import javafx.scene.control.ListView;
 import store.PostStore;
-import store.ReplyStore;
 
-
+import javafx.scene.control.CheckBox;
 import java.sql.SQLException;
 import java.util.*;
 
@@ -52,17 +49,21 @@ public class ViewStudentPosts {
 	private static double height = applicationMain.FoundationsMain.WINDOW_HEIGHT;
 	
 	// GUI Area 1: It informs the user about the purpose of this page, whose account is being used,
-	// and a button to allow this user to update the account settings.
+	// a button to allow this user to update the account settings, the thread title of which thread
+	// the user is currently in, the search bar for the posts, and a checkbox to filter by read
 	protected static Label label_PageTitle = new Label();
 	protected static Label label_UserDetails = new Label();
 	protected static Label label_ThreadTitle = new Label();
 	protected static TextField text_searchBar = new TextField();
+	protected static CheckBox checkbox_read = new CheckBox("Filter Read");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 	
+	// This is the ListView with all of the posts
 	protected static ListView<String> list_Posts = new ListView<>();
 	
+	// This is the query for the search bar
 	protected static String query;
 	
 	protected static final PostStore postStore = new PostStore(Set.of("General", "Homework"));
@@ -147,6 +148,20 @@ public ViewStudentPosts() {
 		text_searchBar.setPromptText("Enter Search Query");
 		text_searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
 			ControllerStudentPosts.searchPosts();
+		});
+		
+		setupCheckBoxUI(checkbox_read, "Arial", 14, 100, Pos.CENTER, 570, 32);
+		checkbox_read.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
+		    try {
+		        if (isNowSelected) {
+		            List<String> unreadPosts = theDatabase.listUnreadPosts(CurrentThread);
+		            list_Posts.setItems(FXCollections.observableArrayList(unreadPosts));
+		        } else {
+		            PopulateStudentPostList();
+		        }
+		    } catch (SQLException e) {
+		        e.printStackTrace();
+		    }
 		});
 	
 		// GUI Area 3		
@@ -295,5 +310,24 @@ public static void PopulateStudentPostList() {
 		t.setLayoutX(x);
 		t.setLayoutY(y);
 		t.setEditable(e);
+	}
+	
+	/*******
+	 * Private local method to initialize the standard fields for a CheckBox.
+	 *
+	 * @param c  The CheckBox object to be initialized
+	 * @param ff The font family to be used
+	 * @param f  The size of the font to be used
+	 * @param w  The minimum width of the CheckBox
+	 * @param p  The alignment (e.g., left, centered, or right)
+	 * @param x  The location from the left edge (x-axis)
+	 * @param y  The location from the top edge (y-axis)
+	 */
+	private static void setupCheckBoxUI(CheckBox c, String ff, double f, double w, Pos p, double x, double y) {
+	    c.setFont(Font.font(ff, f));
+	    c.setMinWidth(w);
+	    c.setAlignment(p);
+	    c.setLayoutX(x);
+	    c.setLayoutY(y);
 	}
 }

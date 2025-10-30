@@ -154,7 +154,8 @@ public class Database {
 	            + "body VARCHAR(255), "
 	            + "author VARCHAR(255), "
 	            + "thread VARCHAR(255), "
-	            + "id UUID NOT NULL)";
+	            + "id UUID NOT NULL, "
+	            + "read BOOL DEFAULT FALSE)";
 	    statement.execute(postsTable);
 	    
 	    // Create table for replies
@@ -217,6 +218,7 @@ public class Database {
 	
 	public UUID grabPostId(String title){
 		String query = "SELECT title, id FROM PostDB";
+		String update = "UPDATE PostDB SET read = TRUE WHERE id = ?";
 
 	    try (PreparedStatement pstmt = connection.prepareStatement(query);
 	         ResultSet rs = pstmt.executeQuery()) {
@@ -225,6 +227,11 @@ public class Database {
 	        	String Title = rs.getString("title");
 	        	if (Title.equals(title)) {
 		            UUID id = rs.getObject("id", UUID.class);
+	                // Mark as read
+	                try (PreparedStatement updateStmt = connection.prepareStatement(update)) {
+	                    updateStmt.setObject(1, id);
+	                    updateStmt.executeUpdate();
+	                }
 		            return id;
 	        	}
 	        }
@@ -237,9 +244,6 @@ public class Database {
 	}
 	
 	public List<String> listPosts(String currentThread) throws SQLException {
-
-		DatabaseMetaData md = connection.getMetaData();
-		System.out.println("[DBG] DB URL = " + md.getURL());
 		
 	    List<String> posts = new ArrayList<>();
 
@@ -262,6 +266,22 @@ public class Database {
 	    }
 
 	    return posts;
+	}
+	
+	public List<String> listUnreadPosts(String thread) throws SQLException {
+	    List<String> postTitles = new ArrayList<>();
+	    String sql = "SELECT title, author FROM PostDB WHERE thread = ? AND read = FALSE";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+	        pstmt.setString(1, thread);
+	        ResultSet rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            postTitles.add(rs.getString("author") + " - " + rs.getString("title"));
+	        }
+	    }
+
+	    return postTitles;
 	}
 	
 	public List<String> postContent(String post, String user, String thread){

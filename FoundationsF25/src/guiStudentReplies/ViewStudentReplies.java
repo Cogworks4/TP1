@@ -91,8 +91,6 @@ public class ViewStudentReplies {
 		int dashIndex = post.indexOf("- ");
 		CurrentPost = dashIndex != -1 ? post.substring(dashIndex + 2) : post;
 		
-		System.out.print(CurrentPost);
-		
 		CurrentPostId = theDatabase.grabPostId(CurrentPost);
 		
 		javafx.application.Platform.runLater(() ->

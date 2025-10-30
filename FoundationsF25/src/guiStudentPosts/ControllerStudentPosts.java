@@ -4,7 +4,6 @@ import java.sql.SQLException;
 import database.Database;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.control.ListView;
 
 /**
  * Controller for the Student Posts screen.
@@ -30,7 +29,7 @@ public class ControllerStudentPosts {
 					ViewStudentPosts.label_PageTitle, 
 					ViewStudentPosts.label_UserDetails,
 					ViewStudentPosts.label_ThreadTitle,
-					
+					ViewStudentPosts.checkbox_read,
 					ViewStudentPosts.line_Separator1,
 					ViewStudentPosts.line_Separator2,
 					ViewStudentPosts.list_Posts,
