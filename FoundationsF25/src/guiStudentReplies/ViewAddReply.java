@@ -9,14 +9,44 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.util.function.Consumer;
 
+/**
+ * <p><b>ViewAddReply</b> — a lightweight JavaFX dialog for submitting replies to existing posts.</p>
+ *
+ * <p>This view provides a text area for entering reply text.
+ * The "Create" button is enabled only when the body contains text.
+ * When the user submits, a {@link ReplyInput} record containing the body text
+ * is sent to the provided callback handler.</p>
+ *
+ * <p>If the callback throws an exception (e.g. due to validation or database errors),
+ * the dialog remains open and displays an error alert to the user.</p>
+ *
+ * <p><b>Usage Example:</b></p>
+ * <pre>{@code
+ * ViewAddReply.open(stage, "", replyInput -> {
+ *     database.writeReply(new Reply(postId, currentUser, replyInput.body()));
+ * }, false);
+ * }</pre>
+ *
+ * @author Jacob
+ * @version 1.0
+ */
 public final class ViewAddReply {
 
-    /** Simple DTO for the result */
+    /**
+     * Simple record type representing reply input.
+     *
+     * @param body the reply text body entered by the user
+     */
     public record ReplyInput(String body) {}
 
     /**
-     * Opens a small window to collect Title + Body and returns via onSubmit.
-     * The main window stays open.
+     * Opens the "Add Reply" dialog window.
+     *
+     * @param owner       the owner {@link Stage} of this dialog
+     * @param initialBody optional initial body text to display
+     * @param onSubmit    a {@link Consumer} that receives the resulting {@link ReplyInput}
+     *                    when the user clicks "Create"
+     * @param blockOwner  whether the owner window should be blocked while this dialog is open
      */
     public static void open(Stage owner,
                             String initialBody,

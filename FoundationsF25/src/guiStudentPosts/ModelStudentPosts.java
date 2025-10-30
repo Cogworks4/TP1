@@ -1,16 +1,13 @@
 package guiStudentPosts;
 
-/*******
- * <p> Title: ModelStudentPost Class. </p>
- * 
- * <p> Description: The StudentPost Page Model.  This class is not used as there is no
- * data manipulated by this MVC.</p>
- * 
- * @author Jacob Sheridan
- * 
- * @version 1.00		2025-09-22 Initial version
- *  
+/**
+ * Model placeholder for the Student Posts screen.
+ *
+ * <p>This MVC page does not track mutable view state in a separate model;
+ * the data flows directly between the controller/view and the database/store.</p>
+ *
+ * @author Jacob
+ * @since 1.0
  */
-
 public class ModelStudentPosts {
 }

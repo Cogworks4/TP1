@@ -9,14 +9,46 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.util.function.Consumer;
 
+/**
+ * <p><b>ViewAddPost</b> — a small JavaFX dialog window used for creating new discussion posts.</p>
+ *
+ * <p>This view provides text fields for a post title and body. When both fields
+ * contain text, the "Create" button becomes enabled. On submission, a
+ * {@link PostInput} record containing the entered title and body is passed to
+ * the provided callback.</p>
+ *
+ * <p>The dialog may be opened as modal (blocking its owner) or non-modal, and
+ * does not close the parent window upon opening.</p>
+ *
+ * <p><b>Usage Example:</b></p>
+ * <pre>{@code
+ * ViewAddPost.open(stage, "", "", postInput -> {
+ *     database.writePost(new Post(postInput.title(), postInput.body()));
+ * }, true);
+ * }</pre>
+ *
+ * @author Jacob
+ * @version 1.0
+ */
 public final class ViewAddPost {
 
-    /** Simple DTO for the result */
+    /**
+     * Simple record type representing the data entered by the user.
+     *
+     * @param title the post title entered by the user
+     * @param body  the main body text of the post
+     */
     public record PostInput(String title, String body) {}
 
     /**
-     * Opens a small window to collect Title + Body and returns via onSubmit.
-     * The main window stays open.
+     * Opens the "Add Post" dialog window.
+     *
+     * @param owner        the owner {@link Stage} of this dialog
+     * @param initialTitle optional initial title text to display
+     * @param initialBody  optional initial body text to display
+     * @param onSubmit     a {@link Consumer} that receives the resulting {@link PostInput}
+     *                     when the user clicks "Create"
+     * @param blockOwner   whether the owner window should be blocked while the dialog is open
      */
     public static void open(Stage owner,
                             String initialTitle,

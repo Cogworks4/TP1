@@ -1,16 +1,19 @@
 package guiStudentPosts;
 
-/*******
- * <p> Title: ViewStudentPost Class. </p>
- * 
- * <p> Description: </p>
- * 
- * @author Jacob Sheridan
- * 
- * @version 1.00		2025-08-20 Initial version
- *  
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+/**
+ * JavaFX view for listing posts within a thread for a student user.
+ *
+ * <p>Renders page labels, separators, a posts ListView, and page controls.
+ * Double-clicking a list item opens the Replies view for the selected post.
+ * The view delegates actions to {@link ControllerStudentPosts}.</p>
+ *
+ * <p>Call {@link #displayStudentPosts(Stage, entityClasses.User, String)} to show the page.</p>
+ *
+ * @author Jacob
+ * @since 1.0
  */
-
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -20,14 +23,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+import javafx.scene.control.TextField;
 import database.Database;
 import entityClasses.Post;
 import entityClasses.Reply;
 import entityClasses.User;
+import guiFirstAdmin.ControllerFirstAdmin;
 import guiStudentPosts.ViewStudentPosts;
 import javafx.scene.control.ListView;
 import store.PostStore;
 import store.ReplyStore;
+
 
 import java.sql.SQLException;
 import java.util.*;
@@ -50,12 +56,14 @@ public class ViewStudentPosts {
 	protected static Label label_PageTitle = new Label();
 	protected static Label label_UserDetails = new Label();
 	protected static Label label_ThreadTitle = new Label();
+	protected static TextField text_searchBar = new TextField();
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 	
 	protected static ListView<String> list_Posts = new ListView<>();
 	
+	protected static String query;
 	
 	protected static final PostStore postStore = new PostStore(Set.of("General", "Homework"));
 	
@@ -82,6 +90,14 @@ public class ViewStudentPosts {
 	
 	public static Scene theStudentPostScene = null;	// The Scene each invocation populates
 	
+    /**
+     * Creates (on first use) and displays the Student Posts page for the given user and thread.
+     * Populates the UI, loads the current thread’s posts, and asks the controller to paint.
+     *
+     * @param ps    the JavaFX stage to render into
+     * @param user  the signed-in user
+     * @param thread the thread name to list posts for
+     */
 	public static void displayStudentPosts(Stage ps, User user, String thread) {
 		// Establish the references to the GUI and the current user
 		theStage = ps;
@@ -126,6 +142,12 @@ public ViewStudentPosts() {
 		
 		label_ThreadTitle.setText(CurrentThread);
 		setupLabelUI(label_ThreadTitle, "Arial", 20, width, Pos.CENTER, 0, 55);
+		
+		setupTextUI(text_searchBar, "Arial", 18, 200, Pos.BASELINE_LEFT, 570, 55, true);
+		text_searchBar.setPromptText("Enter Search Query");
+		text_searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+			ControllerStudentPosts.searchPosts();
+		});
 	
 		// GUI Area 3		
 		setupButtonUI(button_Return, "Dialog", 18, 210, Pos.CENTER, 20, 540);
@@ -158,6 +180,12 @@ public ViewStudentPosts() {
 		// Don't follow this pattern if formatting of the page does not change dynamically.
 	}
 
+
+
+/**
+ * Populates or refreshes the posts ListView from the database for {@code CurrentThread}.
+ * Initializes layout the first time the list is added to the root pane.
+ */
 public static void PopulateStudentPostList() {
     if (!theRootPane.getChildren().contains(list_Posts)) {
         theRootPane.getChildren().add(list_Posts);
@@ -179,10 +207,6 @@ public static void PopulateStudentPostList() {
 	}
 
     list_Posts.setItems(javafx.collections.FXCollections.observableArrayList(postTitles));
-}
-
-public static void AddPostToList() {
-	
 }
 
 	/*-*******************************************************************************************
@@ -249,5 +273,27 @@ public static void AddPostToList() {
 		c.setMinWidth(w);
 		c.setLayoutX(x);
 		c.setLayoutY(y);
+	}
+	
+	/**********
+	 * Private local method to initialize the standard fields for a text field
+	 * 
+	 * @param t  The TextField object to be initialized
+	 * @param ff The font to be used
+	 * @param f  The size of the font to be used
+	 * @param w  The width of the Button
+	 * @param p  The alignment (e.g. left, centered, or right)
+	 * @param x  The location from the left edge (x axis)
+	 * @param y  The location from the top (y axis)
+	 * @param e  The flag (Boolean) that specifies if this field is editable
+	 */
+	private void setupTextUI(TextField t, String ff, double f, double w, Pos p, double x, double y, boolean e) {
+		t.setFont(Font.font(ff, f));
+		t.setMinWidth(w);
+		t.setMaxWidth(w);
+		t.setAlignment(p);
+		t.setLayoutX(x);
+		t.setLayoutY(y);
+		t.setEditable(e);
 	}
 }
