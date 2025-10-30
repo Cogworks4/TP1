@@ -85,6 +85,8 @@ public class Database {
 		
 	}
 	
+	public Connection getConnection() { return this.connection; }
+	
 	
 /*******
  * <p> Method: connectToDatabase </p>
@@ -214,29 +216,31 @@ public class Database {
 	}
 	
 	public UUID grabPostId(String title){
-//		String query = "SELECT title, id FROM PostDB";
-//
-//	    try (PreparedStatement pstmt = connection.prepareStatement(query);
-//	         ResultSet rs = pstmt.executeQuery()) {
-//
-//	        while (rs.next()) {
-//	        	String Title = rs.getString("title");
-//	        	if (Title.equals(title)) {
-//		            UUID id = rs.getObject("id", UUID.class);
-//		            return id;
-//	        	}
-//	        }
-//
-//	    } catch (SQLException e) {
-//	        e.printStackTrace();
-//	    }
-//	    
-//	    return null;
-		
-		return null;
+		String query = "SELECT title, id FROM PostDB";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(query);
+	         ResultSet rs = pstmt.executeQuery()) {
+
+	        while (rs.next()) {
+	        	String Title = rs.getString("title");
+	        	if (Title.equals(title)) {
+		            UUID id = rs.getObject("id", UUID.class);
+		            return id;
+	        	}
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return null;
 	}
 	
-	public List<String> listPosts(String currentThread) {
+	public List<String> listPosts(String currentThread) throws SQLException {
+
+		DatabaseMetaData md = connection.getMetaData();
+		System.out.println("[DBG] DB URL = " + md.getURL());
+		
 	    List<String> posts = new ArrayList<>();
 
 	    String query = "SELECT author, title, thread FROM PostDB";
@@ -295,7 +299,7 @@ public class Database {
 	    		ResultSet rs = pstmt.executeQuery()){
 	    	
 	    	while (rs.next()) {
-	    		UUID Postid = rs.getObject("post", UUID.class);
+	    		UUID Postid = rs.getObject("postid", UUID.class);
 	    		if (Postid.equals(postid)) {
 		    		String author = rs.getString("author");
 		    		String body = rs.getString("body");
@@ -311,6 +315,18 @@ public class Database {
 	}
 	
 	public void writeReply(Reply reply) throws SQLException {
+		try (PreparedStatement chk = connection.prepareStatement(
+		        "SELECT 1 FROM PostDB WHERE id = ?")) {   // use your real table name
+		    chk.setObject(1, reply.getPostId());
+		    try (ResultSet rs = chk.executeQuery()) {
+		        if (!rs.next()) {
+		            System.out.println("[DBG] parent NOT FOUND in posts");
+		            throw new IllegalStateException("Parent post not found: " + reply.getPostId());
+		        }
+		        System.out.println("[DBG] parent FOUND");
+		    }
+		}
+		
 		String insertPost = "INSERT INTO ReplyDB (body, author, postid, id) "
 				+ "VALUES (?, ?, ?, ?)";
 		try(PreparedStatement pstmt = connection.prepareStatement(insertPost)) {

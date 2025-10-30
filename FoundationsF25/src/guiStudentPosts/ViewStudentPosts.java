@@ -28,6 +28,8 @@ import guiStudentPosts.ViewStudentPosts;
 import javafx.scene.control.ListView;
 import store.PostStore;
 import store.ReplyStore;
+
+import java.sql.SQLException;
 import java.util.*;
 
 public class ViewStudentPosts {
@@ -168,7 +170,13 @@ public static void PopulateStudentPostList() {
         list_Posts.setStyle("-fx-font-family: 'Monospaced'; -fx-font-size: 14;");
     }
     
-    List<String> postTitles = theDatabase.listPosts(CurrentThread);
+    List<String> postTitles;
+	try {
+		postTitles = theDatabase.listPosts(CurrentThread);
+	} catch (SQLException e) {
+		postTitles = null;
+		e.printStackTrace();
+	}
 
     list_Posts.setItems(javafx.collections.FXCollections.observableArrayList(postTitles));
 }

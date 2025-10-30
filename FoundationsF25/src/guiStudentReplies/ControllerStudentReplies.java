@@ -47,6 +47,9 @@ public class ControllerStudentReplies {
 		}
 		
 		protected static void performAddReply(UUID CurrentPostId) {
+
+			System.out.println("[DBG] performAddReply postId=" + CurrentPostId);
+			
 			ViewAddReply.open(ViewStudentReplies.theStage, "", input -> {
 		        String author = ViewStudentReplies.theUser.getUserName();
 		        String body   = input.body();
@@ -55,12 +58,14 @@ public class ControllerStudentReplies {
 
 		        try {
 		            theDatabase.writeReply(reply);   // persist to DB
+		            List<String> updatedContent = theDatabase.postContent(ViewStudentReplies.CurrentPost, ViewStudentReplies.theUser.getUserName(), ViewStudentReplies.CurrentThread);
+				    ViewStudentReplies.list_Replies.setItems(javafx.collections.FXCollections.observableArrayList(updatedContent));
 		        } catch (SQLException e) {
 		            System.err.println("*** ERROR *** DB error creating reply: " + e.getMessage());
 		            e.printStackTrace();
 		            return;
 		        }
-		    }, /*blockOwner=*/true);;
+		    }, /*blockOwner=*/true);
 		}
 
 }

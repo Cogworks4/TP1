@@ -8,15 +8,19 @@ import java.util.*;
 import entityClasses.Post;
 import entityClasses.Reply;
 
+import database.Database;
+
 public class ReplyStoreSpec {
 
     private static final String USER_A = "userA";
     private static final String USER_B = "userB";
+    
+    private static Database theDatabase = applicationMain.FoundationsMain.database;		
 
     public static void main(String[] args) throws Exception {
         PostStore posts = new PostStore(new HashSet<>(Arrays.asList("General", "Homework", "Projects")));
         Post parentPost1 = posts.create(USER_A, "Title", "Body", "General", null);
-        ReplyStore replies = new ReplyStore(posts.listAll());
+        ReplyStore replies = new ReplyStore(posts.listAll(), theDatabase.getConnection());
 
         // TC-R1: Create a reply
         Reply r1 = replies.create(parentPost1.getId(), USER_A, "Thanks!");

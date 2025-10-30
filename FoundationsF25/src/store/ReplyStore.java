@@ -1,12 +1,17 @@
 package store;
 
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.sql.Connection;
 
 import entityClasses.Post;
 import entityClasses.Reply;
+import database.Database;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +72,7 @@ public class ReplyStore {
 	 * last filter/search operation. Subset can be empty or arbitrarily large.
 	 */
 
+	private final Connection connection;
 	private final Map<UUID, Post> postIndex; // reference snapshot of posts for validation
 
 	/**
@@ -75,7 +81,8 @@ public class ReplyStore {
 	 * 
 	 * @return As declared
 	 */
-	public ReplyStore(Collection<Post> posts) {
+	public ReplyStore(Collection<Post> posts, Connection connection) {
+		this.connection = connection;
 		this.postIndex = new HashMap<>();
 		for (Post p : posts) {
 			postIndex.put(p.getId(), p);
@@ -102,14 +109,25 @@ public class ReplyStore {
 	 * @return As declared
 	 */
 	private void validateForCreateOrUpdate(Reply r, boolean isCreate) {
-		String body = r.getBody() == null ? "" : r.getBody().trim();
-		if (body.isEmpty()) {
-			throw new ValidationException("Reply cannot be empty.");
-		}
-		Post parent = postIndex.get(r.getPostId());
-		if (parent == null || parent.isDeleted()) {
-			throw new ValidationException("You cannot reply to a deleted or non-existent post.");
-		}
+	    String body = r.getBody() == null ? "" : r.getBody().trim();
+	    if (body.isEmpty()) throw new ValidationException("Reply cannot be empty.");
+
+	    // 1) Try memory (fast path)
+	    Post parent = postIndex.get(r.getPostId());
+	    if (parent != null && !parent.isDeleted()) return;
+
+	    // 2) Fall back to DB (authoritative)
+	    try (PreparedStatement ps = connection.prepareStatement(
+	            "SELECT 1 FROM PostDB WHERE id = ?")) {
+	        ps.setObject(1, r.getPostId()); // UUID column in H2
+	        try (ResultSet rs = ps.executeQuery()) {
+	            if (!rs.next()) {
+	                throw new ValidationException("You cannot reply to a non-existent post.");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        throw new ValidationException("DB check failed: " + e.getMessage());
+	    }
 	}
 
 	// --- CRUD ---
