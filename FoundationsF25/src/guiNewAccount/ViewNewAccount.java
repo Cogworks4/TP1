@@ -204,7 +204,7 @@ public class ViewNewAccount {
 		
 		// If the Username is invalid, this alert dialog will tell the user
 		alertUsernameInvalidError.setTitle("Invalid Username");
-		alertUsernameInvalidError.setHeaderText("Usernames cannot contain special characters or spaces.\n"
+		alertUsernameInvalidError.setHeaderText("Usernames cannot contain spaces or special characters consecutively or in be beginning or end.\n"
 											  + "Username length cannot be less than 4 or greater than 32.");
 		alertUsernameInvalidError.setContentText("Correct the username and try again");
 		

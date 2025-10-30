@@ -3,6 +3,7 @@ package guiAdminHome;
 import java.util.ArrayList;
 import java.util.List;
 
+import database.Database;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,7 +17,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import database.Database;
 import entityClasses.User;
 import guiUserUpdate.ViewUserUpdate;
 import guiListUsers.ViewListUsers;
@@ -88,7 +88,7 @@ public class ViewAdminHome {
 	protected static Label label_InvitationEmailAddress = new Label("Email Address");
 	protected static TextField text_InvitationEmailAddress = new TextField();
 	protected static ComboBox <String> combobox_SelectRole = new ComboBox <String>();
-	protected static String [] roles = {"Admin", "Role1", "Role2"};
+	protected static String [] roles = {"Admin", "Student", "Staff"};
 	protected static Button button_SendInvitation = new Button("Send Invitation");
 	protected static Alert alertEmailError = new Alert(AlertType.INFORMATION);
 	protected static Alert alertEmailSent = new Alert(AlertType.INFORMATION);
@@ -130,7 +130,7 @@ public class ViewAdminHome {
 	protected static User theUser;				// The current logged in User
 
 	private static Scene theAdminHomeScene;		// The shared Scene each invocation populates
-	private static final int theRole = 1;		// Admin: 1; Role1: 2; Role2: 3
+	private static final int theRole = 1;		// Admin: 1; Student: 2; Staff: 3
 
 	/*-*******************************************************************************************
 

@@ -13,8 +13,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Font;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import nameValidator.userUpdateNameValidator;
 import entityClasses.User;
+import inputValidation.userUpdateNameValidator;
 
 /*******
  * <p>
@@ -77,7 +77,7 @@ public class ViewUserUpdate {
 	// These are dynamic labels and they change based on the user and user
 	// interactions.
 	private static Label label_CurrentUsername = new Label();
-	private static Label label_CurrentPassword = new Label();
+	public static Label label_CurrentPassword = new Label();
 	private static Label label_CurrentFirstName = new Label();
 	private static Label label_CurrentMiddleName = new Label();
 	private static Label label_CurrentLastName = new Label();
@@ -107,6 +107,7 @@ public class ViewUserUpdate {
 	// change the
 	// the values of the various account detail items.
 	private static TextInputDialog dialogUpdateFirstName;
+	private static TextInputDialog dialogUpdatePassword;
 	private static TextInputDialog dialogUpdateMiddleName;
 	private static TextInputDialog dialogUpdateLastName;
 	private static TextInputDialog dialogUpdatePreferredFirstName;
@@ -253,6 +254,7 @@ public class ViewUserUpdate {
 		theUserUpdateScene = new Scene(theRootPane, width, height);
 
 		// Initialize the pop-up dialogs to an empty text filed.
+		dialogUpdatePassword = new TextInputDialog("");
 		dialogUpdateFirstName = new TextInputDialog("");
 		dialogUpdateMiddleName = new TextInputDialog("");
 		dialogUpdateLastName = new TextInputDialog("");
@@ -260,6 +262,9 @@ public class ViewUserUpdate {
 		dialogUpdateEmailAddresss = new TextInputDialog("");
 
 		// Establish the label for each of the dialogs.
+		dialogUpdatePassword.setTitle("Update Password");
+		dialogUpdatePassword.setHeaderText("Update your Password");
+		
 		dialogUpdateFirstName.setTitle("Update First Name");
 		dialogUpdateFirstName.setHeaderText("Update your First Name");
 
@@ -291,10 +296,26 @@ public class ViewUserUpdate {
 		setupLabelUI(label_CurrentUsername, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 100);
 		setupButtonUI(button_UpdateUsername, "Dialog", 18, 275, Pos.CENTER, 500, 93);
 
-		// password
+		// Password
 		setupLabelUI(label_Password, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 150);
 		setupLabelUI(label_CurrentPassword, "Arial", 18, 260, Pos.BASELINE_LEFT, 200, 150);
 		setupButtonUI(button_UpdatePassword, "Dialog", 18, 275, Pos.CENTER, 500, 143);
+		button_UpdatePassword.setOnAction((event) -> { 
+			result = dialogUpdatePassword.showAndWait();
+			// Calls passwordValidator and checks if password has the necessary requirements 
+			result.ifPresent(name -> {
+				error = Model.guiPwdError(inputValidation.PasswordValidation.passwordEvaluator(name));			
+				if(Model.showErrorMessage(error)) {
+					theDatabase.updatePassword(theUser.getUserName(), name);
+					label_CurrentPassword.setText(name);
+				} else {
+					// Tells console that validation failed
+					System.out.println("Validation failed:");
+					label_ErrorMessage.setText( error);
+					return; // skip update
+				}
+			});
+		});
 
 		// First Name
 		setupLabelUI(label_FirstName, "Arial", 18, 190, Pos.BASELINE_RIGHT, 5, 200);
@@ -303,13 +324,13 @@ public class ViewUserUpdate {
 		button_UpdateFirstName.setOnAction((event) -> {
 			result = dialogUpdateFirstName.showAndWait();
 			result.ifPresent(name -> {
-				List<String> validationError = userUpdateNameValidator.validateFirstName(name);
-				if (validationError.isEmpty()) {
+				error = userUpdateNameValidator.validateFirstName(name);
+				if (Model.showErrorMessage(error)) {
 					theDatabase.updateFirstName(theUser.getUserName(), name);
 				} else {
 					// sends error to console - can comment out if needed
 					System.out.println("Validation failed:");
-					System.out.println(validationError);
+					label_ErrorMessage.setText(error);
 					return; // skip update
 					// Validation failed — skip the update
 					// GUI error message can be added here later
@@ -332,13 +353,13 @@ public class ViewUserUpdate {
 			result = dialogUpdateMiddleName.showAndWait();
 			// calls InputValidator and if no errors, saves input to database
 			result.ifPresent(name -> {
-				List<String> validationError = userUpdateNameValidator.validateMiddleName(name);
-				if (validationError.isEmpty()) {
+				error = userUpdateNameValidator.validateMiddleName(name);
+				if (Model.showErrorMessage(error)) {
 					theDatabase.updateMiddleName(theUser.getUserName(), name);
 				} else {
 					// sends error to console - can comment out if needed
 					System.out.println("Validation failed:");
-					System.out.println(validationError);
+					label_ErrorMessage.setText(error);
 					return; // skip update
 					// Validation failed — skip the update
 					// GUI error message can be added here later
@@ -361,13 +382,13 @@ public class ViewUserUpdate {
 			result = dialogUpdateLastName.showAndWait();
 			// calls InputValidator and if no errors, saves input to database
 			result.ifPresent(name -> {
-				List<String> validationError = userUpdateNameValidator.validateLastName(name);
-				if (validationError.isEmpty()) {
+				error = userUpdateNameValidator.validateLastName(name);
+				if (Model.showErrorMessage(error)) {
 					theDatabase.updateLastName(theUser.getUserName(), name);
 				} else {
 					// sends error to console - can comment out if needed
 					System.out.println("Validation failed:");
-					System.out.println(validationError);
+					label_ErrorMessage.setText(error);
 					return; // skip update
 					// Validation failed — skip the update
 					// GUI error message can be added here later
@@ -390,13 +411,13 @@ public class ViewUserUpdate {
 			result = dialogUpdatePreferredFirstName.showAndWait();
 			// calls InputValidator and if no errors, saves input to database
 			result.ifPresent(name -> {
-				List<String> validationError = userUpdateNameValidator.validatePreferredName(name);
-				if (validationError.isEmpty()) {
+				error = userUpdateNameValidator.validatePreferredName(name);
+				if (Model.showErrorMessage(error)) {
 					theDatabase.updatePreferredFirstName(theUser.getUserName(), name);
 				} else {
 					// sends error to console - can comment out if needed
 					System.out.println("Validation failed:");
-					System.out.println(validationError);
+					label_ErrorMessage.setText(error);
 					return; // skip update
 					// Validation failed — skip the update
 					// GUI error message can be added here later
@@ -418,7 +439,7 @@ public class ViewUserUpdate {
 		button_UpdateEmailAddress.setOnAction((event) -> {
 			result = dialogUpdateEmailAddresss.showAndWait();
 			if (!result.isEmpty()) {
-				error = emailRecognizer.emailRecognizer.validateEmail(result.get());
+				error = inputValidation.emailRecognizer.checkForValidEmail(result.get());
 				if (Model.showErrorMessage(error)) {
 					result.ifPresent(name -> theDatabase.updateEmailAddress(theUser.getUserName(), result.get()));
 					theDatabase.getUserAccountDetails(theUser.getUserName());
@@ -443,6 +464,7 @@ public class ViewUserUpdate {
 		// Set up the button to proceed to this user's home page
 		setupButtonUI(button_ProceedToUserHomePage, "Dialog", 18, 300, Pos.CENTER, width / 2 - 150, 450);
 		button_ProceedToUserHomePage.setOnAction((event) -> {
+			Model.showErrorMessage("");
 			ControllerUserUpdate.goToUserHomePage(theStage, theUser);
 		});
 

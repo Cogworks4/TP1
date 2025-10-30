@@ -1,11 +1,17 @@
+<<<<<<<< HEAD:FoundationsF25/src/guiStudent/ModelStudentHome.java
 package guiStudent;
 
 public class ModelStudentHome {
+========
+package guiStaff;
+
+public class ModelStaffHome {
+>>>>>>>> main:FoundationsF25/src/guiStaff/ModelStaffHome.java
 
 /*******
- * <p> Title: ModelStudentHome Class. </p>
+ * <p> Title: ModelStaffHome Class. </p>
  * 
- * <p> Description: The StudentHome Page Model.  This class is not used as there is no
+ * <p> Description: The StaffHome Page Model.  This class is not used as there is no
  * data manipulated by this MVC beyond accepting role information and saving it in the
  * database.</p>
  * 

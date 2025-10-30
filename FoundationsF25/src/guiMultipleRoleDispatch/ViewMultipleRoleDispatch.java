@@ -2,6 +2,8 @@ package guiMultipleRoleDispatch;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import database.Database;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -12,7 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-import database.Database;
 import entityClasses.User;
 
 /*******
@@ -149,8 +150,8 @@ public class ViewMultipleRoleDispatch {
 		list = new ArrayList<String>();
 		list.add("<Select a role>");
 		if (theDatabase.getCurrentAdminRole()) list.add("Admin");
-		if (theDatabase.getCurrentNewRole1()) list.add("Role1");
-		if (theDatabase.getCurrentNewRole2()) list.add("Role2");
+		if (theDatabase.getCurrentNewStudent()) list.add("Student");
+		if (theDatabase.getCurrentNewStaff()) list.add("Staff");
 		combobox_SelectRole.setItems(FXCollections.observableArrayList(list));
 
 		setupButtonUI(button_PerformRole, "Dialog", 16, 100, Pos.CENTER, 495, 105);

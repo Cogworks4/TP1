@@ -53,7 +53,7 @@ public class ControllerNewAccount {
 		int roleCode = 0;
 		User user = null;
 		// Make sure the Username is valid
-		if (usernameRecognizer.usernameRecognizer.usernameValidate(ViewNewAccount.text_Username.getText())
+		if (inputValidation.usernameRecognizer.usernameValidate(ViewNewAccount.text_Username.getText())
 				.length() == 0) {
 			if (UpdatePwdInvalid()) {
 				// Make sure the two passwords are the same.
@@ -65,10 +65,10 @@ public class ControllerNewAccount {
 					if (ViewNewAccount.theRole.compareTo("Admin") == 0) {
 						roleCode = 1;
 						user = new User(username, password, "", "", "", "", "", true, false, false);
-					} else if (ViewNewAccount.theRole.compareTo("Role1") == 0) {
+					} else if (ViewNewAccount.theRole.compareTo("Student") == 0) {
 						roleCode = 2;
 						user = new User(username, password, "", "", "", "", "", false, true, false);
-					} else if (ViewNewAccount.theRole.compareTo("Role2") == 0) {
+					} else if (ViewNewAccount.theRole.compareTo("Staff") == 0) {
 						roleCode = 3;
 						user = new User(username, password, "", "", "", "", "", false, false, true);
 					} else {
@@ -126,6 +126,9 @@ public class ControllerNewAccount {
 		}
 	}
 
+	/**
+	 * @return
+	 */
 	protected static boolean UpdatePwdInvalid() {
 		String password = ViewNewAccount.text_Password1.getText();
 
@@ -133,11 +136,12 @@ public class ControllerNewAccount {
 
 		int bitmap = 0;
 
-		String[] errCode = { "U", "Low", "N", "S", "Lon", "P" };
+		String[] errCode = { "Upper case", "Lower case", "Numeric digits", "Special character", "Long Enough",
+		"Password Length" };
 		String[] messages = { "Upper Case", "Lower Case", "Numeric Digits", "Special Characters",
 				"Password is longer than 7", "Password is shorter than 32" };
 
-		for (int i = 0; i < 6; i++) {
+		for (int i = 0; i < errCode.length; i++) {
 			if (PwdError.contains(errCode[i])) {
 				bitmap |= (1 << i);
 			}
