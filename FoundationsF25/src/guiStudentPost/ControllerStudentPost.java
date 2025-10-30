@@ -1,5 +1,8 @@
 package guiStudentPost;
 
+import java.sql.SQLException;
+
+import database.Database;
 
 /*******
  * <p> Title: ControllerlStudentPost Class. </p>
@@ -13,7 +16,8 @@ package guiStudentPost;
  */
 
 public class ControllerStudentPost {
-		
+	
+	protected static Database theDatabase = applicationMain.FoundationsMain.database;
 	
 		protected static void repaintTheWindow() {
 			ViewStudentPost.theRootPane.getChildren().setAll(
@@ -48,6 +52,16 @@ public class ControllerStudentPost {
 					    ViewStudentPost.CurrentThread,
 					    java.util.List.of()
 					);
+				
+				try {
+					// Create a new User object with admin role and register in the database
+					theDatabase.writePost(post);
+				} catch (SQLException e) {
+					System.err.println("*** ERROR *** Database error trying to register a user: " + e.getMessage());
+					e.printStackTrace();
+					System.exit(0);
+				}
+				
 		        // Update the list view (prepend newest)
 		        ViewStudentPost.list_Posts.getItems().add(0, post.getAuthorId() + " — " + post.getTitle());
 		    }, /*blockOwner=*/true);

@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 import java.sql.Timestamp;
 
 import entityClasses.User;
+import entityClasses.Post;
+import entityClasses.Reply;
 
 /*******
  * <p> Title: Database Class. </p>
@@ -60,6 +62,11 @@ public class Database {
 	private boolean currentAdminRole;
 	private boolean currentNewStudent;
 	private boolean currentNewStaff;
+	
+	private String title;
+	private String body;
+	private String author;
+	private String thread;
 
 	/*******
 	 * <p> Method: Database </p>
@@ -133,6 +140,22 @@ public class Database {
 	    		+ "userName VARCHAR(255))";
 	    statement.execute(oneTimePasswordTable);
 	    
+	    // Create table for posts
+	    String postsTable = "CREATE TABLE IF NOT EXISTS PostDB ("
+	            + "title VARCHAR(255), "
+	            + "body VARCHAR(255), "
+	            + "author VARCHAR(255), "
+	            + "thread VARCHAR(255))";
+	    statement.execute(postsTable);
+	    
+	    // Create table for replies
+	    String replyTable = "CREATE TABLE IF NOT EXISTS ReplyDB ("
+	            + "title VARCHAR(255), "
+	            + "body VARCHAR(255), "
+	            + "author VARCHAR(255), "
+	            + "post VARCHAR(255))";
+	    statement.execute(replyTable);
+	    
 	}
 	
 	
@@ -164,6 +187,46 @@ public class Database {
 	    }
 	}
 
+	public void writePost(Post post) throws SQLException {
+		String insertPost = "INSERT INTO PostDB (title, body, author, thread) "
+				+ "VALUES (?, ?, ?, ?)";
+		try(PreparedStatement pstmt = connection.prepareStatement(insertPost)) {
+			title = post.getTitle();
+			pstmt.setString(1, title);
+			body = post.getBody();
+			pstmt.setString(2, body);
+			author = post.getAuthorId();
+			pstmt.setString(3, author);
+			thread = post.getThread();
+			pstmt.setString(4, thread);
+		
+			pstmt.executeUpdate();
+		}
+	}
+	
+	public List<String> listPosts(String currentThread) {
+	    List<String> posts = new ArrayList<>();
+
+	    String query = "SELECT author, title, thread FROM PostDB";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(query);
+	         ResultSet rs = pstmt.executeQuery()) {
+
+	        while (rs.next()) {
+	        	String thread = rs.getString("thread");
+	        	if (thread.equals(currentThread)) {
+		            String author = rs.getString("author");
+		            String title = rs.getString("title");
+		            posts.add(author + " - " + title);
+	        	}
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return posts;
+	}
 
 /*******
  * <p> Method: isDatabaseEmpty </p>

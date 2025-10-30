@@ -156,13 +156,8 @@ public static void PopulateStudentPostList() {
         list_Posts.setPrefHeight(line_Separator2.getStartY() - line_Separator1.getStartY() - 16);
         list_Posts.setStyle("-fx-font-family: 'Monospaced'; -fx-font-size: 14;");
     }
-
-    List<Post> allPosts = postStore.listAll();
-    List<String> postTitles = allPosts.stream()
-        .filter(p -> !p.isDeleted())
-        .filter(p -> p.getThread().equals(CurrentThread))
-        .map(p -> p.getAuthorId() + " — " + p.getTitle())
-        .toList();
+    
+    List<String> postTitles = theDatabase.listPosts(CurrentThread);
 
     list_Posts.setItems(javafx.collections.FXCollections.observableArrayList(postTitles));
 }
