@@ -160,6 +160,7 @@ public static void PopulateStudentPostList() {
     List<Post> allPosts = postStore.listAll();
     List<String> postTitles = allPosts.stream()
         .filter(p -> !p.isDeleted())
+        .filter(p -> p.getThread().equals(CurrentThread))
         .map(p -> p.getAuthorId() + " — " + p.getTitle())
         .toList();
 
