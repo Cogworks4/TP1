@@ -82,6 +82,15 @@ public class ViewStudentReplies {
 	
 	public static Scene theStudentRepliescene = null;	// The Scene each invocation populates
 	
+	 /**
+     * Creates (on first use) and displays the Student Replies page for the given user, post, and thread.
+     * Populates the UI, loads the current thread’s posts, and asks the controller to paint.
+     *
+     * @param ps    the JavaFX stage to render into
+     * @param user  the signed-in user
+     * @param post  the post name to list all replies
+     * @param thread the thread name get content for the post
+     */
 	public static void displayStudentReplies(Stage ps, User user, String post, String thread) {
 		// Establish the references to the GUI and the current user
 		theStage = ps;
@@ -110,6 +119,7 @@ public class ViewStudentReplies {
 		// two controller methods to deal with this dynamic aspect.
 		ControllerStudentReplies.repaintTheWindow();
 	}
+	
 	
 public ViewStudentReplies() {
 		
@@ -146,6 +156,10 @@ public ViewStudentReplies() {
 		// Don't follow this pattern if formatting of the page does not change dynamically.
 	}
 
+	/*
+	 * Populates the student reply list by setting the list_replies params, and
+	 * by calling the post content method in database
+	 */
 	public static void PopulateStudentReplyList() {
 	    if (!theRootPane.getChildren().contains(list_Replies)) {
 	        theRootPane.getChildren().add(list_Replies);
@@ -161,10 +175,6 @@ public ViewStudentReplies() {
 	    
 	    list_Replies.setItems(javafx.collections.FXCollections.observableArrayList(content));
 	}
-
-public static void AddPostToList() {
-	
-}
 
 	/*-*******************************************************************************************
 

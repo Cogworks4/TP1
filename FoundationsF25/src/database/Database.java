@@ -197,6 +197,12 @@ public class Database {
 	    }
 	}
 
+	/*
+	 * Writes a post into the PostDB table, writing the title, body, author, thread, and id
+	 * from the entity class that was already made
+	 * 
+	 * @param post the obj created with the required data
+	 */
 	public void writePost(Post post) throws SQLException {
 		String insertPost = "INSERT INTO PostDB (title, body, author, thread, id) "
 				+ "VALUES (?, ?, ?, ?, ?)";
@@ -216,6 +222,12 @@ public class Database {
 		}
 	}
 	
+	/*
+	 * grabs the post id by searching through the table and finding a matching title,
+	 * also marks the post as read, as if this is called you are entering the post
+	 * 
+	 * @param title 
+	 */
 	public UUID grabPostId(String title){
 		String query = "SELECT title, id FROM PostDB";
 		String update = "UPDATE PostDB SET read = TRUE WHERE id = ?";
@@ -242,7 +254,14 @@ public class Database {
 	    
 	    return null;
 	}
-	
+
+	/*
+	 * creates the list of posts from the PostDB table with all of the data
+	 * from matching the current thread, returns a list of strings 
+	 * "author - title"
+	 * 
+	 * @param thread used to search through the table to find a match
+	 */
 	public List<String> listPosts(String currentThread) throws SQLException {
 		
 	    List<String> posts = new ArrayList<>();
@@ -268,6 +287,12 @@ public class Database {
 	    return posts;
 	}
 	
+	/*
+	 * returns a list of all of the unread posts, same as above except
+	 * filters by the read bool and doesn't include any read posts
+	 * 
+	 * @param thread used to search through the table to find a match
+	 */
 	public List<String> listUnreadPosts(String thread) throws SQLException {
 	    List<String> postTitles = new ArrayList<>();
 	    String sql = "SELECT title, author FROM PostDB WHERE thread = ? AND read = FALSE";
@@ -284,6 +309,15 @@ public class Database {
 	    return postTitles;
 	}
 	
+	/*
+	 * Post content returns a list of strings to be displayed in the Student replies Page
+	 * the first initial lines are the body of the current post, and the rest are the 
+	 * replies turned into strings with "author - body"
+	 * 
+	 * @param post used to find the correct post in the db
+	 * @param user used to find the correct post in the db
+	 * @param thread used to find the correct post in the db
+	 */
 	public List<String> postContent(String post, String user, String thread){
 		List<String> content = new ArrayList<>();
 		
@@ -333,7 +367,12 @@ public class Database {
 
 	    return content;
 	}
-	
+		
+	/*
+	 * Writes the reply to the ReplyDB, first ensures that a parent can be found 
+	 * 
+	 * @reply the obj created to supply the proper data
+	 */
 	public void writeReply(Reply reply) throws SQLException {
 		try (PreparedStatement chk = connection.prepareStatement(
 		        "SELECT 1 FROM PostDB WHERE id = ?")) {   // use your real table name

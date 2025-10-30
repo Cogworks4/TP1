@@ -22,8 +22,13 @@ import java.util.*;
 
 public class ControllerStudentReplies {
 	
+	// creates obj of database to connect to and use static references
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;
 	
+	/**
+     * repaints the current window with all of the content from the View within
+     * the package
+     */
 		protected static void repaintTheWindow() {
 			ViewStudentReplies.theRootPane.getChildren().setAll(
 					ViewStudentReplies.label_PageTitle, 
@@ -41,11 +46,20 @@ public class ControllerStudentReplies {
 			ViewStudentReplies.theStage.show();
 		}
 		
+		/**
+	     * returns to the previous page
+	     */
 		protected static void performReturn() {
 			guiStudentPosts.ViewStudentPosts.displayStudentPosts(ViewStudentReplies.theStage,
 					ViewStudentReplies.theUser, ViewStudentReplies.CurrentThread);
 		}
 		
+		/**
+	     * adds a reply to the database by calling the method in database to write it
+	     * to the ReplyDB table, updates the list afterwards to update it in real time
+	     * 
+	     * @param CurrentPostId the current post id inwhich the user is located
+	     */
 		protected static void performAddReply(UUID CurrentPostId) {
 
 			System.out.println("[DBG] performAddReply postId=" + CurrentPostId);

@@ -66,6 +66,7 @@ public class ViewStudentPosts {
 	// This is the query for the search bar
 	protected static String query;
 	
+	// This creates the post store obj for each thread
 	protected static final PostStore postStore = new PostStore(Set.of("General", "Homework"));
 	
 	// This is a separator and it is used to partition the GUI for various tasks

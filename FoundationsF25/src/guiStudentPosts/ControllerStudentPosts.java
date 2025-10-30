@@ -1,9 +1,13 @@
 package guiStudentPosts;
 
 import java.sql.SQLException;
+import java.util.function.Consumer;
+
 import database.Database;
+import guiStudentPosts.ViewAddPost.PostInput;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.stage.Stage;
 
 /**
  * Controller for the Student Posts screen.
@@ -20,10 +24,10 @@ public class ControllerStudentPosts {
 	
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;
 	
-	    /**
-	     * Rebuilds the posts scene and shows it on {@code theStage}.
-	     * Sets the title, scene, and visible controls for the page.
-	     */
+    /**
+     * repaints the current window with all of the content from the View within
+     * the package
+     */
 		protected static void repaintTheWindow() {
 			ViewStudentPosts.theRootPane.getChildren().setAll(
 					ViewStudentPosts.label_PageTitle, 
@@ -52,12 +56,8 @@ public class ControllerStudentPosts {
 		}
 		
 	    /**
-	     * Opens the “Add Post” dialog. When the user submits:
-	     * <ul>
-	     *   <li>Creates a new post in {@code postStore}</li>
-	     *   <li>Writes it to the database</li>
-	     *   <li>Prepends a display row to the posts ListView</li>
-	     * </ul>
+	     * Adds the post by creating a post obj and calling the write post function in the
+	     * database, which writes it to the PostDB table
 	     */
 		protected static void performAddPost() {
 			ViewAddPost.open(ViewStudentPosts.theStage, "", "", input -> {
@@ -79,6 +79,10 @@ public class ControllerStudentPosts {
 		    }, true);
 		}
 		
+		/**
+		 * Filters the posts based on the match of the input in the search bar, calls
+		 * populateStudentPostList() to refresh the feed in real time
+		 */
 		protected static void searchPosts() {
 			String input = ViewStudentPosts.text_searchBar.getText();
 			ViewStudentPosts.PopulateStudentPostList();
