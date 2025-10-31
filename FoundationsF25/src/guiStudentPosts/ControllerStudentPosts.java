@@ -22,11 +22,16 @@ import javafx.stage.Stage;
  */
 public class ControllerStudentPosts {
 	
+	/**
+	 *  Database instance
+	 */
 	protected static Database theDatabase = applicationMain.FoundationsMain.database;
 	
     /**
-     * repaints the current window with all of the content from the View within
-     * the package
+     * Repaints the Student Posts window with all UI elements 
+     * 
+     * <p>Repaints the current window with all of the content from the View within
+     * the package<p>
      */
 		protected static void repaintTheWindow() {
 			ViewStudentPosts.theRootPane.getChildren().setAll(
@@ -48,16 +53,24 @@ public class ControllerStudentPosts {
 		}
 		
 		/**
-	    * Navigates back to the Student Home page, preserving the current stage and user.
+		 * Navigates back to the Student Home page
+		 * 
+		 * <p> This method navigates back to the Student Home page, preserving 
+		 * the current stage and user.<p>
 	    */
 		protected static void performReturn() {
 			guiStudent.ViewStudentHome.displayStudentHome(ViewStudentPosts.theStage,
 					ViewStudentPosts.theUser);
 		}
 		
+		
 	    /**
-	     * Adds the post by creating a post obj and calling the write post function in the
-	     * database, which writes it to the PostDB table
+	     * Opens the "Add Post" dialog handing post creation
+	     * 
+	     * <p>Adds the post by creating a post obj and calling the write post function in the
+	     * database, which writes it to the PostDB table<p>
+	     * 
+	     * @throws SQLException if there is an error when writing the post to database
 	     */
 		protected static void performAddPost() {
 			ViewAddPost.open(ViewStudentPosts.theStage, "", "", input -> {
@@ -80,8 +93,10 @@ public class ControllerStudentPosts {
 		}
 		
 		/**
-		 * Filters the posts based on the match of the input in the search bar, calls
-		 * populateStudentPostList() to refresh the feed in real time
+		 * Filters the display of post based on the user's search input
+		 * 
+		 * <p>Filters the posts based on the match of the input in the search bar, calls
+		 * populateStudentPostList() to refresh the feed in real time<p>
 		 */
 		protected static void searchPosts() {
 			String input = ViewStudentPosts.text_searchBar.getText();

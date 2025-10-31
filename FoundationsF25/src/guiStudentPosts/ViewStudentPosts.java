@@ -2,18 +2,6 @@ package guiStudentPosts;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-/**
- * JavaFX view for listing posts within a thread for a student user.
- *
- * <p>Renders page labels, separators, a posts ListView, and page controls.
- * Double-clicking a list item opens the Replies view for the selected post.
- * The view delegates actions to {@link ControllerStudentPosts}.</p>
- *
- * <p>Call {@link #displayStudentPosts(Stage, entityClasses.User, String)} to show the page.</p>
- *
- * @author Jacob
- * @since 1.0
- */
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -35,6 +23,18 @@ import javafx.scene.control.CheckBox;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * JavaFX view for listing posts within a thread for a student user.
+ *
+ * <p>Renders page labels, separators, a posts ListView, and page controls.
+ * Double-clicking a list item opens the Replies view for the selected post.
+ * The view delegates actions to {@link ControllerStudentPosts}.</p>
+ *
+ * <p>Call {@link #displayStudentPosts(Stage, entityClasses.User, String)} to show the page.</p>
+ *
+ * @author Jacob
+ * @since 1.0
+ */
 public class ViewStudentPosts {
 	
 	/*-*******************************************************************************************
@@ -125,6 +125,17 @@ public class ViewStudentPosts {
 		ControllerStudentPosts.repaintTheWindow();
 	}
 	
+	/**
+	 * Constructs the Student Posts view and initializes its UI components.
+	 *
+	 * <p>Builds the layout, configures event handlers, and prepares
+	 * the scene for displaying posts within the current thread. It sets up
+	 * the search bar, read filter, and navigation buttons, delegating user actions
+	 * to {@link ControllerStudentPosts}.</p>
+	 *
+	 * <p>This view is instantiated only once and reused by
+	 * {@link #displayStudentPosts(Stage, entityClasses.User, String)}.</p>
+	 */
 public ViewStudentPosts() {
 		
 		// This page is used by all roles, so we do not specify the role being used		
@@ -199,8 +210,15 @@ public ViewStudentPosts() {
 
 
 /**
- * Populates or refreshes the posts ListView from the database for {@code CurrentThread}.
- * Initializes layout the first time the list is added to the root pane.
+ * Populates or refreshes the posts list for the current thread.
+ *
+ * <p>If the posts list has not yet been added to the root pane, this method
+ * initializes its layout and styling. Then it retrieves the posts from the
+ * database via {@code Database.listPosts(CurrentThread)} and updates the
+ * {@link #list_Posts} view accordingly.</p>
+ *
+ * <p>If a database access error occurs, the stack trace is printed and the list
+ * remains unchanged.</p>
  */
 public static void PopulateStudentPostList() {
     if (!theRootPane.getChildren().contains(list_Posts)) {
