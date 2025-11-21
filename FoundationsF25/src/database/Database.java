@@ -154,9 +154,14 @@ public class Database {
 	            + "body VARCHAR(255), "
 	            + "author VARCHAR(255), "
 	            + "thread VARCHAR(255), "
-	            + "id UUID NOT NULL, "
-	            + "read BOOL DEFAULT FALSE)";
+	            + "id UUID NOT NULL)";
 	    statement.execute(postsTable);
+	    
+	    // Create table for read posts
+	    String readPostsTable = "CREATE TABLE IF NOT EXISTS ReadPostsDB ("
+	    		+ "postID UUID NOT NULL, "
+	    		+ "userName VARCHAR(255))";
+	    statement.execute(readPostsTable);
 	    
 	    // Create table for replies
 	    String replyTable = "CREATE TABLE IF NOT EXISTS ReplyDB ("
@@ -228,30 +233,32 @@ public class Database {
 	 * 
 	 * @param title 
 	 */
-	public UUID grabPostId(String title){
-		String query = "SELECT title, id FROM PostDB";
-		String update = "UPDATE PostDB SET read = TRUE WHERE id = ?";
+	public UUID grabPostId(String title, String userName) {
+	    String query  = "SELECT id FROM PostDB WHERE title = ?";
+	    String insert = "INSERT INTO ReadPostsDB (postID, userName) VALUES (?, ?)";
 
-	    try (PreparedStatement pstmt = connection.prepareStatement(query);
-	         ResultSet rs = pstmt.executeQuery()) {
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, title);
 
-	        while (rs.next()) {
-	        	String Title = rs.getString("title");
-	        	if (Title.equals(title)) {
-		            UUID id = rs.getObject("id", UUID.class);
-	                // Mark as read
-	                try (PreparedStatement updateStmt = connection.prepareStatement(update)) {
-	                    updateStmt.setObject(1, id);
-	                    updateStmt.executeUpdate();
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                String postIdStr = rs.getString("id");
+
+	                // write into ReadPostsDB
+	                try (PreparedStatement pstmt2 = connection.prepareStatement(insert)) {
+	                    pstmt2.setString(1, postIdStr);
+	                    pstmt2.setString(2, userName);
+	                    pstmt2.executeUpdate();
 	                }
-		            return id;
-	        	}
-	        }
 
+	                return UUID.fromString(postIdStr);
+	            }
+	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
-	    
+
+	    // no matching post found
 	    return null;
 	}
 
@@ -293,20 +300,29 @@ public class Database {
 	 * 
 	 * @param thread used to search through the table to find a match
 	 */
-	public List<String> listUnreadPosts(String thread) throws SQLException {
-	    List<String> postTitles = new ArrayList<>();
-	    String sql = "SELECT title, author FROM PostDB WHERE thread = ? AND read = FALSE";
+	public List<String> listUnreadPosts(String userName, String thread) throws SQLException {
+	    List<String> postEntries = new ArrayList<>();
+
+	    String sql =
+	        "SELECT author, title FROM PostDB " +
+	        "WHERE thread = ? AND id NOT IN (" +
+	            "SELECT postID FROM ReadPostsDB WHERE userName = ?" +
+	        ")";
 
 	    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
 	        pstmt.setString(1, thread);
+	        pstmt.setString(2, userName);
+
 	        ResultSet rs = pstmt.executeQuery();
 
 	        while (rs.next()) {
-	            postTitles.add(rs.getString("author") + " - " + rs.getString("title"));
+	            String author = rs.getString("author");
+	            String title = rs.getString("title");
+	            postEntries.add(author + " - " + title);
 	        }
 	    }
 
-	    return postTitles;
+	    return postEntries;
 	}
 	
 	/*

@@ -1,6 +1,3 @@
-/guiStudent/
-/guiMultipleRoleDispatch/
-/guiStudentPost/
-/guiTools/
-/guiUserLogin/
-/guiUserUpdate/
+/database/
+/guiStudentPosts/
+/guiStudentReplies/

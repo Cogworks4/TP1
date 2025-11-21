@@ -166,7 +166,7 @@ public ViewStudentPosts() {
 		checkbox_read.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
 		    try {
 		        if (isNowSelected) {
-		            List<String> unreadPosts = theDatabase.listUnreadPosts(CurrentThread);
+		            List<String> unreadPosts = theDatabase.listUnreadPosts(theUser.getUserName(), CurrentThread);
 		            list_Posts.setItems(FXCollections.observableArrayList(unreadPosts));
 		        } else {
 		            PopulateStudentPostList();

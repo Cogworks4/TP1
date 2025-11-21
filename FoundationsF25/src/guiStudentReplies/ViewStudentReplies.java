@@ -100,7 +100,7 @@ public class ViewStudentReplies {
 		int dashIndex = post.indexOf("- ");
 		CurrentPost = dashIndex != -1 ? post.substring(dashIndex + 2) : post;
 		
-		CurrentPostId = theDatabase.grabPostId(CurrentPost);
+		CurrentPostId = theDatabase.grabPostId(CurrentPost, theUser.getUserName());
 		
 		javafx.application.Platform.runLater(() ->
 			label_PostTitle.setText(CurrentPost)
