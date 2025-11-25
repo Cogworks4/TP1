@@ -4,10 +4,15 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.sql.SQLException;
+import java.util.List;
+
 import database.Database;
 import entityClasses.User;
 import guiUserUpdate.ViewUserUpdate;
@@ -56,11 +61,11 @@ public class ViewStudentHome {
 	// GUI ARea 2: This is a stub, so there are no widgets here.  For an actual role page, this are
 	// would contain the widgets needed for the user to play the assigned role.
 	
-	protected static Button button_Thread1 = new Button("General");
-	protected static Button button_Thread2 = new Button("Homework");
-	
 	// This is a separator and it is used to partition the GUI for various tasks
-	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
+	protected static Line line_Separator2 = new Line(20, 525, width-20,525);
+	
+	// This is the ListView with all of the threads
+	protected static ListView<String> list_Threads = new ListView<>();
 	
 	// GUI Area 3: This is last of the GUI areas.  It is used for quitting the application and for
 	// logging out.
@@ -82,7 +87,7 @@ public class ViewStudentHome {
 	protected static int ThreadID;				// The ID of the current thread
 	
 
-	private static Scene theViewStudentHomeScene;	// The shared Scene each invocation populates
+	protected static Scene theViewStudentHomeScene;	// The shared Scene each invocation populates
 	protected static final int theRole = 2;		// Admin: 1; Student: 2; Role2: 3
 
 	/*-*******************************************************************************************
@@ -128,11 +133,9 @@ public class ViewStudentHome {
 		applicationMain.FoundationsMain.activeHomePage = theRole;
 		
 		label_UserDetails.setText("User: " + theUser.getUserName());
-				
-		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundations: Student Home Page");
-		theStage.setScene(theViewStudentHomeScene);
-		theStage.show();
+		
+		PopulateThreadList();
+		ControllerStudentHome.repaintTheWindow();
 	}
 	
 	/**********
@@ -169,12 +172,21 @@ public class ViewStudentHome {
 		
 		// GUI Area 2
 		
-		setupButtonUI(button_Thread1, "Dialog", 18, 250, Pos.CENTER, 20, 115);
-		button_Thread1.setOnAction((event) -> {ControllerStudentHome.StudentPosts("General");});
-		
-		setupButtonUI(button_Thread2, "Dialog", 18, 250, Pos.CENTER, 20, 165);
-		button_Thread2.setOnAction((event) -> {ControllerStudentHome.StudentPosts("Homework");});
-		
+		list_Threads.setOnMouseClicked(e -> {
+		    if (e.getClickCount() == 2) {
+		        // Get the selected item
+		        String selectedThread = list_Threads.getSelectionModel().getSelectedItem();
+
+		        if (selectedThread != null) {
+		            // Pass the post title (or ID) to the next page
+		            guiStudentPosts.ViewStudentPosts.displayStudentPosts(
+		                theStage, 
+		                theUser, 
+		                selectedThread
+		            );
+		        }
+		    }
+		});
 		
 		// GUI Area 3
         setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
@@ -185,11 +197,31 @@ public class ViewStudentHome {
 
 		// This is the end of the GUI initialization code
 		
-		// Place all of the widget items into the Root Pane's list of children
-         theRootPane.getChildren().addAll(
-			label_PageTitle, label_UserDetails, button_UpdateThisUser, line_Separator1,
-	        line_Separator4, button_Thread1, button_Thread2, button_Logout, button_Quit);
+		
 }
+	
+	public static void PopulateThreadList() {
+	    if (!theRootPane.getChildren().contains(list_Threads)) {
+	        theRootPane.getChildren().add(list_Threads);
+
+	        // layout only once (or move to constructor)
+	        list_Threads.setLayoutX(20);
+	        list_Threads.setLayoutY(103);
+	        list_Threads.setPrefWidth(width - 40);
+	        list_Threads.setPrefHeight(414);
+	        list_Threads.setStyle("-fx-font-family: 'Monospaced'; -fx-font-size: 14;");
+	    }
+	    
+	    List<String> Threads;
+		try {
+			Threads = theDatabase.listThreads();
+		} catch (SQLException e) {
+			Threads = null;
+			e.printStackTrace();
+		}
+
+	    list_Threads.setItems(javafx.collections.FXCollections.observableArrayList(Threads));
+	}
 	
 	
 	/*-********************************************************************************************

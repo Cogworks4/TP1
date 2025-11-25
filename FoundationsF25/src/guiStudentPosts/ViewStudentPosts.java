@@ -156,12 +156,15 @@ public ViewStudentPosts() {
 		label_ThreadTitle.setText(CurrentThread);
 		setupLabelUI(label_ThreadTitle, "Arial", 20, width, Pos.CENTER, 0, 55);
 		
+			// search bar for posts
 		setupTextUI(text_searchBar, "Arial", 18, 200, Pos.BASELINE_LEFT, 570, 55, true);
 		text_searchBar.setPromptText("Enter Search Query");
 		text_searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
 			ControllerStudentPosts.searchPosts();
 		});
 		
+		// GUI Area 2
+			// Checkbox for read/unread
 		setupCheckBoxUI(checkbox_read, "Arial", 14, 100, Pos.CENTER, 570, 32);
 		checkbox_read.selectedProperty().addListener((obs, wasSelected, isNowSelected) -> {
 		    try {

@@ -148,6 +148,11 @@ public class Database {
 	    		+ "userName VARCHAR(255))";
 	    statement.execute(oneTimePasswordTable);
 	    
+	    String threadsTable = "CREATE TABLE IF NOT EXISTS ThreadDB ("
+	    		+ "title VARCHAR(255) UNIQUE, "
+	    		+ "tags VARCHAR(255))";
+	    statement.execute(threadsTable);
+	    
 	    // Create table for posts
 	    String postsTable = "CREATE TABLE IF NOT EXISTS PostDB ("
 	            + "title VARCHAR(255), "
@@ -201,6 +206,45 @@ public class Database {
 	        return false;
 	    }
 	}
+	
+	/*
+	 * Writes a thread into the database, grabbing staff input for the title and the tags
+	 * 
+	 * @param title and tags from staff input
+	 */
+	public void writeThread(String title, String tags) throws SQLException {
+		String insertThread = "INSERT INTO ThreadDB (title, tags) "
+				+ "VALUES (?, ?)";
+		try(PreparedStatement pstmt = connection.prepareStatement(insertThread)) {
+			pstmt.setString(1,  title);
+			pstmt.setString(2,  tags);
+		
+			pstmt.executeUpdate();
+		}
+	}
+	
+	/*
+	 * Creates a list of all of the threads that is displayed to the user in the homepage, grabs from 
+	 * the database and formatting into title - tags, then returning the list of strings
+	 */
+	public List<String> listThreads() throws SQLException {
+	    List<String> threads = new ArrayList<>();
+
+	    String query = "SELECT title, tags FROM ThreadDB";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(query);
+	         ResultSet rs = pstmt.executeQuery()) {
+
+	        while (rs.next()) {
+	        	threads.add(rs.getString("title") + " - " + rs.getString("tags"));
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return threads;
+	}
 
 	/*
 	 * Writes a post into the PostDB table, writing the title, body, author, thread, and id
@@ -231,7 +275,7 @@ public class Database {
 	 * grabs the post id by searching through the table and finding a matching title,
 	 * also marks the post as read, as if this is called you are entering the post
 	 * 
-	 * @param title 
+	 * @param title and username
 	 */
 	public UUID grabPostId(String title, String userName) {
 	    String query  = "SELECT id FROM PostDB WHERE title = ?";

@@ -1,6 +1,7 @@
 package guiStudent;
 
 import guiStudent.ViewStudentHome;
+import guiStudentPosts.ViewStudentPosts;
 
 public class ControllerStudentHome {
 
@@ -18,6 +19,28 @@ public class ControllerStudentHome {
 		guiStudentPosts.ViewStudentPosts.displayStudentPosts(ViewStudentHome.theStage, 
 				ViewStudentHome.theUser, Thread);
 	}
+	
+	/**
+     * Repaints the Student Posts window with all UI elements 
+     * 
+     * <p>Repaints the current window with all of the content from the View within
+     * the package<p>
+     */
+		protected static void repaintTheWindow() {
+			ViewStudentHome.theRootPane.getChildren().setAll(
+					ViewStudentHome.label_PageTitle, 
+					ViewStudentHome.label_UserDetails,
+					ViewStudentHome.line_Separator1,
+					ViewStudentHome.line_Separator2,
+					ViewStudentHome.list_Threads,
+					ViewStudentHome.button_Quit,
+					ViewStudentHome.button_Logout);
+			
+			// Set the title for the window
+			ViewStudentHome.theStage.setTitle("CSE 360 Foundation Code: Student Home Page");
+			ViewStudentHome.theStage.setScene(ViewStudentHome.theViewStudentHomeScene);
+			ViewStudentHome.theStage.show();
+		}
 
 	
  	/**********
