@@ -84,7 +84,7 @@ public class ControllerStudentPosts {
 				try {
 					theDatabase.writePost(post);
 				} catch (SQLException e) {
-					System.err.println("*** ERROR *** Database error trying to register a user: " + e.getMessage());
+					System.err.println("*** ERROR *** Database error trying write a post: " + e.getMessage());
 					e.printStackTrace();
 					System.exit(0);
 				}

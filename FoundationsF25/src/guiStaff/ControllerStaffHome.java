@@ -83,18 +83,21 @@ public class ControllerStaffHome {
 	 * 
 	 */	
 	protected static void performAddThread() {
-		ViewAddThread.open(ViewStaffHome.theStage, "", "", input -> {
-				    String Title = input.title();
-				    String Tags = input.tags(),
-				);
-			try {
-				theDatabase.writeThread(Title, Tags);
-			} catch (SQLException e) {
-				System.err.println("*** ERROR *** Database error trying to write a Thread: " + e.getMessage());
-				e.printStackTrace();
-				System.exit(0);
-			}
-	        ViewStaffHome.list_Threads.getItems().add(0, Title + " — " + Tags);
+	    ViewAddThread.open(ViewStaffHome.theStage, "", "", input -> {
+
+	        String title = input.title();
+	        String tags  = input.tags();
+
+	        try {
+	            theDatabase.writeThread(title, tags);
+	        } catch (SQLException e) {
+	            System.err.println("*** ERROR *** Database error trying to write a Thread: " + e.getMessage());
+	            e.printStackTrace();
+	            return;
+	        }
+
+	        ViewStaffHome.list_Threads.getItems().add(0, title + " - " + tags);
+
 	    }, true);
 	}
 }

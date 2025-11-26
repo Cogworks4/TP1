@@ -75,7 +75,7 @@ public class ViewStudentReplies {
 	private static Database theDatabase = applicationMain.FoundationsMain.database;		
 	
 	protected static final ReplyStore replyStore = new ReplyStore(Set.of(), theDatabase.getConnection());
-
+	
 	protected static Stage theStage;			// The Stage that JavaFX has established for us
 	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets 
 	protected static User theUser;				// The current user of the application

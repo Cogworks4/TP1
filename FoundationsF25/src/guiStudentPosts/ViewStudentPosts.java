@@ -22,6 +22,7 @@ import store.PostStore;
 import javafx.scene.control.CheckBox;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * JavaFX view for listing posts within a thread for a student user.
@@ -66,8 +67,7 @@ public class ViewStudentPosts {
 	// This is the query for the search bar
 	protected static String query;
 	
-	// This creates the post store obj for each thread
-	protected static final PostStore postStore = new PostStore(Set.of("General", "Homework"));
+	protected static PostStore postStore;
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator2 = new Line(20, 525, width-20,525);
@@ -101,11 +101,30 @@ public class ViewStudentPosts {
      * @param thread the thread name to list posts for
      */
 	public static void displayStudentPosts(Stage ps, User user, String thread) {
+		
+		// Allows all of the threads within the database
+		List<String> threadRows = null;
+		try {
+			threadRows = theDatabase.listThreads();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} // "Title - tags" strings
+
+		Set<String> allowedThreads = threadRows.stream()
+		        .map(row -> {
+		            int idx = row.indexOf(" - ");
+		            return (idx == -1) ? row : row.substring(0, idx); // keep only title
+		        })
+		        .collect(Collectors.toSet());
+
+		postStore = new PostStore(allowedThreads);
+		
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
 		
-		CurrentThread = thread;
+		CurrentThread = thread.split(" -", 2)[0];
 		
 		javafx.application.Platform.runLater(() ->
 			label_ThreadTitle.setText(CurrentThread)

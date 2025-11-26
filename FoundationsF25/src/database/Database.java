@@ -224,6 +224,41 @@ public class Database {
 	}
 	
 	/*
+	 * Deletes a thread from the database
+	 * 
+	 * @param thread title
+	 */
+	public boolean deleteThread(String title) {
+	    String query = "DELETE FROM ThreadDB WHERE title = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, title);
+	        int rowsAffected = pstmt.executeUpdate();
+	        return rowsAffected > 0;
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	        return false;
+	    }
+	}
+	
+	/*
+	 * Updates the thread in the database
+	 * 
+	 * @param thread original title
+	 */
+	public void updateThread(String original, String title, String tags) {
+	    String query = "UPDATE ThreadDB SET title = ?, tags = ? WHERE title = ?";
+	    
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setString(1, title);
+	        pstmt.setString(2, tags);
+	        pstmt.setString(3, original);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
+	/*
 	 * Creates a list of all of the threads that is displayed to the user in the homepage, grabs from 
 	 * the database and formatting into title - tags, then returning the list of strings
 	 */

@@ -190,13 +190,13 @@ public class ViewStaffHome {
 		});
 		
 		// GUI Area 3
-        setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
+        setupButtonUI(button_Logout, "Dialog", 18, 200, Pos.CENTER, 20, 540);
         button_Logout.setOnAction((event) -> {ControllerStaffHome.performLogout(); });
         
-        setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
+        setupButtonUI(button_Quit, "Dialog", 18, 200, Pos.CENTER, 300, 540);
         button_Quit.setOnAction((event) -> {ControllerStaffHome.performQuit(); });
         
-        setupButtonUI(button_AddThread, "Dialog", 18, 250, Pos.CENTER, 450, 540);
+        setupButtonUI(button_AddThread, "Dialog", 18, 200, Pos.CENTER, 570, 540);
         button_AddThread.setOnAction((event) -> {ControllerStaffHome.performAddThread(); });
 
 		// This is the end of the GUI initialization code
