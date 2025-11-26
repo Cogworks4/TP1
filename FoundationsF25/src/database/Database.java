@@ -224,15 +224,32 @@ public class Database {
 	}
 	
 	/*
-	 * Deletes a thread from the database
+	 * Deletes a thread from the database and any posts for it
 	 * 
 	 * @param thread title
 	 */
 	public boolean deleteThread(String title) {
-	    String query = "DELETE FROM ThreadDB WHERE title = ?";
-	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-	        pstmt.setString(1, title);
-	        int rowsAffected = pstmt.executeUpdate();
+	    int rowsAffected = 0;
+
+	    try {
+	        String selectIds = "SELECT id FROM PostDB WHERE thread = ?";
+	        try (PreparedStatement select = connection.prepareStatement(selectIds)) {
+	            select.setString(1, title);
+	            try (ResultSet rs = select.executeQuery()) {
+	                while (rs.next()) {
+	                    String id = rs.getObject("id").toString();
+	                    deletePost(id);  // deletes replies + post
+	                    rowsAffected++;
+	                }
+	            }
+	        }
+
+	        String deleteThread = "DELETE FROM ThreadDB WHERE title = ?";
+	        try (PreparedStatement pstmt = connection.prepareStatement(deleteThread)) {
+	            pstmt.setString(1, title);
+	            rowsAffected += pstmt.executeUpdate();
+	        }
+
 	        return rowsAffected > 0;
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -304,6 +321,29 @@ public class Database {
 		
 			pstmt.executeUpdate();
 		}
+	}
+	
+	/* deletes the Post and any replies under said post
+	 * 
+	 * @param id is the id to find the post and any replies in the database
+	 */
+	public void deletePost(String id) throws SQLException {
+	    // Parse the String to a UUID
+	    java.util.UUID uuid = java.util.UUID.fromString(id);
+
+	    // First delete replies for that post
+	    String deleteReplies = "DELETE FROM ReplyDB WHERE postid = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(deleteReplies)) {
+	        pstmt.setObject(1, uuid);
+	        pstmt.executeUpdate();
+	    }
+
+	    // Then delete the post itself
+	    String deletePost = "DELETE FROM PostDB WHERE id = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(deletePost)) {
+	        pstmt.setObject(1, uuid);
+	        pstmt.executeUpdate();
+	    }
 	}
 	
 	/*

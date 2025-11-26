@@ -1,4 +1,4 @@
-package guiStudentPosts;
+package guiStaffPosts;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,7 +15,8 @@ import javafx.stage.Stage;
 import javafx.scene.control.TextField;
 import database.Database;
 import entityClasses.User;
-import guiStudentPosts.ViewStudentPosts;
+import guiStaff.ControllerStaffHome;
+import guiStaffPosts.ViewStaffPosts;
 import javafx.scene.control.ListView;
 import store.PostStore;
 
@@ -25,18 +26,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * JavaFX view for listing posts within a thread for a student user.
+ * JavaFX view for listing posts within a thread for a Staff user.
  *
  * <p>Renders page labels, separators, a posts ListView, and page controls.
  * Double-clicking a list item opens the Replies view for the selected post.
- * The view delegates actions to {@link ControllerStudentPosts}.</p>
+ * The view delegates actions to {@link ControllerStaffPosts}.</p>
  *
- * <p>Call {@link #displayStudentPosts(Stage, entityClasses.User, String)} to show the page.</p>
+ * <p>Call {@link #displayStaffPosts(Stage, entityClasses.User, String)} to show the page.</p>
  *
  * @author Jacob
  * @since 1.0
  */
-public class ViewStudentPosts {
+public class ViewStaffPosts {
 	
 	/*-*******************************************************************************************
 
@@ -78,10 +79,12 @@ public class ViewStudentPosts {
 	// return is to a fixed page as opposed to the actual page that invoked the pages.
 	protected static Button button_Return = new Button("Return");
 	protected static Button button_AddPost = new Button("Add Post");
+	protected static Button button_ModifyThread = new Button("Modify Thread");
 	
 	// These attributes are used to configure the page and populate it with this user's information
-	private static ViewStudentPosts theView;	// Used to determine if instantiation of the class
+	private static ViewStaffPosts theView;	// Used to determine if instantiation of the class
 	protected static String CurrentThread;
+	protected static String CurrentTags;
 												// is needed
 	// Reference for the in-memory database so this package has access
 	private static Database theDatabase = applicationMain.FoundationsMain.database;		
@@ -90,19 +93,17 @@ public class ViewStudentPosts {
 	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets 
 	protected static User theUser;				// The current user of the application
 	
-	public static Scene theStudentPostScene = null;	// The Scene each invocation populates
+	public static Scene theStaffPostScene = null;	// The Scene each invocation populates
 	
     /**
-     * Creates (on first use) and displays the Student Posts page for the given user and thread.
+     * Creates (on first use) and displays the Staff Posts page for the given user and thread.
      * Populates the UI, loads the current thread’s posts, and asks the controller to paint.
      *
      * @param ps    the JavaFX stage to render into
      * @param user  the signed-in user
      * @param thread the thread name to list posts for
      */
-	public static void displayStudentPosts(Stage ps, User user, String thread) {
-		
-		// Establish the references to the GUI and the current user
+	public static void displayStaffPosts(Stage ps, User user, String thread) {
 		theStage = ps;
 		theUser = user;
 		
@@ -111,9 +112,8 @@ public class ViewStudentPosts {
 		try {
 			threadRows = theDatabase.listThreads();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} // "Title - tags" strings
+		}
 
 		Set<String> allowedThreads = threadRows.stream()
 		        .map(row -> {
@@ -124,7 +124,10 @@ public class ViewStudentPosts {
 
 		postStore = new PostStore(allowedThreads);
 		
-		CurrentThread = thread.split(" -", 2)[0];
+		String[] parts = thread.split(" -", 2);
+
+		CurrentThread = parts[0];
+		CurrentTags = parts.length > 1 ? parts[1] : "";
 		
 		javafx.application.Platform.runLater(() ->
 			label_ThreadTitle.setText(CurrentThread)
@@ -132,41 +135,41 @@ public class ViewStudentPosts {
 		
 		// If not yet established, populate the static aspects of the GUI by creating the 
 		// singleton instance of this class
-		if (theView == null) theView = new ViewStudentPosts();
+		if (theView == null) theView = new ViewStaffPosts();
 		
-		guiStudentPosts.ViewStudentPosts.PopulateStudentPostList();
+		guiStaffPosts.ViewStaffPosts.PopulateStaffPostList();
 
 		// Populate the dynamic aspects of the GUI with the data from the user and the current
 		// state of the system.  This page is different from the others.  Since there are two 
 		// modes (1: user has not been selected, and 2: user has been selected) there are two
 		// lists of widgets to be displayed.  For this reason, we have implemented the following 
 		// two controller methods to deal with this dynamic aspect.
-		ControllerStudentPosts.repaintTheWindow();
+		ControllerStaffPosts.repaintTheWindow();
 	}
 	
 	/**
-	 * Constructs the Student Posts view and initializes its UI components.
+	 * Constructs the Staff Posts view and initializes its UI components.
 	 *
 	 * <p>Builds the layout, configures event handlers, and prepares
 	 * the scene for displaying posts within the current thread. It sets up
 	 * the search bar, read filter, and navigation buttons, delegating user actions
-	 * to {@link ControllerStudentPosts}.</p>
+	 * to {@link ControllerStaffPosts}.</p>
 	 *
 	 * <p>This view is instantiated only once and reused by
-	 * {@link #displayStudentPosts(Stage, entityClasses.User, String)}.</p>
+	 * {@link #displayStaffPosts(Stage, entityClasses.User, String)}.</p>
 	 */
-public ViewStudentPosts() {
+public ViewStaffPosts() {
 		
 		// This page is used by all roles, so we do not specify the role being used		
 			
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
-		theStudentPostScene = new Scene(theRootPane, width, height);
+		theStaffPostScene = new Scene(theRootPane, width, height);
 		
 		// Populate the window with the title and other common widgets and set their static state
 		
 		// GUI Area 1
-		label_PageTitle.setText("Student Posts Page");
+		label_PageTitle.setText("Staff Posts Page");
 		setupLabelUI(label_PageTitle, "Arial", 28, width, Pos.CENTER, 0, 5);
 
 		label_UserDetails.setText("User: " + theUser.getUserName());
@@ -179,7 +182,7 @@ public ViewStudentPosts() {
 		setupTextUI(text_searchBar, "Arial", 18, 200, Pos.BASELINE_LEFT, 570, 55, true);
 		text_searchBar.setPromptText("Enter Search Query");
 		text_searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
-			ControllerStudentPosts.searchPosts();
+			ControllerStaffPosts.searchPosts();
 		});
 		
 		// GUI Area 2
@@ -191,7 +194,7 @@ public ViewStudentPosts() {
 		            List<String> unreadPosts = theDatabase.listUnreadPosts(theUser.getUserName(), CurrentThread);
 		            list_Posts.setItems(FXCollections.observableArrayList(unreadPosts));
 		        } else {
-		            PopulateStudentPostList();
+		            PopulateStaffPostList();
 		        }
 		    } catch (SQLException e) {
 		        e.printStackTrace();
@@ -199,11 +202,14 @@ public ViewStudentPosts() {
 		});
 	
 		// GUI Area 3		
-		setupButtonUI(button_Return, "Dialog", 18, 210, Pos.CENTER, 20, 540);
-		button_Return.setOnAction((event) -> {ControllerStudentPosts.performReturn(); });
+		setupButtonUI(button_Return, "Dialog", 18, 200, Pos.CENTER, 20, 540);
+		button_Return.setOnAction((event) -> {ControllerStaffPosts.performReturn(); });
 		
-		setupButtonUI(button_AddPost, "Dialog", 18, 210, Pos.CENTER, 300, 540);
-		button_AddPost.setOnAction((event) -> {ControllerStudentPosts.performAddPost();});
+		setupButtonUI(button_AddPost, "Dialog", 18, 200, Pos.CENTER, 300, 540);
+		button_AddPost.setOnAction((event) -> {ControllerStaffPosts.performAddPost();});
+        
+        setupButtonUI(button_ModifyThread, "Dialog", 18, 200, Pos.CENTER, 570, 540);
+        button_ModifyThread.setOnAction((event) -> {ControllerStaffPosts.performModifyThread(); });
 		
 		list_Posts.setOnMouseClicked(e -> {
 		    if (e.getClickCount() == 2) {
@@ -242,7 +248,7 @@ public ViewStudentPosts() {
  * <p>If a database access error occurs, the stack trace is printed and the list
  * remains unchanged.</p>
  */
-public static void PopulateStudentPostList() {
+public static void PopulateStaffPostList() {
     if (!theRootPane.getChildren().contains(list_Posts)) {
         theRootPane.getChildren().add(list_Posts);
 

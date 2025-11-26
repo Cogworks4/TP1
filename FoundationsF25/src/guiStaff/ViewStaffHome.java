@@ -180,7 +180,7 @@ public class ViewStaffHome {
 
 		        if (selectedThread != null) {
 		            // Pass the post title (or ID) to the next page
-		            guiStudentPosts.ViewStudentPosts.displayStudentPosts(
+		            guiStaffPosts.ViewStaffPosts.displayStaffPosts(
 		                theStage, 
 		                theUser, 
 		                selectedThread
