@@ -1,9 +1,12 @@
-package guiStudent;
+package guiStaff;
 
-import guiStudent.ViewStudentHome;
+import java.sql.SQLException;
+
+import database.Database;
+import guiStudentPosts.ViewAddPost;
 import guiStudentPosts.ViewStudentPosts;
 
-public class ControllerStudentHome {
+public class ControllerStaffHome {
 
 	/*-*******************************************************************************************
 
@@ -15,31 +18,34 @@ public class ControllerStudentHome {
 	
 	 */
 	
-	protected static void StudentPosts(String Thread) {
-		guiStudentPosts.ViewStudentPosts.displayStudentPosts(ViewStudentHome.theStage, 
-				ViewStudentHome.theUser, Thread);
+	protected static Database theDatabase = applicationMain.FoundationsMain.database;
+	
+	protected static void StaffPosts(String Thread) {
+		guiStudentPosts.ViewStudentPosts.displayStudentPosts(ViewStaffHome.theStage, 
+				ViewStaffHome.theUser, Thread);
 	}
 	
 	/**
-     * Repaints the Student Posts window with all UI elements 
+     * Repaints the Staff Posts window with all UI elements 
      * 
      * <p>Repaints the current window with all of the content from the View within
      * the package<p>
      */
 		protected static void repaintTheWindow() {
-			ViewStudentHome.theRootPane.getChildren().setAll(
-					ViewStudentHome.label_PageTitle, 
-					ViewStudentHome.label_UserDetails,
-					ViewStudentHome.line_Separator1,
-					ViewStudentHome.line_Separator2,
-					ViewStudentHome.list_Threads,
-					ViewStudentHome.button_Quit,
-					ViewStudentHome.button_Logout);
+			ViewStaffHome.theRootPane.getChildren().setAll(
+					ViewStaffHome.label_PageTitle, 
+					ViewStaffHome.label_UserDetails,
+					ViewStaffHome.line_Separator1,
+					ViewStaffHome.line_Separator2,
+					ViewStaffHome.list_Threads,
+					ViewStaffHome.button_Quit,
+					ViewStaffHome.button_Logout,
+					ViewStaffHome.button_AddThread);
 			
 			// Set the title for the window
-			ViewStudentHome.theStage.setTitle("CSE 360 Foundation Code: Student Home Page");
-			ViewStudentHome.theStage.setScene(ViewStudentHome.theViewStudentHomeScene);
-			ViewStudentHome.theStage.show();
+			ViewStaffHome.theStage.setTitle("CSE 360 Foundation Code: Staff Home Page");
+			ViewStaffHome.theStage.setScene(ViewStaffHome.theViewStaffHomeScene);
+			ViewStaffHome.theStage.show();
 		}
 
 	
@@ -52,7 +58,7 @@ public class ControllerStudentHome {
 	 * 
 	 */
 	protected static void performLogout() {
-		guiUserLogin.ViewUserLogin.displayUserLogin(ViewStudentHome.theStage);
+		guiUserLogin.ViewUserLogin.displayUserLogin(ViewStaffHome.theStage);
 	}
 	
 	
@@ -66,5 +72,29 @@ public class ControllerStudentHome {
 	 */	
 	protected static void performQuit() {
 		System.exit(0);
+	}
+	
+	/**********
+	 * <p> Method: performAddThread() </p>
+	 * 
+	 * <p> Description: This method terminates the execution of the program.  It leaves the
+	 * database in a state where the normal login page will be displayed when the application is
+	 * restarted.</p>
+	 * 
+	 */	
+	protected static void performAddThread() {
+		ViewAddThread.open(ViewStaffHome.theStage, "", "", input -> {
+				    String Title = input.title();
+				    String Tags = input.tags(),
+				);
+			try {
+				theDatabase.writeThread(Title, Tags);
+			} catch (SQLException e) {
+				System.err.println("*** ERROR *** Database error trying to write a Thread: " + e.getMessage());
+				e.printStackTrace();
+				System.exit(0);
+			}
+	        ViewStaffHome.list_Threads.getItems().add(0, Title + " — " + Tags);
+	    }, true);
 	}
 }

@@ -4,17 +4,22 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
+
+import java.sql.SQLException;
+import java.util.List;
+
 import database.Database;
-//import database.Database;
 import entityClasses.User;
+import guiUserUpdate.ViewUserUpdate;
 
 
 /*******
- * <p> Title: ViewStaffHome Class. </p>
+ * <p> Title: GUIReviewerHomePage Class. </p>
  * 
  * <p> Description: The Java/FX-based Staff Home Page.  The page is a stub for some role needed for
  * the application.  The widgets on this page are likely the minimum number and kind for other role
@@ -24,7 +29,7 @@ import entityClasses.User;
  * 
  * @author Lynn Robert Carter
  * 
- * @version 1.00		2025-04-20 Initial version
+ * @version 1.00		2025-08-20 Initial version
  *  
  */
 
@@ -49,22 +54,24 @@ public class ViewStaffHome {
 	protected static Label label_PageTitle = new Label();
 	protected static Label label_UserDetails = new Label();
 	protected static Button button_UpdateThisUser = new Button("Account Update");
-		
+	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
 
 	// GUI ARea 2: This is a stub, so there are no widgets here.  For an actual role page, this are
 	// would contain the widgets needed for the user to play the assigned role.
 	
-	
-	
 	// This is a separator and it is used to partition the GUI for various tasks
-	protected static Line line_Separator4 = new Line(20, 525, width-20,525);
+	protected static Line line_Separator2 = new Line(20, 525, width-20,525);
+	
+	// This is the ListView with all of the threads
+	protected static ListView<String> list_Threads = new ListView<>();
 	
 	// GUI Area 3: This is last of the GUI areas.  It is used for quitting the application and for
 	// logging out.
 	protected static Button button_Logout = new Button("Logout");
 	protected static Button button_Quit = new Button("Quit");
+	protected static Button button_AddThread = new Button("Add Thread");
 
 	// This is the end of the GUI objects for the page.
 	
@@ -78,8 +85,10 @@ public class ViewStaffHome {
 	protected static Stage theStage;			// The Stage that JavaFX has established for us	
 	protected static Pane theRootPane;			// The Pane that holds all the GUI widgets
 	protected static User theUser;				// The current logged in User
+	protected static int ThreadID;				// The ID of the current thread
 	
-	private static Scene theStaffHomeScene;		// The shared Scene each invocation populates
+
+	protected static Scene theViewStaffHomeScene;	// The shared Scene each invocation populates
 	protected static final int theRole = 3;		// Admin: 1; Student: 2; Staff: 3
 
 	/*-*******************************************************************************************
@@ -88,11 +97,12 @@ public class ViewStaffHome {
 	
 	 */
 
+
 	/**********
-	 * <p> Method: displayStaffHome(Stage ps, User user) </p>
+	 * <p> Method: displayStudentHome(Stage ps, User user) </p>
 	 * 
 	 * <p> Description: This method is the single entry point from outside this package to cause
-	 * the Staff Home page to be displayed.
+	 * the Student Home page to be displayed.
 	 * 
 	 * It first sets up every shared attributes so we don't have to pass parameters.
 	 * 
@@ -123,30 +133,28 @@ public class ViewStaffHome {
 		theDatabase.getUserAccountDetails(user.getUserName());
 		applicationMain.FoundationsMain.activeHomePage = theRole;
 		
-		label_UserDetails.setText("User: " + theUser.getUserName());// Set the username
-
-		// Set the title for the window, display the page, and wait for the Admin to do something
-		theStage.setTitle("CSE 360 Foundations: Staff Home Page");
-		theStage.setScene(theStaffHomeScene);						// Set this page onto the stage
-		theStage.show();											// Display it to the user
+		label_UserDetails.setText("User: " + theUser.getUserName());
+		
+		PopulateThreadList();
+		ControllerStaffHome.repaintTheWindow();
 	}
 	
 	/**********
-	 * <p> Method: ViewStaffHome() </p>
+	 * <p> Method: ViewStudentHome() </p>
 	 * 
 	 * <p> Description: This method initializes all the elements of the graphical user interface.
 	 * This method determines the location, size, font, color, and change and event handlers for
-	 * each GUI object. </p>
+	 * each GUI object.</p>
 	 * 
 	 * This is a singleton and is only performed once.  Subsequent uses fill in the changeable
-	 * fields using the displayStaffHome method.</p>
+	 * fields using the displayRole2Home method.</p>
 	 * 
 	 */
 	private ViewStaffHome() {
-		
+
 		// Create the Pane for the list of widgets and the Scene for the window
 		theRootPane = new Pane();
-		theStaffHomeScene = new Scene(theRootPane, width, height);	// Create the scene
+		theViewStaffHomeScene = new Scene(theRootPane, width, height);	// Create the scene
 		
 		// Set the title for the window
 		
@@ -160,12 +168,26 @@ public class ViewStaffHome {
 		setupLabelUI(label_UserDetails, "Arial", 20, width, Pos.BASELINE_LEFT, 20, 55);
 		
 		setupButtonUI(button_UpdateThisUser, "Dialog", 18, 170, Pos.CENTER, 610, 45);
-		button_UpdateThisUser.setOnAction((event) -> {ControllerStaffHome.performUpdate(); });
+		button_UpdateThisUser.setOnAction((event) ->
+			{ViewUserUpdate.displayUserUpdate(theStage, theUser); });
 		
 		// GUI Area 2
 		
-			// This is a stub, so this area is empty
-		
+		list_Threads.setOnMouseClicked(e -> {
+		    if (e.getClickCount() == 2) {
+		        // Get the selected item
+		        String selectedThread = list_Threads.getSelectionModel().getSelectedItem();
+
+		        if (selectedThread != null) {
+		            // Pass the post title (or ID) to the next page
+		            guiStudentPosts.ViewStudentPosts.displayStudentPosts(
+		                theStage, 
+		                theUser, 
+		                selectedThread
+		            );
+		        }
+		    }
+		});
 		
 		// GUI Area 3
         setupButtonUI(button_Logout, "Dialog", 18, 250, Pos.CENTER, 20, 540);
@@ -173,13 +195,36 @@ public class ViewStaffHome {
         
         setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
         button_Quit.setOnAction((event) -> {ControllerStaffHome.performQuit(); });
+        
+        setupButtonUI(button_AddThread, "Dialog", 18, 250, Pos.CENTER, 450, 540);
+        button_AddThread.setOnAction((event) -> {ControllerStaffHome.performAddThread(); });
 
 		// This is the end of the GUI initialization code
 		
-		// Place all of the widget items into the Root Pane's list of children
-        theRootPane.getChildren().addAll(
-			label_PageTitle, label_UserDetails, button_UpdateThisUser, line_Separator1,
-	        line_Separator4, button_Logout, button_Quit);
+		
+}
+	
+	public static void PopulateThreadList() {
+	    if (!theRootPane.getChildren().contains(list_Threads)) {
+	        theRootPane.getChildren().add(list_Threads);
+
+	        // layout only once (or move to constructor)
+	        list_Threads.setLayoutX(20);
+	        list_Threads.setLayoutY(103);
+	        list_Threads.setPrefWidth(width - 40);
+	        list_Threads.setPrefHeight(414);
+	        list_Threads.setStyle("-fx-font-family: 'Monospaced'; -fx-font-size: 14;");
+	    }
+	    
+	    List<String> Threads;
+		try {
+			Threads = theDatabase.listThreads();
+		} catch (SQLException e) {
+			Threads = null;
+			e.printStackTrace();
+		}
+
+	    list_Threads.setItems(javafx.collections.FXCollections.observableArrayList(Threads));
 	}
 	
 	
