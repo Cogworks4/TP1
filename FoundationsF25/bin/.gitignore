@@ -1,10 +1,6 @@
-/guiMultipleRoleDispatch/
-/guiStaff/
-/guiTools/
-/guiUserLogin/
-/guiUserUpdate/
-/guiStudentPosts/
-/guiStudentReplies/
+/guiStaffReplies/
+/guiStaffPosts/
 /database/
 /guiAdminTickets/
 /guiAdminHome/
+/guiStudentReplies/

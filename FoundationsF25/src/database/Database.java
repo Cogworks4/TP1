@@ -224,15 +224,33 @@ public class Database {
 	}
 	
 	/*
-	 * Deletes a thread from the database
+	 * Deletes a thread from the database and any posts for it
 	 * 
 	 * @param thread title
 	 */
 	public boolean deleteThread(String title) {
-	    String query = "DELETE FROM ThreadDB WHERE title = ?";
-	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
-	        pstmt.setString(1, title);
-	        int rowsAffected = pstmt.executeUpdate();
+	    int rowsAffected = 0;
+
+	    try {
+	        String selectIds = "SELECT id FROM PostDB WHERE thread = ?";
+	        try (PreparedStatement select = connection.prepareStatement(selectIds)) {
+	            select.setString(1, title);
+	            try (ResultSet rs = select.executeQuery()) {
+	                while (rs.next()) {
+	                    String id = rs.getObject("id").toString();
+	                    java.util.UUID uuid = java.util.UUID.fromString(id);
+	                    deletePost(uuid);  // deletes replies + post
+	                    rowsAffected++;
+	                }
+	            }
+	        }
+
+	        String deleteThread = "DELETE FROM ThreadDB WHERE title = ?";
+	        try (PreparedStatement pstmt = connection.prepareStatement(deleteThread)) {
+	            pstmt.setString(1, title);
+	            rowsAffected += pstmt.executeUpdate();
+	        }
+
 	        return rowsAffected > 0;
 	    } catch (SQLException e) {
 	        e.printStackTrace();
@@ -246,9 +264,19 @@ public class Database {
 	 * @param thread original title
 	 */
 	public void updateThread(String original, String title, String tags) {
-	    String query = "UPDATE ThreadDB SET title = ?, tags = ? WHERE title = ?";
+		String UpdatePosts = "UPDATE PostDB SET thread = ? WHERE thread = ?";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(UpdatePosts)) {
+			pstmt.setString(1, title);
+			pstmt.setString(2, original);
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+	    String UpdateThread = "UPDATE ThreadDB SET title = ?, tags = ? WHERE title = ?";
 	    
-	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	    try (PreparedStatement pstmt = connection.prepareStatement(UpdateThread)) {
 	        pstmt.setString(1, title);
 	        pstmt.setString(2, tags);
 	        pstmt.setString(3, original);
@@ -306,6 +334,39 @@ public class Database {
 		}
 	}
 	
+	/* deletes the Post and any replies under said post
+	 * 
+	 * @param id is the id to find the post and any replies in the database
+	 */
+	public void deletePost(UUID id) throws SQLException {
+
+	    // First delete replies for that post
+	    String deleteReplies = "DELETE FROM ReplyDB WHERE postid = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(deleteReplies)) {
+	        pstmt.setObject(1, id);
+	        pstmt.executeUpdate();
+	    }
+
+	    // Then delete the post itself
+	    String deletePost = "DELETE FROM PostDB WHERE id = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(deletePost)) {
+	        pstmt.setObject(1, id);
+	        pstmt.executeUpdate();
+	    }
+	}
+	
+	public void updatePost(UUID id, String title, String body) throws SQLException {
+	    String updatePost = "UPDATE PostDB set title = ?, body = ? WHERE id = ?";
+	    try (PreparedStatement pstmt = connection.prepareStatement(updatePost)) {
+	    	pstmt.setString(1, title);
+	    	pstmt.setString(2, body);
+	    	pstmt.setObject(3, id);
+	    	pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+	
 	/*
 	 * grabs the post id by searching through the table and finding a matching title,
 	 * also marks the post as read, as if this is called you are entering the post
@@ -339,6 +400,30 @@ public class Database {
 
 	    // no matching post found
 	    return null;
+	}
+	
+	/*
+	 * grabs the post id by searching through the table and finding a matching title,
+	 * also marks the post as read, as if this is called you are entering the post
+	 * 
+	 * @param title and username
+	 */
+	public String grabPostBody(UUID id) {
+	    String query = "SELECT body FROM PostDB WHERE id = ?";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(query)) {
+	        pstmt.setObject(1, id);
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getString("body");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return null; // not found or error
 	}
 
 	/*
@@ -495,6 +580,61 @@ public class Database {
 		
 			pstmt.executeUpdate();
 		}
+	}
+	
+	/*
+	 * Deletes the reply from the database
+	 * 
+	 * @param id  the unique id for the reply to find it
+	 */
+	public void deleteReply(UUID id) throws SQLException {
+		String DeleteReply = "DELETE FROM ReplyDB WHERE id = ?";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(DeleteReply)) {
+			pstmt.setObject(1, id);
+			pstmt.executeUpdate();
+		}
+	}
+	
+	/*
+	 * Updates the reply in the database
+	 * 
+	 * @param id  the unique id for the reply to find it
+	 * @param body  the new body for the reply
+	 */
+	public void updateReply(UUID id, String body) throws SQLException {
+		String UpdateReply = "UPDATE ReplyDB SET body = ? WHERE id = ?";
+		
+		try (PreparedStatement pstmt = connection.prepareStatement(UpdateReply)) {
+			pstmt.setString(1, body);
+			pstmt.setObject(2, id);
+			pstmt.executeUpdate();
+		}
+	}
+	
+	/*
+	 * Grabs the UUID of the reply with matching body and author
+	 * 
+	 * @param body  body of the reply
+	 * @param author  author of the reply
+	 */
+	public UUID grabReplyID(String body, String author) throws SQLException {
+	    String GrabUUID = "SELECT id FROM ReplyDB WHERE body = ? AND author = ?";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(GrabUUID)) {
+	        pstmt.setString(1, body);
+	        pstmt.setString(2, author);
+
+	        try (ResultSet rs = pstmt.executeQuery()) {
+	            if (rs.next()) {
+	                return (UUID) rs.getObject("id");  // works for UUID column type
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return null;  // not found or error
 	}
 
 /*******
