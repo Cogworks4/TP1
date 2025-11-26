@@ -218,7 +218,7 @@ public ViewStaffPosts() {
 
 		        if (selectedPost != null) {
 		            // Pass the post title (or ID) to the next page
-		            guiStudentReplies.ViewStudentReplies.displayStudentReplies(
+		            guiStaffReplies.ViewStaffReplies.displayStaffReplies(
 		                theStage, 
 		                theUser, 
 		                selectedPost,

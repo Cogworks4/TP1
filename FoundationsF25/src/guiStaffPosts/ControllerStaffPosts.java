@@ -107,6 +107,7 @@ public class ControllerStaffPosts {
 			                theDatabase.updateThread(ViewStaffPosts.CurrentThread,
 			                                         result.newTitle(),
 			                                         result.newTags());
+			                ViewStaffHome.displayStaffHome(ViewStaffPosts.theStage, ViewStaffPosts.theUser);
 			            }
 			        },
 			        true

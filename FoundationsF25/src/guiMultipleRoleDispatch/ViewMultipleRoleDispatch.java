@@ -92,7 +92,6 @@ public class ViewMultipleRoleDispatch {
 	 */
 
 	public static void displayMultipleRoleDispatch(Stage ps, User user) {
-		
 		// Establish the references to the GUI and the current user
 		theStage = ps;
 		theUser = user;
