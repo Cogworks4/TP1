@@ -9,6 +9,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
+import guiAdminHome.ViewAdminHome;
 
 
 
@@ -92,6 +93,20 @@ public class ControllerAdminHome {
 		ViewAdminHome.text_InvitationEmailAddress.setText("");
 		ViewAdminHome.label_NumberOfInvitations.setText("Number of outstanding invitations: " + 
 				theDatabase.getNumberOfInvitations());
+	}
+	
+	
+	/**********
+	 * <p>Title: adminTickets() Method.</p>
+	 *
+	 * <p>Description: Opens the Admin Tickets page so admins can create
+	 * and manage open/closed admin requests.</p>
+	 **********/
+	protected static void adminTickets() {
+	    guiAdminTickets.ViewAdminTickets.displayAdminTickets(
+	            ViewAdminHome.theStage,
+	            ViewAdminHome.theUser
+	    );
 	}
 	
 	/**********

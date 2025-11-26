@@ -5,6 +5,9 @@ import java.sql.SQLException;
 import database.Database;
 import guiStudentPosts.ViewAddPost;
 import guiStudentPosts.ViewStudentPosts;
+import guiStaff.ViewStaffHome;
+import guiAdminTickets.ViewAdminTickets; 
+
 
 public class ControllerStaffHome {
 
@@ -25,6 +28,14 @@ public class ControllerStaffHome {
 				ViewStaffHome.theUser, Thread);
 	}
 	
+	protected static void performAdminTickets() {
+	    guiAdminTickets.ViewAdminTickets.displayAdminTickets(
+	            ViewStaffHome.theStage,
+	            ViewStaffHome.theUser
+	    );
+	}
+	
+	
 	/**
      * Repaints the Staff Posts window with all UI elements 
      * 
@@ -40,6 +51,7 @@ public class ControllerStaffHome {
 					ViewStaffHome.list_Threads,
 					ViewStaffHome.button_Quit,
 					ViewStaffHome.button_Logout,
+					ViewStaffHome.button_AdminTickets,
 					ViewStaffHome.button_AddThread);
 			
 			// Set the title for the window

@@ -105,6 +105,7 @@ public class ViewAdminHome {
 	protected static Button button_ListUsers = new Button("List All Users");
 	protected static Button button_AddRemoveRoles = new Button("Add/Remove Roles");
 	protected static Alert alertNotImplemented = new Alert(AlertType.INFORMATION);
+	protected static Button button_AdminTickets = new Button("Admin Tickets");
 
 	// This is a separator and it is used to partition the GUI for various tasks
 	private static Line line_Separator4 = new Line(20, 525, width-20,525);
@@ -252,6 +253,10 @@ public class ViewAdminHome {
 		setupButtonUI(button_SetOnetimePassword, "Dialog", 16, 250, Pos.CENTER, 20, 320);
 		button_SetOnetimePassword.setOnAction((event) -> 
 			{ControllerAdminHome.setOnetimePassword(); });
+		
+		setupButtonUI(button_AdminTickets, "Dialog", 16, 250, Pos.CENTER, 290, 270);
+		button_AdminTickets.setOnAction((event) -> 
+			{ControllerAdminHome.adminTickets();});
 
 		setupButtonUI(button_DeleteUser, "Dialog", 16, 250, Pos.CENTER, 20, 370);
 		button_DeleteUser.setOnAction((event) -> {ControllerAdminHome.deleteUser(); });
@@ -268,6 +273,8 @@ public class ViewAdminHome {
     
 		setupButtonUI(button_Quit, "Dialog", 18, 250, Pos.CENTER, 300, 540);
 		button_Quit.setOnAction((event) -> {ControllerAdminHome.performQuit(); });
+		
+		
 
 		// This is the end of the GUI initialization code
 		
@@ -280,6 +287,7 @@ public class ViewAdminHome {
     		label_InvitationEmailAddress, text_InvitationEmailAddress,
     		combobox_SelectRole, button_SendInvitation, line_Separator3,
     		button_ManageInvitations,
+    		button_AdminTickets,
     		button_SetOnetimePassword,
     		button_DeleteUser,
     		button_ListUsers,

@@ -72,6 +72,8 @@ public class ViewStaffHome {
 	protected static Button button_Logout = new Button("Logout");
 	protected static Button button_Quit = new Button("Quit");
 	protected static Button button_AddThread = new Button("Add Thread");
+	protected static Button button_AdminTickets = new Button("Admin Tickets");
+
 
 	// This is the end of the GUI objects for the page.
 	
@@ -171,6 +173,11 @@ public class ViewStaffHome {
 		button_UpdateThisUser.setOnAction((event) ->
 			{ViewUserUpdate.displayUserUpdate(theStage, theUser); });
 		
+		// Admin Tickets button near top-center
+		setupButtonUI(button_AdminTickets, "Dialog", 18, 170, Pos.CENTER, 315, 45);
+		button_AdminTickets.setOnAction((event) -> 
+		{ ControllerStaffHome.performAdminTickets(); });
+		
 		// GUI Area 2
 		
 		list_Threads.setOnMouseClicked(e -> {
@@ -198,6 +205,7 @@ public class ViewStaffHome {
         
         setupButtonUI(button_AddThread, "Dialog", 18, 200, Pos.CENTER, 570, 540);
         button_AddThread.setOnAction((event) -> {ControllerStaffHome.performAddThread(); });
+        
 
 		// This is the end of the GUI initialization code
 		
