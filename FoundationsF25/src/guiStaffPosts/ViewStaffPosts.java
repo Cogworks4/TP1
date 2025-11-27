@@ -57,7 +57,7 @@ public class ViewStaffPosts {
 	protected static Label label_UserDetails = new Label();
 	protected static Label label_ThreadTitle = new Label();
 	protected static TextField text_searchBar = new TextField();
-	protected static CheckBox checkbox_read = new CheckBox("Filter Read");
+	protected static CheckBox checkbox_read = new CheckBox("Filter Unread");
 	
 	// This is a separator and it is used to partition the GUI for various tasks
 	protected static Line line_Separator1 = new Line(20, 95, width-20, 95);
