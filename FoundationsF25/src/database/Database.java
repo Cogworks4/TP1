@@ -11,6 +11,7 @@ import java.util.UUID;
 import java.time.LocalDateTime;
 import java.sql.Timestamp;
 
+
 import entityClasses.User;
 import entityClasses.Post;
 import entityClasses.Reply;
@@ -308,6 +309,25 @@ public class Database {
 
 	    return threads;
 	}
+	
+	/**
+	 * Update the thread for a single post.
+	 *
+	 * @param postId    the UUID of the post to move
+	 * @param newThread the title of the destination thread
+	 */
+	public void updatePostThread(UUID postId, String newThread) {
+	    String sql = "UPDATE PostDB SET thread = ? WHERE id = ?";
+
+	    try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+	        pstmt.setString(1, newThread);
+	        pstmt.setObject(2, postId);
+	        pstmt.executeUpdate();
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	}
+
 
 	/*
 	 * Writes a post into the PostDB table, writing the title, body, author, thread, and id

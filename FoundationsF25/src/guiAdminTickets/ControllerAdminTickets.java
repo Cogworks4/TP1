@@ -2,6 +2,7 @@ package guiAdminTickets;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.UUID;
 
 import database.Database;
 import entityClasses.Post;
@@ -88,6 +89,69 @@ public class ControllerAdminTickets {
                 true
         );
     }
+    
+    /**
+     * Open a read-only ticket details dialog for an item selected
+     * from either the OPEN or CLOSED list.
+     *
+     * @param ticketListEntry the list entry string (e.g. "author - title")
+     * @param fromOpenList    true if this came from the OPEN list (ticket can be resolved)
+     */
+    protected static void openTicketDetails(String ticketListEntry, boolean fromOpenList) {
+        if (ticketListEntry == null || ticketListEntry.isBlank()) {
+            return;
+        }
+
+        // listPosts() returns "author - title"; we only need the title
+        String title = extractTitleFromListEntry(ticketListEntry);
+
+        try {
+            Database db = ViewAdminTickets.theDatabase;
+
+            // Reuse existing helper: this also logs that the user has read the post
+            UUID postId = db.grabPostId(title, ViewAdminTickets.theUser.getUserName());
+
+            if (postId == null) {
+                // Nothing to show
+                return;
+            }
+
+            String body = db.grabPostBody(postId);
+            if (body == null) {
+                body = "(No body found for this ticket.)";
+            }
+
+            // Open dialog; only allow "Resolve" for OPEN tickets
+            ViewTicketDetails.open(
+                    ViewAdminTickets.theStage,
+                    title,
+                    body,
+                    fromOpenList,
+                    () -> {
+                        // This callback runs only if the user clicks "Mark Resolved"
+                        try {
+                            db.updatePostThread(postId, ViewAdminTickets.ADMIN_CLOSED_THREAD);
+                            ViewAdminTickets.refreshTicketLists();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+            );
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Parse "author - title" into just the "title" portion.
+     */
+    private static String extractTitleFromListEntry(String entry) {
+        int dashIndex = entry.indexOf("- ");
+        return (dashIndex != -1) ? entry.substring(dashIndex + 2) : entry;
+    }
+
+
 
     /**
      * Reload the lists from the database.
