@@ -133,6 +133,27 @@ public class ViewAdminTickets {
         list_ClosedTickets.setPrefWidth(columnWidth);
         list_ClosedTickets.setPrefHeight(listHeight);
         list_ClosedTickets.setStyle("-fx-font-family: 'Monospaced'; -fx-font-size: 14;");
+        
+        // Double-click on an OPEN ticket to view details (and optionally resolve)
+        list_OpenTickets.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                String selected = list_OpenTickets.getSelectionModel().getSelectedItem();
+                if (selected != null) {
+                    ControllerAdminTickets.openTicketDetails(selected, true);
+                }
+            }
+        });
+
+        // Double-click on a CLOSED ticket to view details (read-only)
+        list_ClosedTickets.setOnMouseClicked(e -> {
+            if (e.getClickCount() == 2) {
+                String selected = list_ClosedTickets.getSelectionModel().getSelectedItem();
+                if (selected != null) {
+                    ControllerAdminTickets.openTicketDetails(selected, false);
+                }
+            }
+        });
+
 
         // Buttons at bottom
         setupButtonUI(button_Return, "Dialog", 18, 200, Pos.CENTER, 40, 540);
